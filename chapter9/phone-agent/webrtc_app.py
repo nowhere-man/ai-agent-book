@@ -329,9 +329,9 @@ async def health() -> dict[str, Any]:
         "experiment": "9-2",
         "model_provider": os.getenv("PHONE_MODEL_PROVIDER", "ark"),
         "model_credential_present": bool(
-            os.getenv("ARK_API_KEY")
+            os.getenv("OPENAI_API_KEY")
             or os.getenv("OPENAI_API_KEY")
-            or os.getenv("OPENROUTER_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
         ),
         "speech_paths": "browser microphone RTP -> Whisper ASR; system TTS -> WebRTC RTP",
     }

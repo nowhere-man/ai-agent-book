@@ -107,10 +107,10 @@ source .venv/bin/activate
 cd chapter6/model-benchmark
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
-# or export OPENAI_API_KEY=... MOONSHOT_API_KEY=... ARK_API_KEY=...
+# or export OPENAI_API_KEY=... OPENAI_API_KEY=... OPENAI_API_KEY=...
 
 python demo.py
 ```
@@ -129,8 +129,8 @@ python demo.py --max-tokens 256
 Use `--base-url`, `--model`, and `--api-key-env` to test a new provider without changing `DEFAULT_PROVIDERS`.
 
 ```bash
-python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
-  --api-key-env DEEPSEEK_API_KEY --name "DeepSeek官方/deepseek-chat"
+python demo.py --base-url https://api.openai.com/v1 --model deepseek-chat \
+  --api-key-env OPENAI_API_KEY --name "DeepSeek官方/deepseek-chat"
 ```
 
 ## Concurrency sweep
@@ -165,8 +165,8 @@ This validates full aggregation logic with synthetic numbers labelled `[SYNTHETI
 - Moonshot / doubao (explicit base_url + key)
 
 OpenRouter fallback behavior:
-- If `OPENAI_API_KEY` is missing, OpenAI-style entries can still run via OpenRouter (`OPENROUTER_API_KEY`), with model id mapping.
-- For gpt-5.x, OpenRouter is preferred when `OPENROUTER_API_KEY` exists.
+- If `OPENAI_API_KEY` is missing, OpenAI-style entries can still run via OpenRouter (`OPENAI_API_KEY`), with model id mapping.
+- For gpt-5.x, OpenRouter is preferred when `OPENAI_API_KEY` exists.
 
 ## Files
 
@@ -275,11 +275,11 @@ source .venv/bin/activate
 cd chapter6/model-benchmark
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 配置 key：只需填手上有的，未设置的提供商会自动跳过
 cp env.example .env        # 然后编辑 .env
-# 或直接 export OPENAI_API_KEY=... MOONSHOT_API_KEY=... ARK_API_KEY=...
+# 或直接 export OPENAI_API_KEY=... OPENAI_API_KEY=... OPENAI_API_KEY=...
 
 python demo.py             # 一条命令跑出对比表
 ```
@@ -303,8 +303,8 @@ python demo.py --max-tokens 256                # 生成更长响应，更充分�
 用 `--base-url / --model / --api-key-env` 即可直接指定单个端点，无需改 `DEFAULT_PROVIDERS`：
 
 ```bash
-python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
-               --api-key-env DEEPSEEK_API_KEY --name "DeepSeek官方/deepseek-chat"
+python demo.py --base-url https://api.openai.com/v1 --model deepseek-chat \
+               --api-key-env OPENAI_API_KEY --name "DeepSeek官方/deepseek-chat"
 # 换个 base_url、保持同一 model，即可对比"同模型不同提供商"
 ```
 
@@ -362,12 +362,12 @@ python demo.py --mock --concurrency-sweep 1,2,4,8,16     # 合成并发压测表
 | 展示名 | 模型 | base_url | key 环境变量 |
 | --- | --- | --- | --- |
 | OpenAI/gpt-5.6-luna | gpt-5.6-luna | （官方默认，可回退 OpenRouter） | OPENAI_API_KEY |
-| Moonshot/moonshot-v1-8k | moonshot-v1-8k | https://api.moonshot.cn/v1 | MOONSHOT_API_KEY |
-| Doubao/doubao-1.5-pro-32k | doubao-1-5-pro-32k-250115 | https://ark.cn-beijing.volces.com/api/v3 | ARK_API_KEY |
+| Moonshot/moonshot-v1-8k | moonshot-v1-8k | https://api.openai.com/v1 | OPENAI_API_KEY |
+| Doubao/doubao-1.5-pro-32k | doubao-1-5-pro-32k-250115 | https://api.openai.com/v1 | OPENAI_API_KEY |
 
 > **OpenRouter 回退**：`OpenAI/*` 这几条（base_url 为空的 OpenAI 原生条目）在未设置
-> `OPENAI_API_KEY` 时会自动改走 **OpenRouter**（`OPENROUTER_API_KEY`，模型名映射为
-> `openai/*`）。`gpt-5.x` 直连 OpenAI 需组织实名认证，因此只要设置了 `OPENROUTER_API_KEY`
+> `OPENAI_API_KEY` 时会自动改走 **OpenRouter**（`OPENAI_API_KEY`，模型名映射为
+> `openai/*`）。`gpt-5.x` 直连 OpenAI 需组织实名认证，因此只要设置了 `OPENAI_API_KEY`
 > 就优先走 OpenRouter。带专属 `base_url` 的条目（Kimi/豆包）不参与回退。
 
 **提供商列表是可配置的**：在 `benchmark.py` 的 `DEFAULT_PROVIDERS` 里追加
@@ -422,6 +422,6 @@ Doubao/doubao-1.5-pro-32k | 10/10 (100%) | 1097ms   | 1409ms   | 2.32s      | 2.
   计入可用性下降——这本身也是一种"实测限流阈值"的方式（书中实验 6-8 的一环）。
 - **TTFT 与网络强相关**：跨境访问的服务 TTFT 会显著偏高，结论需结合部署地点解读。
 - **OpenRouter 回退**：未设置 `OPENAI_API_KEY` 时，`OpenAI/*` 条目自动经 OpenRouter 路由
-  （需 `OPENROUTER_API_KEY`，`gpt-*` 映射为 `openai/*`）；`gpt-5.x` 只要有 `OPENROUTER_API_KEY`
+  （需 `OPENAI_API_KEY`，`gpt-*` 映射为 `openai/*`）；`gpt-5.x` 只要有 `OPENAI_API_KEY`
   即优先走 OpenRouter（直连需实名认证）。其它提供商（DEEPSEEK / SILICONFLOW 等）如需启用，
   在 `DEFAULT_PROVIDERS` 中补充配置并设置对应环境变量即可。

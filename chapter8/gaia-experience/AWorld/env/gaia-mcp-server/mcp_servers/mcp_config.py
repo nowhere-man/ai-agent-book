@@ -54,15 +54,6 @@ mcp_config = {
             "args": ["run", "src/pptx_server.py"],
             "cwd": "documents_server",
         },
-        "documents-pdf-server": {
-            "type": "stdio",
-            "command": "uv",
-            "args": ["run", "src/pdf_server.py"],
-            "cwd": "documents_server",
-            "env": {
-                "DATALAB_API_KEY": os.getenv("DATALAB_API_KEY"),
-            },
-        },
         "documents-txt-server": {
             "type": "stdio",
             "command": "uv",
@@ -140,12 +131,6 @@ mcp_config = {
                 "VIDEO_LLM_MODEL_NAME": os.getenv("VIDEO_LLM_MODEL_NAME"),
                 "VIDEO_LLM_API_KEY": os.getenv("VIDEO_LLM_API_KEY"),
             },
-        },
-        "parxiv-server": {
-            "type": "stdio",
-            "command": "uv",
-            "args": ["run", "src/parxiv.py"],
-            "cwd": "parxiv_server",
         },
         "terminal-server": {
             "type": "stdio",

@@ -18,7 +18,7 @@ A production-ready AI coding agent built with Claude, implementing all technique
 **All 17 tools from tools.json fully implemented:**
 
 **File Operations (Pure Python):**
-- `Read` - File reading with image/PDF/notebook support
+- `Read` - File reading with image/notebook support
 - `Write` - File writing with auto lint checking
 - `Edit` - Search and replace editing
 - `MultiEdit` - Multiple edits in one operation
@@ -114,7 +114,7 @@ coding-agent/
 cd /Users/boj/ai-agent-book/projects/week5/coding-agent
 
 # Install dependencies (minimal!)
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 
 # Set up environment
 cp .env.example .env
@@ -129,7 +129,6 @@ cp .env.example .env
 - `python-dotenv`
 
 **Optional (for enhanced features):**
-- `PyPDF2` - For PDF reading
 - `requests`, `beautifulsoup4`, `html2text` - For WebFetch
 
 **No command-line tools needed!** Works on macOS without Homebrew packages.

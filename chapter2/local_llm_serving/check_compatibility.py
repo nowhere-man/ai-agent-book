@@ -104,7 +104,7 @@ def provide_recommendations(cuda_available, system):
     elif cuda_available:
         print("\n✅ Your system supports vLLM!")
         print("\nNext steps:")
-        print("1. Install requirements: pip install -r requirements.txt")
+        print("1. Install requirements: pip install -r ../../requirements.txt")
         print("2. Run the main script: python main.py")
         print("3. The script will automatically use vLLM")
         

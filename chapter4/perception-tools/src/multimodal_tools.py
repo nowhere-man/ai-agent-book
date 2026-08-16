@@ -106,17 +106,15 @@ async def read_webpage(
 
 
 def _sniff_document_type(path: Path) -> Optional[str]:
-    """Detect .pdf/.docx/.pptx from magic bytes when the extension is unusable.
+    """Detect .docx/.pptx from magic bytes when the extension is unusable.
 
     A URL's path often carries no real extension (e.g.
-    https://arxiv.org/pdf/2301.07041 -> ".07041"), so the downloaded temp
+    URL paths may carry no useful extension, so the downloaded temp
     file's suffix cannot be trusted to identify the format.
     """
     try:
         with open(path, 'rb') as f:
             header = f.read(4)
-        if header.startswith(b'%PDF'):
-            return '.pdf'
         if header.startswith(b'PK\x03\x04'):
             import zipfile
             with zipfile.ZipFile(path) as zf:
@@ -135,7 +133,7 @@ async def read_document(
     extract_images: bool = False
 ) -> Union[str, TextContent]:
     """
-    Read and extract content from documents (PDF, DOCX, PPTX).
+    Read and extract content from DOCX and PPTX documents.
     
     Args:
         file_path: Path to the document file (or URL)
@@ -156,28 +154,10 @@ async def read_document(
         logging.info(f"📄 Reading document: {path}")
         
         file_ext = path.suffix.lower()
-        if file_ext not in ('.pdf', '.docx', '.pptx'):
+        if file_ext not in ('.docx', '.pptx'):
             # The suffix came from the URL path and may be meaningless
             # (".07041", ".tmp"), so fall back to the file's magic bytes.
             file_ext = _sniff_document_type(path) or file_ext
-        
-        # PDF extraction
-        if file_ext == '.pdf':
-            import PyPDF2
-            
-            with open(path, 'rb') as file:
-                reader = PyPDF2.PdfReader(file)
-                text = ""
-                for page in reader.pages:
-                    text += page.extract_text() + "\n"
-                
-                result = {
-                    "file_name": path.name,
-                    "file_type": "pdf",
-                    "page_count": len(reader.pages),
-                    "text": text[:10000],  # Limit size
-                    "text_length": len(text)
-                }
         
         # DOCX extraction
         elif file_ext == '.docx':

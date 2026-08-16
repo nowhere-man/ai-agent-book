@@ -842,7 +842,7 @@ def summarize(protocol: dict, protocol_hash: str, run_dir: Path, rows: list[dict
             "credential_scan_passed": False,
         },
     }
-    configured = [value for name in ("MOONSHOT_API_KEY", "KIMI_API_KEY") if (value := os.getenv(name))]
+    configured = [value for name in ("OPENAI_API_KEY", "OPENAI_API_KEY") if (value := os.getenv(name))]
     credential_findings = []
     for path in sorted((run_dir / "cases").glob("*.json")):
         raw = path.read_text(encoding="utf-8")
@@ -869,9 +869,9 @@ def main() -> int:
     if protocol_copy.exists() and protocol_copy.read_bytes() != protocol_bytes:
         raise RuntimeError("run protocol copy differs from frozen protocol")
     protocol_copy.write_bytes(protocol_bytes)
-    key = os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
+    key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not key:
-        raise RuntimeError("MOONSHOT_API_KEY or KIMI_API_KEY is required")
+        raise RuntimeError("OPENAI_API_KEY or OPENAI_API_KEY is required")
     client = OpenAI(api_key=key, base_url=protocol["provider"]["base_url"])
 
     jobs = []

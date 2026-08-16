@@ -450,7 +450,7 @@ Example `.env` file (partial fields):
 OPENAI_API_KEY=your-openai-api-key
 
 # Google Search API (for googlesearch-server)
-GOOGLE_API_KEY=your-google-api-key
+OPENAI_API_KEY=your-google-api-key
 GOOGLE_CSE_ID=your-search-engine-id
 
 # E2B API (for code execution sandbox)
@@ -978,7 +978,7 @@ vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
 
 # Method 2: Use a compatible service like OpenRouter
 # Configure in .env:
-LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your-openrouter-api-key
 
 # Restart the service
@@ -1659,7 +1659,7 @@ vim .env
 OPENAI_API_KEY=your-openai-api-key
 
 # Google Search API（用于 googlesearch-server）
-GOOGLE_API_KEY=your-google-api-key
+OPENAI_API_KEY=your-google-api-key
 GOOGLE_CSE_ID=your-search-engine-id
 
 # E2B API（用于代码执行沙箱）
@@ -1729,11 +1729,11 @@ from train.adapter.verl.common import get_agent_tool_env_and_servers
 
 class GaiaAgentLoop(AworldAgentLoop):
     """GAIA 任务的自定义 Agent Loop"""
-    
+
     def build_agents(self):
         # 获取 MCP 环境配置和可用服务列表
         gaia_env_config, gaia_env_servers = get_agent_tool_env_and_servers()
-        
+
         # 构建 Agent 实例
         return Agent(
             conf=AgentConfig(
@@ -1743,13 +1743,13 @@ class GaiaAgentLoop(AworldAgentLoop):
                 llm_api_key="dummy",  # VeRL 内部通信不需要真实 API Key
             ),
             name="gaia_super_agent",
-            
+
             # 系统提示（定义 Agent 角色和能力）
             system_prompt="""You are a helpful AI assistant specialized in solving complex tasks.
 You have access to various tools including web search, code execution, and file analysis.
 When given a task, break it down into steps and use available tools systematically.
 Always provide your final answer in <answer>...</answer> tags.""",
-            
+
             # MCP 工具配置
             mcp_config=gaia_env_config,
             mcp_servers=gaia_env_servers,
@@ -1775,7 +1775,7 @@ from aworld.swarms.swarm import Swarm
 class MultiAgentLoop(AworldAgentLoop):
     def build_agents(self):
         config, servers = get_agent_tool_env_and_servers()
-        
+
         # 创建专业化 Agent
         researcher = Agent(
             conf=AgentConfig(...),
@@ -1783,14 +1783,14 @@ class MultiAgentLoop(AworldAgentLoop):
             system_prompt="You are a research specialist...",
             mcp_servers=["googlesearch-server", "wiki-server"]
         )
-        
+
         coder = Agent(
             conf=AgentConfig(...),
             name="coder",
             system_prompt="You are a coding expert...",
             mcp_servers=["e2b-code-server", "terminal-server"]
         )
-        
+
         # 构建 Swarm
         return Swarm(
             agents=[researcher, coder],
@@ -1842,27 +1842,27 @@ from aworld.logs.util import logger
 def gaia_reward_func(data_source, solution_str, ground_truth, extra_info=None):
     """
     GAIA 任务的奖励函数
-    
+
     Args:
         data_source: 数据来源标识
         solution_str: Agent 生成的完整解答
         ground_truth: 标准答案
         extra_info: 额外信息（如 task_id, level）
-    
+
     Returns:
         float: 奖励值（0.0 或 1.0）
     """
     # 从 solution_str 中提取 <answer>...</answer> 标签内容
     pattern = r'<answer>(.*?)</answer>'
     match = re.search(pattern, solution_str, re.DOTALL | re.MULTILINE)
-    
+
     if not match:
         logger.warning("No answer tag found in solution")
         return 0.0
-    
+
     answer = match.group(1).strip()
     logger.info(f"Extracted answer: {answer}, Ground truth: {ground_truth}")
-    
+
     # 使用 GAIA 标准评分器（支持数字、列表、字符串）
     if question_scorer(answer, ground_truth):
         return 1.0
@@ -2189,7 +2189,7 @@ vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
 
 # 方法 2：使用 OpenRouter 等兼容服务
 # .env 中配置：
-LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your-openrouter-api-key
 
 # 重启服务
@@ -2355,23 +2355,23 @@ curl -X POST http://localhost:8080/mcp \
 def dense_reward_func(data_source, solution_str, ground_truth, extra_info=None):
     """密集奖励函数（考虑中间步骤）"""
     reward = 0.0
-    
+
     # 1. 工具使用奖励（鼓励探索）
     num_tool_calls = solution_str.count("Tool call:")
     reward += min(num_tool_calls * 0.1, 0.5)  # 最多 0.5 分
-    
+
     # 2. 推理质量奖励（基于 CoT）
     if "<think>" in solution_str and "</think>" in solution_str:
         reward += 0.2  # 有思考过程
-    
+
     # 3. 最终答案奖励（主要分数）
     if question_scorer(extract_answer(solution_str), ground_truth):
         reward += 1.0
-    
+
     # 4. 效率惩罚（避免过度工具调用）
     if num_tool_calls > 15:
         reward -= 0.2
-    
+
     return reward
 ```
 
@@ -2381,22 +2381,22 @@ def dense_reward_func(data_source, solution_str, ground_truth, extra_info=None):
 # gaia_datasets/create_multitask_dataset.py
 def create_multitask_dataset():
     datasets = []
-    
+
     # 任务 1：GAIA
     gaia_ds = load_gaia_dataset(...)
     gaia_ds['task_type'] = 'gaia'
     datasets.append(gaia_ds)
-    
+
     # 任务 2：Code Execution
     code_ds = load_code_dataset(...)
     code_ds['task_type'] = 'code'
     datasets.append(code_ds)
-    
+
     # 任务 3：Web Navigation
     web_ds = load_webarena_dataset(...)
     web_ds['task_type'] = 'web'
     datasets.append(web_ds)
-    
+
     # 混合采样
     return pd.concat(datasets).sample(frac=1.0)
 ```

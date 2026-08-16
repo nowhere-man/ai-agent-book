@@ -27,7 +27,7 @@ uv venv --python 3.12
 uv pip install -e .
 ```
 
-With `OPENROUTER_API_KEY` configured, the saved campaign used:
+With `OPENAI_API_KEY` configured, the saved campaign used:
 
 ```bash
 .venv/bin/tau2 run \

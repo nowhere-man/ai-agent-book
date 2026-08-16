@@ -17,9 +17,9 @@ except ImportError:
     pass
 
 from config import (
-    OLLAMA_MODEL, 
+    OLLAMA_MODEL,
     OLLAMA_TEMPERATURE,
-    SYSTEM_PROMPT, 
+    SYSTEM_PROMPT,
     USER_PROMPT_TEMPLATE,
     PII_DETECTION_SCHEMA,
     OUTPUT_DIR
@@ -34,12 +34,12 @@ def _value_appears_in_text(value: str, text: str) -> bool:
 
 class LogSanitizationAgent:
     """Agent for sanitizing logs using local Qwen3 0.6B model via Ollama"""
-    
+
     def __init__(self, model: str = OLLAMA_MODEL):
         """Initialize the sanitization agent.
 
         Primary backend is the local Ollama model. If Ollama is unavailable
-        (not running / not reachable) and OPENROUTER_API_KEY is set, the agent
+        (not running / not reachable) and OPENAI_API_KEY is set, the agent
         falls back to OpenRouter (default hosted model: openai/gpt-5.6-luna),
         so the experiment still runs without a local model.
         """
@@ -67,7 +67,7 @@ class LogSanitizationAgent:
 
         except Exception as e:
             # Universal fallback: route through OpenRouter when Ollama is down.
-            openrouter_key = os.getenv("OPENROUTER_API_KEY")
+            openrouter_key = os.getenv("OPENAI_API_KEY")
             if openrouter_key:
                 from openai import OpenAI
 
@@ -88,7 +88,7 @@ class LogSanitizationAgent:
             else:
                 print(f"❌ Failed to connect to Ollama: {e}")
                 print("Please ensure Ollama is running: ollama serve, "
-                      "or set OPENROUTER_API_KEY as a fallback")
+                      "or set OPENAI_API_KEY as a fallback")
                 raise
 
     def _chat_stream(self, messages):
@@ -130,44 +130,44 @@ class LogSanitizationAgent:
                 if not chunk.choices:
                     continue
                 yield chunk.choices[0].delta.content or ""
-    
+
     def count_tokens(self, text: str) -> int:
         """Estimate token count (rough approximation)"""
         # Rough estimate: 1 token ≈ 4 characters for English text
         # For more accurate counting, we'd need the actual tokenizer
         return len(text) // 4
-    
+
     def detect_pii(self, conversation_text: str) -> Tuple[List[str], Dict]:
         """
         Detect Level 3 PII in conversation text using local LLM
-        
+
         Args:
             conversation_text: Text to analyze
-        
+
         Returns:
             - List of detected PII values
             - Performance metrics dictionary
         """
         # Prepare the prompt
         user_prompt = USER_PROMPT_TEMPLATE.format(conversation_text=conversation_text)
-        
+
         # Count input tokens
         input_tokens = self.count_tokens(SYSTEM_PROMPT + user_prompt)
-        
+
         # Measure prefill time (time to first token)
         start_time = time.perf_counter()
-        
+
         # Create messages for Ollama
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt}
         ]
-        
+
         # Track first token time
         first_token_time = None
         output_tokens_count = 0
         full_response = ""
-        
+
         try:
             # Use structured output with JSON schema (backend-agnostic stream)
             print("\n   🧠 Analyzing (JSON): \033[90m", end="", flush=True)  # Gray color for JSON
@@ -184,30 +184,30 @@ class LogSanitizationAgent:
                     print(content, end="", flush=True)
 
             print("\033[0m")  # Reset color and new line
-            
+
             end_time = time.perf_counter()
-            
+
         except Exception as e:
             print(f"\n❌ Error during PII detection: {e}")
             return [], {}
-        
+
         # Calculate performance metrics
         prefill_time_ms = (first_token_time - start_time) * 1000 if first_token_time else 0
         total_time_ms = (end_time - start_time) * 1000
         output_time_ms = total_time_ms - prefill_time_ms
-        
+
         prefill_speed = input_tokens / (prefill_time_ms / 1000) if prefill_time_ms > 0 else 0
         output_speed = output_tokens_count / (output_time_ms / 1000) if output_time_ms > 0 else 0
-        
+
         # Parse JSON response
         pii_values = []
         accepted_items = []
-        
+
         try:
             response_json = json.loads(full_response)
             if not isinstance(response_json, dict):
                 return [], {}
-            
+
             raw_items = response_json.get('pii_items')
             if isinstance(raw_items, list):
                 for item in raw_items:
@@ -245,20 +245,20 @@ class LogSanitizationAgent:
             'pii_items_found': len(pii_values),
             'pii_items': accepted_items
         }
-        
+
         return pii_values, metrics
-    
+
     def sanitize_text(self, text: str, pii_values: List[str]) -> Tuple[str, int]:
         """
         Replace PII values with [REDACTED] in the text
-        
+
         Returns:
             - Sanitized text
             - Number of replacements made
         """
         sanitized = text
         replacements = 0
-        
+
         for pii_value in pii_values:
             # Escape special regex characters in PII value
             escaped_value = re.escape(pii_value)
@@ -267,40 +267,40 @@ class LogSanitizationAgent:
             # Replace all occurrences
             sanitized = re.sub(escaped_value, '[REDACTED]', sanitized, flags=re.IGNORECASE)
             replacements += occurrences
-        
+
         return sanitized, replacements
-    
+
     def sanitize_conversation(
-        self, 
+        self,
         conversation: Dict,
         test_id: str = "unknown"
     ) -> Dict:
         """
         Sanitize a single conversation and collect metrics
-        
+
         Returns:
             Dictionary with sanitized conversation and metrics
         """
         # Format conversation text
         conv_text = self.format_conversation(conversation)
         conv_id = conversation.get('conversation_id', 'unknown')
-        
+
         print(f"🔍 Processing conversation: {conv_id}")
-        
+
         # Detect PII
         pii_values, perf_metrics = self.detect_pii(conv_text)
         accepted_items = perf_metrics.get('pii_items', [])
-        
+
         if pii_values:
             print(f"   ✅ Found {len(pii_values)} PII items:")
             for pii in pii_values:
                 print(f"      - {pii}")
         else:
             print("   ⚠️  No PII items detected")
-        
+
         # Sanitize the text
         sanitized_text, replacements = self.sanitize_text(conv_text, pii_values)
-        
+
         # Create performance metric. detect_pii() returns an empty metrics dict
         # when the LLM backend fails (e.g. Ollama not running) — fall back to
         # zeros so one failed conversation doesn't crash the whole batch.
@@ -319,9 +319,9 @@ class LogSanitizationAgent:
             replacements_made=replacements,
             sanitized_text_length=len(sanitized_text)
         )
-        
+
         self.metrics_collector.add_metric(metric)
-        
+
         return {
             'conversation_id': conv_id,
             'original_length': len(conv_text),
@@ -332,28 +332,28 @@ class LogSanitizationAgent:
             'pii_items': accepted_items,
             'metrics': metric.to_dict()
         }
-    
+
     def format_conversation(self, conversation: Dict) -> str:
         """Format conversation dictionary into text"""
         lines = []
         lines.append(f"Conversation ID: {conversation.get('conversation_id', 'unknown')}")
         lines.append(f"Timestamp: {conversation.get('timestamp', 'unknown')}")
         lines.append("-" * 50)
-        
+
         messages = conversation.get('messages', [])
         for msg in messages:
             role = msg.get('role', 'unknown').upper()
             content = msg.get('content', '')
             lines.append(f"{role}: {content}")
             lines.append("")  # Empty line between messages
-        
+
         return "\n".join(lines)
-    
+
     def save_sanitized_log(self, test_id: str, results: List[Dict]):
         """Save sanitized logs to output directory"""
         output_file = OUTPUT_DIR / f"{test_id}_sanitized.txt"
         summary_file = OUTPUT_DIR / f"{test_id}_summary.json"
-        
+
         # Save sanitized text
         with open(output_file, 'w') as f:
             for result in results:
@@ -362,7 +362,7 @@ class LogSanitizationAgent:
                 f.write(f"{'='*60}\n")
                 f.write(result['sanitized_text'])
                 f.write("\n")
-        
+
         # Save summary
         summary = {
             'test_id': test_id,
@@ -378,32 +378,32 @@ class LogSanitizationAgent:
                 for r in results
             ]
         }
-        
+
         with open(summary_file, 'w') as f:
             json.dump(summary, f, indent=2)
-        
+
         print(f"✅ Sanitized log saved to: {output_file}")
         print(f"✅ Summary saved to: {summary_file}")
-    
+
     def process_test_case(self, test_id: str, conversations: List[Dict]) -> List[Dict]:
         """Process all conversations in a test case"""
         results = []
-        
+
         print(f"\n{'='*60}")
         print(f"Processing Test Case: {test_id}")
         print(f"Total Conversations: {len(conversations)}")
         print(f"{'='*60}")
-        
+
         for i, conv in enumerate(conversations, 1):
             print(f"\n[{i}/{len(conversations)}] ", end="")
             result = self.sanitize_conversation(conv, test_id)
             results.append(result)
-        
+
         # Save results
         self.save_sanitized_log(test_id, results)
-        
+
         # Save metrics
         self.metrics_collector.save_metrics()
         self.metrics_collector.print_summary()
-        
+
         return results

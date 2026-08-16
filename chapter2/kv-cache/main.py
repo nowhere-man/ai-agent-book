@@ -216,20 +216,20 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
         "sliding_window": KVCacheMode.SLIDING_WINDOW,
         "text_format": KVCacheMode.TEXT_FORMAT
     }
-    
+
     if mode not in mode_map:
         logger.error(f"Invalid mode: {mode}")
         logger.info(f"Valid modes: {', '.join(mode_map.keys())}")
         return
-    
+
     # Use default task if not provided
     if not task:
         task = create_summary_task()
-    
+
     logger.info(f"Running in mode: {mode}")
     logger.info(f"Task: {task}")
     logger.info("="*80)
-    
+
     # Create agent and execute task
     agent = KVCacheAgent(
         api_key=api_key,
@@ -238,18 +238,18 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
         root_dir=root_dir,
         verbose=True
     )
-    
+
     result = agent.execute_task(task, max_iterations=30)
-    
+
     # Print results
     print("\n" + "="*80)
     print(f"EXECUTION RESULTS - Mode: {mode}")
     print("="*80)
-    
+
     metrics = result["metrics"]
     print(f"\n📊 Performance Metrics:")
     print(f"  • Time to First Token (TTFT): {metrics.ttft:.3f} seconds")
-    
+
     # Show TTFT progression
     if metrics.ttft_per_iteration:
         print(f"  • TTFT per iteration:")
@@ -267,11 +267,11 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
             print(f"      Average (after first): {avg_after_first:.3f}s")
             improvement = (first_ttft - last_ttft) / first_ttft * 100
             print(f"      Improvement: {improvement:.1f}%")
-    
+
     print(f"  • Total Execution Time: {metrics.total_time:.3f} seconds")
     print(f"  • Iterations: {result['iterations']}")
     print(f"  • Tool Calls: {len(result['tool_calls'])}")
-    
+
     print(f"\n🔄 Cache Statistics:")
     print(f"  • Cached Tokens: {metrics.cached_tokens:,}")
     print(f"  • Cache Hits: {metrics.cache_hits}")
@@ -279,7 +279,7 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
     if metrics.cache_hits + metrics.cache_misses > 0:
         hit_rate = metrics.cache_hits / (metrics.cache_hits + metrics.cache_misses) * 100
         print(f"  • Cache Hit Rate: {hit_rate:.1f}%")
-    
+
     print(f"\n💰 Token Usage:")
     print(f"  • Prompt Tokens: {metrics.prompt_tokens:,}")
     print(f"  • Completion Tokens: {metrics.completion_tokens:,}")
@@ -287,7 +287,7 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
     if metrics.prompt_tokens > 0:
         cache_ratio = metrics.cached_tokens / metrics.prompt_tokens * 100
         print(f"  • Cache Ratio: {cache_ratio:.1f}% of prompt tokens cached")
-    
+
     # Show tool calls summary
     if result["tool_calls"]:
         print(f"\n🔧 Tool Calls Summary:")
@@ -296,7 +296,7 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
             tool_counts[tc.name] = tool_counts.get(tc.name, 0) + 1
         for tool_name, count in tool_counts.items():
             print(f"  • {tool_name}: {count} calls")
-    
+
     # Save detailed results
     output_file = output or f"result_{mode}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     with open(output_file, 'w') as f:
@@ -320,7 +320,7 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = D
 def select_mode_interactive():
     """
     Interactive mode selection menu
-    
+
     Returns:
         Selected mode string or None for all modes
     """
@@ -333,23 +333,23 @@ def select_mode_interactive():
         ("text_format", "❌ Text Format - Plain text instead of structured"),
         ("compare", "📊 Compare All - Run all modes and compare"),
     ]
-    
+
     print("\n" + "="*60)
     print("KV CACHE DEMONSTRATION - MODE SELECTION")
     print("="*60)
     print("\nSelect a mode to run:\n")
-    
+
     for i, (mode, description) in enumerate(modes, 1):
         print(f"  {i}. {description}")
-    
+
     print("\n  0. Exit")
     print("-"*60)
-    
+
     while True:
         try:
             choice = input("\nEnter your choice (0-7): ").strip()
             choice_num = int(choice)
-            
+
             if choice_num == 0:
                 print("Exiting...")
                 sys.exit(0)
@@ -404,27 +404,27 @@ def run_comparison(api_key: str, task: str = None, root_dir: str = DEFAULT_ROOT_
     print("\n" + "="*80)
     print("ANALYSIS")
     print("="*80)
-    
+
     # Find best and worst performers
     correct_metrics = results["correct"]["metrics"]
-    
+
     print("\n🏆 Performance Impact (compared to correct implementation):")
     for mode, data in results.items():
         if mode == "correct":
             continue
-        
+
         metrics = data["metrics"]
         ttft_diff = ((metrics["ttft"] - correct_metrics["ttft"]) / correct_metrics["ttft"]) * 100
         total_diff = ((metrics["total_time"] - correct_metrics["total_time"]) / correct_metrics["total_time"]) * 100
         cache_diff = correct_metrics["cached_tokens"] - metrics["cached_tokens"]
-        
+
         print(f"\n{mode}:")
         print(f"  • TTFT: {'+' if ttft_diff > 0 else ''}{ttft_diff:.1f}% "
               f"({'slower' if ttft_diff > 0 else 'faster'})")
         print(f"  • Total Time: {'+' if total_diff > 0 else ''}{total_diff:.1f}% "
               f"({'slower' if total_diff > 0 else 'faster'})")
         print(f"  • Lost Cached Tokens: {cache_diff:,}")
-    
+
     # Show TTFT progression comparison
     print("\n📈 TTFT Progression (first 5 iterations):")
     for mode, data in results.items():
@@ -433,7 +433,7 @@ def run_comparison(api_key: str, task: str = None, root_dir: str = DEFAULT_ROOT_
         if ttft_list:
             ttft_str = " → ".join([f"{t:.2f}s" for t in ttft_list])
             print(f"  {mode:<20}: {ttft_str}")
-    
+
     # Key insights
     print("\n📝 Key Insights:")
     print("  1. The correct implementation maintains stable context for optimal KV cache usage")
@@ -443,7 +443,7 @@ def run_comparison(api_key: str, task: str = None, root_dir: str = DEFAULT_ROOT_
     print("  5. Dynamic user profiles add unnecessary context changes")
     print("  6. Sliding windows may seem to reduce context but actually harm cache efficiency")
     print("  7. Text formatting breaks the structured message format that enables caching")
-    
+
     # Save comparison results
     output_file = output or f"comparison_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     with open(output_file, 'w') as f:
@@ -467,7 +467,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--api-key", type=str,
-                        help="Moonshot/Kimi API Key（也可用环境变量 MOONSHOT_API_KEY）")
+                        help="Moonshot/Kimi API Key（也可用环境变量 OPENAI_API_KEY）")
     parser.add_argument("--model", type=str, default=DEFAULT_MODEL,
                         help=f"使用的模型名（默认：{DEFAULT_MODEL}）")
     parser.add_argument("--mode", type=str,
@@ -498,13 +498,13 @@ def main():
         run_report(args.input, args.cache_price_ratio)
         return
 
-    # Get API key. 优先 Moonshot/Kimi 官方 key；缺失时回退到 OPENROUTER_API_KEY
+    # Get API key. 优先 Moonshot/Kimi 官方 key；缺失时回退到 OPENAI_API_KEY
     # （KVCacheAgent 会据此自动切换到 OpenRouter 端点并映射模型名）。
-    api_key = (args.api_key or os.getenv("MOONSHOT_API_KEY")
-               or os.getenv("KIMI_API_KEY") or os.getenv("OPENROUTER_API_KEY"))
+    api_key = (args.api_key or os.getenv("OPENAI_API_KEY")
+               or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"))
     if not api_key:
-        logger.error("请通过 --api-key 或环境变量 MOONSHOT_API_KEY / KIMI_API_KEY / "
-                     "OPENROUTER_API_KEY 提供 API Key；"
+        logger.error("请通过 --api-key 或环境变量 OPENAI_API_KEY / OPENAI_API_KEY / "
+                     "OPENAI_API_KEY 提供 API Key；"
                      "若只想查看已有结果，可使用 --report（无需 API Key）。")
         sys.exit(1)
 

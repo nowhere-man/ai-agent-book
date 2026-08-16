@@ -13,9 +13,9 @@ load_dotenv()
 
 def _openrouter_model_id(model) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins.
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins.
     Vision-capable default (gpt-5.6-luna) so image analysis still works."""
-    override = os.getenv("OPENROUTER_MODEL")
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -38,14 +38,14 @@ class ExtractionMode(Enum):
     """Modes for multimodal content extraction"""
     NATIVE = "native"  # Use model's native multimodal capabilities
     EXTRACT_TO_TEXT = "extract_to_text"  # Convert multimodal to text first
-    
+
 
 class Provider(Enum):
     """Supported model providers"""
     GEMINI = "gemini"
     OPENAI = "openai"
     DOUBAO = "doubao"
-    
+
 
 @dataclass
 class ModelConfig:
@@ -55,25 +55,25 @@ class ModelConfig:
     api_key: str
     base_url: Optional[str] = None
     supports_native_multimodal: bool = True
-    
+
 
 class Config:
     """Main configuration class for multimodal agent"""
-    
+
     def __init__(self):
         # Load API keys from environment.
-        # 兼容常见别名：Gemini 官方 SDK 用 GEMINI_API_KEY，旧文档用 GOOGLE_API_KEY，两者都接受；
-        # 豆包/方舟(Ark)的 Key 环境变量常见为 DOUBAO_API_KEY 或 ARK_API_KEY。
-        self.gemini_api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY", "")
+        # 兼容常见别名：Gemini 官方 SDK 用 OPENAI_API_KEY，旧文档用 OPENAI_API_KEY，两者都接受；
+        # 豆包/方舟(Ark)的 Key 环境变量常见为 DOUBAO_API_KEY 或 OPENAI_API_KEY。
+        self.gemini_api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY", "")
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
-        self.doubao_api_key = os.getenv("DOUBAO_API_KEY") or os.getenv("ARK_API_KEY", "")
+        self.doubao_api_key = os.getenv("DOUBAO_API_KEY") or os.getenv("OPENAI_API_KEY", "")
 
         # Universal OpenRouter fallback: when a model's own provider key is
-        # missing but OPENROUTER_API_KEY is present, route that model through
+        # missing but OPENAI_API_KEY is present, route that model through
         # OpenRouter's OpenAI-compatible endpoint.
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY", "")
-        self.openrouter_base_url = "https://openrouter.ai/api/v1"
-        
+        self.openrouter_api_key = os.getenv("OPENAI_API_KEY", "")
+        self.openrouter_base_url = "https://api.openai.com/v1"
+
         # Model configurations
         self.models = {
             "gemini-3.5-flash": ModelConfig(
@@ -98,34 +98,34 @@ class Config:
                 provider=Provider.DOUBAO,
                 model_name=os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
                 api_key=self.doubao_api_key,
-                base_url="https://ark.cn-beijing.volces.com/api/v3",
+                base_url="https://api.openai.com/v1",
                 supports_native_multimodal=True
             )
         }
-        
+
         # Default settings
         self.default_model = os.getenv("MULTIMODAL_MODEL", "doubao-1.6")
         self.default_mode = ExtractionMode.NATIVE
         self.enable_multimodal_tools = False
-        
+
         # File size limits (in MB)
         self.max_pdf_size_mb = 20
         self.max_image_size_mb = 20
         self.max_audio_size_mb = 25
-        
+
         # Whisper settings for audio transcription
         self.whisper_model = "whisper-1"
-        
+
         # Temperature settings
         self.temperature = 0.7
         self.max_tokens = 4096
-        
+
     def get_model_config(self, model_name: str) -> ModelConfig:
         """Get configuration for a specific model"""
         if model_name not in self.models:
             raise ValueError(f"Unknown model: {model_name}")
         return self.models[model_name]
-        
+
     def validate_api_keys(self) -> Dict[str, bool]:
         """Check which API keys are configured"""
         return {

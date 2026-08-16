@@ -68,7 +68,7 @@ async def run(
     write_json(run_dir / "protocol.json", json.loads(PROTOCOL.read_text(encoding="utf-8")))
 
     env = os.environ.copy()
-    if env.get("KIMI_API_KEY") or env.get("MOONSHOT_API_KEY"):
+    if env.get("OPENAI_API_KEY") or env.get("OPENAI_API_KEY"):
         review_provider = "kimi"
         review_model = "kimi-k3"
     else:
@@ -141,7 +141,7 @@ async def run(
             await call("long_output_persisted", "code_interpreter", {
                 "language": "python", "timeout": 30,
                 "code": "for i in range(260): print(f'LINE-{i:03d}')\n"})
-            await call("excel_formula_screenshot", "excel_create_with_formula_and_screenshot", {
+            await call("excel_formula", "excel_create_with_formula", {
                 "output_path": "invoice.xlsx", "rows": [
                     {"item": "Compute", "quantity": 2, "unit_price": 12.5},
                     {"item": "Storage", "quantity": 3, "unit_price": 7.0}]})
@@ -209,7 +209,7 @@ async def run(
             and "URLError" in by_case["python_network_denied"].get("stdout", "")),
         "long_output_truncated_and_persisted": bool(
             long_evidence and "省略" in by_case["long_output_persisted"].get("stdout", "")),
-        "real_excel_formula_and_screenshot": by_case["excel_formula_screenshot"].get("success") is True,
+        "real_excel_formula": by_case["excel_formula"].get("success") is True,
         "real_webhook": by_case["real_webhook"].get("success") is True,
         "real_browser": by_case["real_browser"].get("success") is True,
         "real_calendar_mutation": by_case["calendar_preflight"].get("success") is True,

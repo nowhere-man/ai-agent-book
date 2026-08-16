@@ -11,7 +11,7 @@
 
 其中 battle 的 simulate/arena 来源与 elo、leaderboard、pipeline 均为纯离线计算，
 无需任何 API；只有 --source llm（LLM 评判对战）需要 LLM API Key：优先用官方
-Anthropic（ANTHROPIC_API_KEY），若无则自动回退到 OpenRouter（OPENROUTER_API_KEY），
+Anthropic（ANTHROPIC_API_KEY），若无则自动回退到 OpenRouter（OPENAI_API_KEY），
 也可用 --judge-backend openrouter 强制走 OpenRouter（direct key 失效时）。
 
 示例：
@@ -262,7 +262,7 @@ def _add_source_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--judge-backend", choices=["anthropic", "openrouter", "auto"],
                         default="auto",
                         help="llm：评判后端。auto=有 ANTHROPIC_API_KEY 用官方 Anthropic，"
-                             "否则回退到 OpenRouter（OPENROUTER_API_KEY）；"
+                             "否则回退到 OpenRouter（OPENAI_API_KEY）；"
                              "openrouter=强制走 OpenRouter（direct key 失效时用）")
 
 

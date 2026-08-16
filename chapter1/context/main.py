@@ -9,8 +9,6 @@ import logging
 from agent import ContextAwareAgent, ContextMode
 from config import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider, resolve_backend
 import json
-from pathlib import Path
-import subprocess
 import time
 from typing import Dict, Any, List
 from tabulate import tabulate
@@ -45,11 +43,11 @@ except ImportError:
 
 class AblationTestSuite:
     """Test suite for exploring context importance through ablation studies"""
-    
+
     def __init__(self, api_key: str, provider: str = "siliconflow", model: str = None):
         """
         Initialize test suite
-        
+
         Args:
             api_key: API key for the LLM provider
             provider: LLM provider to use
@@ -59,53 +57,31 @@ class AblationTestSuite:
         self.provider = provider
         self.model = model
         self.test_results = []
-        
-    def create_complex_financial_task(self) -> str:
-        """
-        Create a complex task that requires multiple tool calls and reasoning
-        
-        Returns:
-            Task description
-        """
-        return """Analyze the financial report from this PDF: https://www.berkshirehathaway.com/qtrly/1stqtr23.pdf
 
-Please complete the following analysis:
-1. Extract the total revenue figures from Q1 2023
-2. Convert the revenue from USD to EUR, GBP, and JPY
-3. Calculate the following metrics:
-   - Average revenue across the three converted currencies
-   - Percentage difference between highest and lowest converted values
-   - If the company maintains a 15% profit margin, what would be the profit in each currency?
-
-Provide a comprehensive financial summary with all calculations shown."""
-    
     def create_multinational_budget_task(self) -> str:
         """
         Create a task requiring multiple currency conversions and calculations
-        
-        Returns:
-            Task description  
-        """
-        return """A multinational company has the following Q1 2024 expenses documented in this report:
-https://raw.githubusercontent.com/adobe/pdfservices-node-sdk-samples/master/resources/extractPDFInput.pdf
 
-Tasks to complete:
-1. Parse the PDF and extract all monetary values mentioned
-2. The company operates in 5 regions with expenses in different currencies:
+        Returns:
+            Task description
+        """
+        return """A multinational company has the following Q1 2024 expenses:
+The company operates in 5 regions with expenses in different currencies:
    - US Office: $2,500,000 USD
-   - UK Office: £1,800,000 GBP  
+   - UK Office: £1,800,000 GBP
    - Japan Office: ¥380,000,000 JPY
    - EU Office: €2,100,000 EUR
    - Singapore Office: $3,200,000 SGD
-3. Convert all expenses to USD for consolidation
-4. Calculate:
+Tasks to complete:
+1. Convert all expenses to USD for consolidation
+2. Calculate:
    - Total global expenses in USD
    - Average expense per region
    - What percentage each region represents of total expenses
    - If we apply a 8% cost reduction uniformly, what would be the new expense for each region in their local currency?
 
 Present a detailed financial analysis with all conversions and calculations."""
-    
+
     def run_single_test(self, task: str, context_mode: ContextMode, test_name: str,
                         case_name: str = "default") -> Dict[str, Any]:
         """
@@ -151,18 +127,18 @@ Present a detailed financial analysis with all conversions and calculations."""
             "reasoning_steps": len(result["trajectory"].reasoning_steps),
             "final_answer_preview": (result.get("final_answer", "")[:200] + "...") if result.get("final_answer") else None
         }
-        
+
         # Log summary
         logger.info(f"Test completed in {test_result['execution_time']}s")
         logger.info(f"Terminal response completed: {test_result['completed']}")
         logger.info(f"Tool calls made: {test_result['num_tool_calls']}")
         logger.info(f"Iterations: {test_result['iterations']}")
-        
+
         if test_result["error"]:
             logger.error(f"Error occurred: {test_result['error']}")
-        
+
         return test_result
-    
+
     def run_ablation_study(self, context_modes: List[ContextMode] = None,
                           cases: List[Dict[str, str]] = None) -> List[Dict[str, Any]]:
         """
@@ -223,14 +199,14 @@ Present a detailed financial analysis with all conversions and calculations."""
                     })
 
         return results
-    
+
     def analyze_results(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Analyze ablation study results
-        
+
         Args:
             results: List of test results
-            
+
         Returns:
             Analysis summary
         """
@@ -242,10 +218,10 @@ Present a detailed financial analysis with all conversions and calculations."""
             "successful_tests": sum(1 for r in results if _completed(r)),
             "context_mode_impact": {}
         }
-        
+
         # Analyze impact of each ablation
         baseline = next((r for r in results if r["context_mode"] == "full"), None)
-        
+
         if baseline:
             for result in results:
                 if result["context_mode"] != "full":
@@ -257,7 +233,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                         "tool_call_delta": result.get("num_tool_calls", 0) - baseline.get("num_tool_calls", 0),
                         "failure_reason": None
                     }
-                    
+
                     # Identify failure reasons
                     if not _completed(result):
                         if result["context_mode"] == "no_tool_calls":
@@ -268,15 +244,15 @@ Present a detailed financial analysis with all conversions and calculations."""
                             mode_analysis["failure_reason"] = "May repeat actions or lose track of progress"
                         elif result["context_mode"] == "no_reasoning":
                             mode_analysis["failure_reason"] = "Lacks planning and strategic thinking"
-                    
+
                     analysis["context_mode_impact"][result["context_mode"]] = mode_analysis
-        
+
         return analysis
-    
+
     def print_results_table(self, results: List[Dict[str, Any]]):
         """
         Print results in a formatted table
-        
+
         Args:
             results: List of test results
         """
@@ -342,65 +318,65 @@ Present a detailed financial analysis with all conversions and calculations."""
         print("COMPARISON MATRIX (rows = context mode, cols = case; cell = completion it=iterations tc=tool calls)")
         print("="*80)
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
-    
+
     def visualize_results(self, results: List[Dict[str, Any]]):
         """
         Create visualizations of ablation study results
-        
+
         Args:
             results: List of test results
         """
         if not MATPLOTLIB_AVAILABLE:
             logger.warning("Matplotlib not available, skipping visualizations")
             return
-            
+
         # Extract data for visualization
         modes = [r["context_mode"] for r in results]
         iterations = [r.get("iterations", 0) for r in results]
         tool_calls = [r.get("num_tool_calls", 0) for r in results]
         exec_times = [r.get("execution_time", 0) for r in results]
         success = [1 if _completed(r) else 0 for r in results]
-        
+
         # Create subplots
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
         fig.suptitle("Ablation Study: Impact of Context Components", fontsize=16)
-        
+
         # Plot 1: terminal-response completion rate
         axes[0, 0].bar(modes, success, color=['green' if s else 'red' for s in success])
         axes[0, 0].set_title("Terminal Responses by Context Mode")
         axes[0, 0].set_ylabel("Completed (1) / No response (0)")
         axes[0, 0].tick_params(axis='x', rotation=45)
-        
+
         # Plot 2: Iterations Required
         axes[0, 1].bar(modes, iterations, color='blue')
         axes[0, 1].set_title("Iterations Required")
         axes[0, 1].set_ylabel("Number of Iterations")
         axes[0, 1].tick_params(axis='x', rotation=45)
-        
+
         # Plot 3: Tool Calls Made
         axes[1, 0].bar(modes, tool_calls, color='orange')
         axes[1, 0].set_title("Tool Calls Made")
         axes[1, 0].set_ylabel("Number of Tool Calls")
         axes[1, 0].tick_params(axis='x', rotation=45)
-        
+
         # Plot 4: Execution Time
         axes[1, 1].bar(modes, exec_times, color='purple')
         axes[1, 1].set_title("Execution Time")
         axes[1, 1].set_ylabel("Time (seconds)")
         axes[1, 1].tick_params(axis='x', rotation=45)
-        
+
         plt.tight_layout()
         plt.savefig("ablation_study_results.png", dpi=150, bbox_inches='tight')
         logger.info("Visualization saved as 'ablation_study_results.png'")
-    
+
     def generate_report(self, results: List[Dict[str, Any]], analysis: Dict[str, Any]) -> str:
         """
         Generate a comprehensive report of the ablation study
-        
+
         Args:
             results: List of test results
             analysis: Analysis summary
-            
+
         Returns:
             Report text
         """
@@ -416,7 +392,7 @@ rubric.
 ## Test Configuration
 - **Provider**: {provider}
 - **Model**: {model}
-- **Task**: Complex financial analysis requiring PDF parsing, currency conversion, and calculations
+- **Task**: Complex financial analysis requiring currency conversion and calculations
 - **Context Modes Tested**: {num_modes}
 
 ## Key Findings
@@ -468,19 +444,19 @@ rubric used by `run_experiment_1_1.py`.
 - Consider context windowing rather than removal for memory optimization
 - Implement fallback mechanisms when context components are unavailable
 """
-        
+
         # Fill in performance metrics
         def get_perf_string(mode):
             mode_result = next((r for r in results if r["context_mode"] == mode), None)
             if mode_result:
                 return f"{'COMPLETED' if _completed(mode_result) else 'NO TERMINAL RESPONSE'} - {mode_result.get('iterations', 0)} iterations, {mode_result.get('execution_time', 0)}s"
             return "N/A"
-        
+
         # Calculate baseline metrics
         baseline = next((r for r in results if r["context_mode"] == "full"), None)
         avg_exec_time = baseline.get("execution_time", 0) if baseline else 0
         avg_tool_calls = baseline.get("num_tool_calls", 0) if baseline else 0
-        
+
         report = report.format(
             provider=self.provider,
             model=self.model or "default",
@@ -494,7 +470,7 @@ rubric used by `run_experiment_1_1.py`.
             avg_exec_time=avg_exec_time,
             avg_tool_calls=avg_tool_calls
         )
-        
+
         return report
 
 
@@ -518,21 +494,21 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
         "no_tool_calls": ContextMode.NO_TOOL_CALLS,
         "no_tool_results": ContextMode.NO_TOOL_RESULTS
     }
-    
+
     if context_mode not in mode_map:
         logger.error(f"Invalid context mode: {context_mode}")
         logger.info(f"Valid modes: {', '.join(mode_map.keys())}")
         return
-    
+
     # Create agent
     agent = ContextAwareAgent(api_key, mode_map[context_mode], provider=provider, model=model)
-    
+
     logger.info(f"Running task with context mode: {context_mode}")
     logger.info(f"Task: {task[:100]}...")
-    
+
     # Execute task
     result = agent.execute_task(task)
-    
+
     # Print results
     print("\n" + "="*60)
     print("TASK EXECUTION RESULT")
@@ -541,15 +517,15 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
     print(f"Terminal response completed: {_completed(result)}")
     print(f"Iterations: {result.get('iterations', 0)}")
     print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
-    
+
     if result.get('final_answer'):
         print(f"\nFinal Answer:")
         print("-"*40)
         print(result['final_answer'])
-    
+
     if result.get('error'):
         print(f"\nError: {result['error']}")
-    
+
     # Save detailed results
     output_file = output or f"task_result_{context_mode}.json"
     with open(output_file, 'w') as f:
@@ -583,72 +559,23 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
             "using_openrouter": result.get("using_openrouter", False),
         }
         json.dump(serializable_result, f, indent=2)
-    
+
     logger.info(f"Detailed results saved to {output_file}")
-
-
-def ensure_sample_pdfs():
-    """
-    Ensure sample PDFs exist, create them if they don't
-    
-    Returns:
-        bool: True if PDFs are available
-    """
-    pdf_dir = Path("fixtures/pdfs")
-    sample_pdf = pdf_dir / "simple_expense_report.pdf"
-    
-    if not pdf_dir.exists() or not sample_pdf.exists():
-        print("\n📚 Sample PDFs not found. Creating them...")
-        try:
-            # Run the PDF creation script
-            result = subprocess.run(
-                [sys.executable, "create_sample_pdf.py"],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            if result.returncode == 0:
-                print("✅ Sample PDFs created successfully in fixtures/pdfs/")
-                return True
-            else:
-                print(f"⚠️ Could not create PDFs: {result.stderr}")
-                return False
-        except Exception as e:
-            print(f"⚠️ Error creating PDFs: {str(e)}")
-            return False
-    return True
 
 
 def get_sample_tasks():
     """
     Get sample tasks for testing
-    
+
     Returns:
         list: List of sample task dictionaries
     """
-    # Check if we're running locally or need to use online PDFs
-    local_pdfs = Path("fixtures/pdfs").exists()
-    
-    if local_pdfs:
-        pdf_path = "file://" + str(Path.cwd() / "fixtures/pdfs" / "simple_expense_report.pdf")
-        pdf_note = "Using local PDF"
-    else:
-        # Use a publicly available PDF for testing
-        pdf_path = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-        pdf_note = "Using online sample PDF"
-    
     return [
         {
             "name": "📊 Currency Conversion Task",
             "description": "Convert between multiple currencies",
-            "task": """Convert $1000 USD to EUR, GBP, and JPY. 
+            "task": """Convert $1000 USD to EUR, GBP, and JPY.
 Then calculate the average value across all three converted currencies."""
-        },
-        {
-            "name": "📄 PDF Analysis Task",
-            "description": f"Extract and analyze data from PDF ({pdf_note})",
-            "task": f"""Analyze this PDF document: {pdf_path}
-Extract any text content and provide a summary of what you found."""
         },
         {
             "name": "💰 Complex Financial Analysis",
@@ -705,9 +632,8 @@ def get_ablation_cases(num_cases: int = 1) -> List[Dict[str, str]]:
     """
     Build a list of self-contained cases for the ablation study.
 
-    Reuses the pre-defined sample tasks, skipping the PDF task (which needs
-    network access) so the study is reproducible offline apart from the LLM
-    call itself. num_cases=1 returns a single case; larger values add more.
+    Reuses the pre-defined text-only sample tasks. num_cases=1 returns a
+    single case; larger values add more.
 
     Args:
         num_cases: How many cases to include (clamped to [1, available]).
@@ -716,8 +642,7 @@ def get_ablation_cases(num_cases: int = 1) -> List[Dict[str, str]]:
         List of {"name", "task"} dicts.
     """
     samples = get_sample_tasks()
-    # Indices 0/2/3/4 are currency/finance tasks (index 1 is the PDF task).
-    candidates = [samples[0], samples[2], samples[3], samples[4]]
+    candidates = samples
     num_cases = max(1, min(num_cases, len(candidates)))
     return [{"name": c["name"], "task": c["task"]} for c in candidates[:num_cases]]
 
@@ -800,7 +725,7 @@ def run_ablation_study(api_key: str, provider: str = "siliconflow", model: str =
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
     logger.info(f"Raw results saved as '{output_file}'")
-    
+
     # Print analysis summary
     print("\n" + "="*80)
     print("ANALYSIS SUMMARY")
@@ -820,7 +745,7 @@ def run_ablation_study(api_key: str, provider: str = "siliconflow", model: str =
 def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = None):
     """
     Run the agent in interactive mode
-    
+
     Args:
         api_key: API key for the LLM provider
         provider: LLM provider to use
@@ -830,10 +755,10 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     current_provider = provider
     current_model = model
     current_api_key = api_key
-    
+
     # Available providers
     available_providers = list(SUPPORTED_PROVIDERS)
-    
+
     print("\n" + "="*60)
     print("INTERACTIVE MODE - Context-Aware Agent")
     print(f"Provider: {current_provider.upper()} | Model: {current_model or 'default'}")
@@ -842,7 +767,6 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     print("  - Type your task/question")
     print("  - 'samples' to see sample tasks")
     print("  - 'sample <number>' to run a sample task")
-    print("  - 'create_pdfs' to create sample PDF files")
     print("  - 'providers' to list available providers")
     print("  - 'provider <name>' to switch provider")
     print("  - 'modes' to see available context modes")
@@ -852,13 +776,10 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     print("  - 'help' to show all commands")
     print("  - 'quit' to exit")
     print("-"*60)
-    
-    # Ensure sample PDFs exist
-    ensure_sample_pdfs()
-    
+
     # Get sample tasks
     sample_tasks = get_sample_tasks()
-    
+
     # Initialize agent with full context
     mode_map = {
         "full": ContextMode.FULL,
@@ -867,20 +788,20 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
         "no_tool_calls": ContextMode.NO_TOOL_CALLS,
         "no_tool_results": ContextMode.NO_TOOL_RESULTS
     }
-    
+
     current_mode = ContextMode.FULL
     agent = ContextAwareAgent(current_api_key, current_mode, provider=current_provider, model=current_model)
-    
+
     while True:
         try:
             # Show current provider in prompt
             prompt = f"\n[{current_provider.upper()}]> "
             user_input = input(prompt).strip()
-            
+
             if user_input.lower() == 'quit':
                 print("Goodbye!")
                 break
-            
+
             elif user_input.lower() == 'help':
                 print("\n📚 Available Commands:")
                 print("  samples          - Display all available sample tasks")
@@ -891,17 +812,16 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print("  mode <name>      - Switch context mode")
                 print("  status           - Show current configuration")
                 print("  reset            - Reset agent trajectory")
-                print("  create_pdfs      - Generate sample PDF files")
                 print("  help             - Show this help message")
                 print("  quit             - Exit interactive mode")
                 print("\nOr type any task/question to execute it.")
-            
+
             elif user_input.lower() == 'samples':
                 print("\n📋 Available sample tasks:")
                 for i, sample in enumerate(sample_tasks, 1):
                     print(f"\n{i}. {sample['name']}")
                     print(f"   {sample['description']}")
-            
+
             elif user_input.lower().startswith('sample '):
                 try:
                     sample_num = int(user_input.split()[1])
@@ -910,43 +830,25 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         print(f"\n📌 Running: {sample['name']}")
                         print(f"Task: {sample['task']}")
                         print("\nProcessing...")
-                        
+
                         result = agent.execute_task(sample['task'])
-                        
+
                         print(f"\n{'='*40}")
                         print(f"Terminal response completed: {_completed(result)}")
                         print(f"Iterations: {result.get('iterations', 0)}")
                         print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
-                        
+
                         if result.get('final_answer'):
                             print(f"\nAnswer:")
                             print(result['final_answer'])
-                        
+
                         if result.get('error'):
                             print(f"\nError: {result['error']}")
                     else:
                         print(f"Invalid sample number. Use 'sample 1' through 'sample {len(sample_tasks)}'")
                 except (ValueError, IndexError):
                     print(f"Invalid sample number. Use 'sample 1' through 'sample {len(sample_tasks)}'")
-            
-            elif user_input.lower() == 'create_pdfs':
-                print("\n📄 Creating sample PDFs...")
-                try:
-                    result = subprocess.run(
-                        [sys.executable, "create_sample_pdf.py"],
-                        capture_output=True,
-                        text=True,
-                        timeout=10
-                    )
-                    if result.returncode == 0:
-                        print("✅ Sample PDFs created successfully in fixtures/pdfs/")
-                        # Update sample tasks with new PDF paths
-                        sample_tasks = get_sample_tasks()
-                    else:
-                        print(f"⚠️ Could not create PDFs: {result.stderr}")
-                except Exception as e:
-                    print(f"⚠️ Error creating PDFs: {str(e)}")
-            
+
             elif user_input.lower() == 'providers':
                 print("\n🔌 Available providers:")
                 for p in available_providers:
@@ -963,7 +865,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         keys = " / ".join(spec.key_vars)
                         keys += " ✓" if spec.api_key() else " (not set)"
                     print(f"  - {p}: {spec.default_model} [{keys}]{status}")
-            
+
             elif user_input.lower().startswith('provider '):
                 new_provider = user_input[9:].strip().lower()
                 if new_provider in available_providers:
@@ -986,24 +888,24 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                     current_provider = new_provider
                     current_api_key = new_api_key
                     current_model = None  # Reset to use default model for new provider
-                    
+
                     # Create new agent with new provider
                     agent = ContextAwareAgent(current_api_key, current_mode, provider=current_provider, model=current_model)
-                    
+
                     # Get default model name from config
                     from config import Config
                     default_model = Config.get_default_model(current_provider)
-                    
+
                     print(f"✅ Switched to provider: {current_provider}")
                     print(f"   Using model: {default_model}")
                 else:
                     print(f"❌ Invalid provider. Available: {', '.join(available_providers)}")
-            
+
             elif user_input.lower() == 'modes':
                 print("\n🔧 Available context modes:")
                 for mode in mode_map.keys():
                     print(f"  - {mode}")
-            
+
             elif user_input.lower().startswith('mode '):
                 new_mode = user_input[5:].strip()
                 if new_mode in mode_map:
@@ -1014,11 +916,11 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         print(f"⚠️ Warning: This mode intentionally disables certain features for testing")
                 else:
                     print(f"❌ Invalid mode. Available: {', '.join(mode_map.keys())}")
-            
+
             elif user_input.lower() == 'reset':
                 agent.reset()
                 print("✅ Agent trajectory and conversation history reset.")
-            
+
             elif user_input.lower() == 'status':
                 from config import Config
                 model_name = current_model or Config.get_default_model(current_provider)
@@ -1028,7 +930,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print(f"  Context Mode: {current_mode.value}")
                 print(f"  Conversation History: {len(agent.conversation_history)} messages")
                 print(f"  Tool Calls: {len(agent.trajectory.tool_calls)}")
-                
+
                 # API key status, derived from the registry so every selectable
                 # provider reports something.
                 spec = PROVIDERS.get(canonical_provider(current_provider))
@@ -1040,26 +942,26 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                     names = " / ".join(spec.key_vars)
                     key_status = "✅ Set" if spec.api_key() else "❌ Not set"
                     print(f"  API Key ({names}): {key_status}")
-                    if not spec.api_key() and os.getenv("OPENROUTER_API_KEY"):
-                        print("  Fallback: ✅ OPENROUTER_API_KEY set (routing via OpenRouter)")
-            
+                    if not spec.api_key() and os.getenv("OPENAI_API_KEY"):
+                        print("  Fallback: ✅ OPENAI_API_KEY set (routing via OpenRouter)")
+
             elif user_input:
                 # Execute task
                 print("\nProcessing...")
                 result = agent.execute_task(user_input)
-                
+
                 print(f"\n{'='*40}")
                 print(f"Terminal response completed: {_completed(result)}")
                 print(f"Iterations: {result.get('iterations', 0)}")
                 print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
-                
+
                 if result.get('final_answer'):
                     print(f"\nAnswer:")
                     print(result['final_answer'])
-                
+
                 if result.get('error'):
                     print(f"\nError: {result['error']}")
-                    
+
         except KeyboardInterrupt:
             print("\n\nInterrupted. Type 'quit' to exit.")
         except Exception as e:
@@ -1133,7 +1035,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        help="LLM 提供商的 API Key（也可通过对应环境变量设置，例如 DASHSCOPE_API_KEY、SILICONFLOW_API_KEY、ARK_API_KEY、MOONSHOT_API_KEY、DEEPSEEK_API_KEY 或 ZHIPU_API_KEY；缺失主 key 时可用 OPENROUTER_API_KEY 兜底）"
+        help="LLM 提供商的 API Key（也可通过对应环境变量设置，例如 OPENAI_API_KEY、OPENAI_API_KEY、OPENAI_API_KEY、OPENAI_API_KEY、OPENAI_API_KEY 或 OPENAI_API_KEY；缺失主 key 时可用 OPENAI_API_KEY 兜底）"
     )
     parser.add_argument(
         "--output",
@@ -1142,7 +1044,7 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     # The registry knows each provider's key variables, the OpenRouter fallback
     # and which providers need no key at all, so resolve through it rather than
     # maintaining a per-provider chain here. An explicit --api-key still wins.
@@ -1156,16 +1058,16 @@ def main():
     if backend.using_openrouter and not args.api_key:
         logger.info(
             f"{args.provider} API key not set; falling back to OpenRouter "
-            "(OPENROUTER_API_KEY). Set the provider key to use it directly."
+            "(OPENAI_API_KEY). Set the provider key to use it directly."
         )
     elif not args.api_key:
         # Pass the resolved key through; ContextAwareAgent re-resolves and an
         # empty value would send it down the fallback path instead.
         api_key = backend.api_key
-    
+
     # Log provider info
     logger.info(f"Using provider: {args.provider}, model: {args.model or 'default'}")
-    
+
     # Execute based on mode
     if args.mode == "single":
         if not args.task:
@@ -1173,23 +1075,20 @@ def main():
             print("\n" + "="*60)
             print("SINGLE TASK MODE - No task provided")
             print("="*60)
-            
-            # Ensure PDFs exist
-            ensure_sample_pdfs()
-            
+
             # Get and display sample tasks
             sample_tasks = get_sample_tasks()
             print("\n📋 Available sample tasks:")
             for i, sample in enumerate(sample_tasks, 1):
                 print(f"\n{i}. {sample['name']}")
                 print(f"   {sample['description']}")
-            
+
             print("\n" + "="*60)
             try:
                 choice = input("\nSelect a task number (1-{}) or 'q' to quit: ".format(len(sample_tasks))).strip()
                 if choice.lower() == 'q':
                     sys.exit(0)
-                
+
                 task_num = int(choice)
                 if 1 <= task_num <= len(sample_tasks):
                     selected_task = sample_tasks[task_num - 1]
@@ -1198,7 +1097,7 @@ def main():
                     print("-"*40)
                     print(selected_task['task'])
                     print("-"*40)
-                    
+
                     confirm = input("\nRun this task? (y/n): ").strip().lower()
                     if confirm == 'y':
                         run_single_task(api_key, selected_task['task'], args.context_mode,
@@ -1219,7 +1118,7 @@ def main():
         run_ablation_study(api_key, provider=args.provider, model=args.model,
                           context_modes=args.ablation_modes, num_cases=args.cases,
                           output=args.output)
-    
+
     else:  # interactive
         interactive_mode(api_key, provider=args.provider, model=args.model)
 

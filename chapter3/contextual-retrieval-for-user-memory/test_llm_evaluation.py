@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 
 # Set dummy API key for demo
-os.environ["KIMI_API_KEY"] = "test_key"
+os.environ["OPENAI_API_KEY"] = "test_key"
 
 console = Console()
 
@@ -23,14 +23,14 @@ def test_llm_evaluation_integration():
     """Test that LLM evaluation is properly integrated"""
     console.print("\n[bold cyan]Testing LLM Evaluation Integration[/bold cyan]")
     console.print("="*80)
-    
+
     from config import Config
     from evaluator import UserMemoryEvaluator, TestCase
-    
+
     # Initialize evaluator
     config = Config.from_env()
     evaluator = UserMemoryEvaluator(config)
-    
+
     # Check if LLM evaluator was initialized
     if evaluator.llm_evaluator:
         console.print("[green]✓ LLM Evaluator successfully initialized[/green]")
@@ -40,7 +40,7 @@ def test_llm_evaluation_integration():
         console.print("  Automatic evaluation will be skipped")
         console.print("  To enable, ensure week2/user-memory-evaluation is accessible")
         console.print("  and has proper API keys configured")
-    
+
     # Create a test case for demonstration
     test_case = TestCase(
         test_id="demo_test",
@@ -59,15 +59,15 @@ def test_llm_evaluation_integration():
         evaluation_criteria="The answer must identify the account number as 123456789.",
         expected_behavior="Answer directly using the account number from the conversation."
     )
-    
+
     # Simulate an agent response
     agent_answer = "Based on the conversation history, your account number is 123456789."
-    
+
     console.print("\n[bold]Simulating Evaluation Process:[/bold]")
     console.print(f"Test Question: {test_case.user_question}")
     console.print(f"Agent Answer: {agent_answer}")
     console.print(f"Evaluation Criteria: {test_case.evaluation_criteria}")
-    
+
     if evaluator.llm_evaluator:
         console.print("\n[yellow]LLM Evaluation would be triggered automatically when running a test case[/yellow]")
         console.print("The evaluation will:")
@@ -77,7 +77,7 @@ def test_llm_evaluation_integration():
         console.print("  4. Provide reasoning for the evaluation")
         console.print("  5. Check if required information was found")
         console.print("  6. Display all results in the console")
-    
+
     console.print("\n[bold]Evaluation Flow:[/bold]")
     console.print("1. Agent generates response using RAG")
     console.print("2. Response is automatically evaluated by LLM")
@@ -89,7 +89,7 @@ def demonstrate_evaluation_output():
     """Show what the evaluation output looks like"""
     console.print("\n[bold cyan]Sample Evaluation Output[/bold cyan]")
     console.print("="*80)
-    
+
     sample_output = """
 ============================================================
 Running LLM Evaluation...
@@ -112,9 +112,9 @@ Processing Time: 1.23s
 Indexing Time: 0.45s
 ============================================================
 """
-    
+
     console.print(Panel(sample_output, title="Expected Console Output", border_style="green"))
-    
+
     console.print("\n[bold]Key Features:[/bold]")
     console.print("• Automatic evaluation after each test")
     console.print("• Continuous reward score (0.0 to 1.0)")
@@ -128,20 +128,20 @@ def check_dependencies():
     """Check if all dependencies are available"""
     console.print("\n[bold cyan]Checking Dependencies[/bold cyan]")
     console.print("="*80)
-    
+
     # Check if user-memory-evaluation is accessible
     eval_path = Path(__file__).parent.parent.parent / "week2" / "user-memory-evaluation"
-    
+
     if eval_path.exists():
         console.print(f"[green]✓ user-memory-evaluation found at: {eval_path}[/green]")
-        
+
         # Check for required files
         required_files = [
             "evaluator.py",
             "models.py",
             "config.py"
         ]
-        
+
         for file in required_files:
             if (eval_path / file).exists():
                 console.print(f"  [green]✓ {file}[/green]")
@@ -150,14 +150,14 @@ def check_dependencies():
     else:
         console.print(f"[red]✗ user-memory-evaluation not found at: {eval_path}[/red]")
         console.print("[yellow]  LLM evaluation will not be available[/yellow]")
-    
+
     # Check for API keys
     console.print("\n[bold]API Keys:[/bold]")
     api_keys = {
         "OPENAI_API_KEY": "OpenAI (for LLM evaluation)",
-        "KIMI_API_KEY": "Kimi (for agent responses)"
+        "OPENAI_API_KEY": "Kimi (for agent responses)"
     }
-    
+
     for key, description in api_keys.items():
         if os.getenv(key):
             console.print(f"  [green]✓ {key} set ({description})[/green]")
@@ -172,17 +172,17 @@ def main():
         "Verifying automatic evaluation of agent responses",
         border_style="cyan"
     ))
-    
+
     try:
         # Check dependencies
         check_dependencies()
-        
+
         # Test integration
         test_llm_evaluation_integration()
-        
+
         # Show sample output
         demonstrate_evaluation_output()
-        
+
         console.print("\n" + "="*80)
         console.print("[bold green]Integration Summary:[/bold green]")
         console.print("✓ LLM evaluation is integrated into the evaluation pipeline")
@@ -191,7 +191,7 @@ def main():
         console.print("✓ Reports include LLM evaluation scores")
         console.print("\n[yellow]Note: Actual LLM evaluation requires valid API keys[/yellow]")
         console.print("="*80 + "\n")
-        
+
     except Exception as e:
         console.print(f"\n[red]Error during testing: {e}[/red]")
         import traceback

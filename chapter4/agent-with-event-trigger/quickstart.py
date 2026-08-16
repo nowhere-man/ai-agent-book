@@ -17,11 +17,11 @@ provider = os.getenv("LLM_PROVIDER", "kimi").lower()
 resolved_provider, api_key = resolve_provider_and_key(provider)
 
 if not api_key:
-    print(f"❌ Error: no API key for provider '{provider}', and no OPENROUTER_API_KEY fallback")
+    print(f"❌ Error: no API key for provider '{provider}', and no OPENAI_API_KEY fallback")
     print(f"\nPlease set one of:")
-    print(f"  export DASHSCOPE_API_KEY='...'    # for dashscope/qwen/bailian")
-    print(f"  export KIMI_API_KEY='...'         # or SILICONFLOW/DOUBAO/OPENROUTER per provider")
-    print(f"  export OPENROUTER_API_KEY='...'   # universal fallback")
+    print(f"  export OPENAI_API_KEY='...'    # for dashscope/qwen/bailian")
+    print(f"  export OPENAI_API_KEY='...'         # or SILICONFLOW/DOUBAO/OPENROUTER per provider")
+    print(f"  export OPENAI_API_KEY='...'   # universal fallback")
     print(f"\nOr change provider:")
     print(f"  export LLM_PROVIDER=dashscope  # or qwen, bailian, siliconflow, doubao, kimi, openrouter")
     sys.exit(1)
@@ -58,7 +58,7 @@ try:
         universal_newlines=True,
         bufsize=1
     )
-    
+
     # Wait for server to start
     print("⏰ Waiting for server to start...")
     max_wait = 30
@@ -77,7 +77,7 @@ try:
         print("❌ Server failed to start in time")
         server_process.terminate()
         sys.exit(1)
-    
+
     print("="*80)
     print("🎉 QUICK START READY!")
     print("="*80)
@@ -104,7 +104,7 @@ try:
     print("📺 Server output will appear below:")
     print("="*80)
     print()
-    
+
     # Stream server output
     try:
         while True:
@@ -117,7 +117,7 @@ try:
         server_process.send_signal(signal.SIGINT)
         server_process.wait(timeout=5)
         print("✅ Server stopped")
-        
+
 except FileNotFoundError:
     print("❌ Error: Could not find server.py")
     print("Make sure you're in the agent-with-event-trigger directory")

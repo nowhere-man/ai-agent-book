@@ -22,13 +22,13 @@ console = Console()
 
 class InteractiveSession:
     """Interactive session manager for Mem0 agent."""
-    
+
     def __init__(self, agent: Mem0Agent):
         self.agent = agent
         self.current_session = None
         self.current_user = None
         self.current_agent_id = None
-        
+
     def start_session(self) -> None:
         """Start a new interactive session."""
         console.print(Panel.fit(
@@ -36,12 +36,12 @@ class InteractiveSession:
             "Type 'help' for commands, 'exit' to quit",
             title="Welcome"
         ))
-        
+
         # Get session details
         self.current_user = Prompt.ask("Enter user ID", default="user_001")
         self.current_agent_id = Prompt.ask("Enter agent ID", default="agent_001")
         session_id = Prompt.ask("Enter session ID", default="session_001")
-        
+
         # Create context
         context = self.agent.create_context(
             agent_id=self.current_agent_id,
@@ -49,11 +49,11 @@ class InteractiveSession:
             session_id=session_id
         )
         self.current_session = session_id
-        
+
         console.print(f"[green]Session started:[/green] {session_id}")
         console.print(f"[green]User:[/green] {self.current_user}")
         console.print(f"[green]Agent:[/green] {self.current_agent_id}")
-        
+
     def show_help(self) -> None:
         """Display help information."""
         help_text = """
@@ -70,29 +70,29 @@ class InteractiveSession:
 - **new** - Start a new session
         """
         console.print(Markdown(help_text))
-    
+
     def show_memories(self) -> None:
         """Display stored memories."""
         if not self.current_user:
             console.print("[yellow]No active session[/yellow]")
             return
-        
+
         memories = self.agent.get_all_memories(user_id=self.current_user)
 
         if not memories:
             console.print("[yellow]No memories found[/yellow]")
             return
-        
+
         console.print(f"\n[cyan]Memories for {self.current_user}:[/cyan]")
         for i, memory in enumerate(memories, 1):
             console.print(f"{i}. {memory.get('memory', memory.get('text', 'N/A'))}")
-    
+
     def save_state(self) -> None:
         """Save the current state."""
         filepath = Prompt.ask("Enter filepath to save", default="state.json")
         self.agent.save_state(filepath)
         console.print(f"[green]State saved to {filepath}[/green]")
-    
+
     def load_state(self) -> None:
         """Load a saved state."""
         filepath = Prompt.ask("Enter filepath to load", default="state.json")
@@ -101,16 +101,16 @@ class InteractiveSession:
             console.print(f"[green]State loaded from {filepath}[/green]")
         else:
             console.print(f"[red]File not found: {filepath}[/red]")
-    
+
     async def run(self) -> None:
         """Run the interactive session."""
         self.start_session()
-        
+
         while True:
             try:
                 # Get user input
                 user_input = Prompt.ask("\n[bold]You[/bold]")
-                
+
                 # Check for commands
                 if user_input.lower() in ["exit", "quit"]:
                     if Confirm.ask("Are you sure you want to exit?"):
@@ -141,17 +141,17 @@ class InteractiveSession:
                 elif user_input.lower() == "new":
                     self.start_session()
                     continue
-                
+
                 # Process the input through the agent
                 console.print("[dim]Processing...[/dim]")
                 response, metrics = await self.agent.process_turn_async(
-                    self.current_session, 
+                    self.current_session,
                     user_input
                 )
-                
+
                 # Display response
                 console.print(f"\n[bold cyan]Agent[/bold cyan]: {response}")
-                
+
                 # Display metrics (optional)
                 if metrics.get("generation_time"):
                     console.print(
@@ -159,25 +159,25 @@ class InteractiveSession:
                         f"Turn {metrics['turn_count']} | "
                         f"Memories: {metrics['memory_count']}[/dim]"
                     )
-                    
+
             except KeyboardInterrupt:
                 console.print("\n[yellow]Interrupted[/yellow]")
                 if Confirm.ask("Exit session?"):
                     break
             except Exception as e:
                 console.print(f"[red]Error: {e}[/red]")
-        
+
         console.print("\n[cyan]Session ended. Goodbye![/cyan]")
 
 
 async def run_batch_mode(agent: Mem0Agent, input_file: Path, output_file: Path) -> None:
     """Run the agent in batch mode."""
     console.print(f"[yellow]Processing batch file: {input_file}[/yellow]")
-    
+
     # Read input file
     with open(input_file, "r") as f:
         batch_data = f.read()
-    
+
     # Parse batch data (assuming JSON format)
     import json
     try:
@@ -185,30 +185,30 @@ async def run_batch_mode(agent: Mem0Agent, input_file: Path, output_file: Path) 
     except json.JSONDecodeError:
         console.print("[red]Invalid JSON in input file[/red]")
         return
-    
+
     results = []
-    
+
     # Process each session
     for session_data in sessions:
         session_id = session_data.get("session_id", "batch_session")
         user_id = session_data.get("user_id", "batch_user")
         agent_id = session_data.get("agent_id", "batch_agent")
         turns = session_data.get("turns", [])
-        
+
         # Create context
         context = agent.create_context(
             agent_id=agent_id,
             user_id=user_id,
             session_id=session_id
         )
-        
+
         session_results = {
             "session_id": session_id,
             "user_id": user_id,
             "agent_id": agent_id,
             "turns": []
         }
-        
+
         # Process turns
         for turn in turns:
             response, metrics = await agent.process_turn_async(session_id, turn)
@@ -217,13 +217,13 @@ async def run_batch_mode(agent: Mem0Agent, input_file: Path, output_file: Path) 
                 "response": response,
                 "metrics": metrics
             })
-        
+
         results.append(session_results)
-    
+
     # Save results
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
-    
+
     console.print(f"[green]Results saved to {output_file}[/green]")
 
 
@@ -317,7 +317,7 @@ CLI_EPILOG = """\
   python main.py --mode batch  --input conversations.json --output results.json
   python main.py --mode benchmark --model kimi-k3
 
-说明：memory / demo / interactive / batch / benchmark 均需要可用的 LLM API（KIMI_API_KEY）
+说明：memory / demo / interactive / batch / benchmark 均需要可用的 LLM API（OPENAI_API_KEY）
 及向量存储；Mem0 的记忆提取与检索依赖在线模型调用。
 """
 

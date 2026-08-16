@@ -23,7 +23,7 @@ from .roles import Role, ROLE_STRATEGY, faction_of
 
 
 # 全局唯一的 LLM 客户端。模型默认当前便宜旗舰 gpt-5.6-luna。
-# 通用回退：优先 OPENAI_API_KEY 直连 OpenAI；没有则用 OPENROUTER_API_KEY 走 OpenRouter。
+# 通用回退：优先 OPENAI_API_KEY 直连 OpenAI；没有则用 OPENAI_API_KEY 走 OpenRouter。
 _MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 _client = None
 
@@ -73,22 +73,22 @@ def get_client():
             "timeout": float(os.getenv("WEREWOLF_LLM_TIMEOUT", "45")),
             "max_retries": int(os.getenv("WEREWOLF_LLM_RETRIES", "1")),
         }
-        if os.environ.get("ARK_API_KEY"):
+        if os.environ.get("OPENAI_API_KEY"):
             _MODEL = os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
-            _client = OpenAI(api_key=os.environ["ARK_API_KEY"],
-                             base_url="https://ark.cn-beijing.volces.com/api/v3",
+            _client = OpenAI(api_key=os.environ["OPENAI_API_KEY"],
+                             base_url="https://api.openai.com/v1",
                              **client_options)
-        elif os.environ.get("MOONSHOT_API_KEY"):
+        elif os.environ.get("OPENAI_API_KEY"):
             _MODEL = os.getenv("MOONSHOT_MODEL", "kimi-k3")
-            _client = OpenAI(api_key=os.environ["MOONSHOT_API_KEY"],
-                             base_url="https://api.moonshot.cn/v1", **client_options)
+            _client = OpenAI(api_key=os.environ["OPENAI_API_KEY"],
+                             base_url="https://api.openai.com/v1", **client_options)
         elif os.environ.get("OPENAI_API_KEY"):
             _client = OpenAI(**client_options)  # 自动读取 OPENAI_API_KEY
-        elif os.environ.get("OPENROUTER_API_KEY"):
+        elif os.environ.get("OPENAI_API_KEY"):
             _MODEL = _to_openrouter_model(_MODEL)
             _client = OpenAI(
-                api_key=os.environ["OPENROUTER_API_KEY"],
-                base_url="https://openrouter.ai/api/v1",
+                api_key=os.environ["OPENAI_API_KEY"],
+                base_url="https://api.openai.com/v1",
                 **client_options,
             )
         else:

@@ -2,7 +2,6 @@ import json
 import logging
 import traceback
 from datetime import datetime
-from pathlib import Path
 from typing import Union
 
 import arxiv
@@ -16,19 +15,12 @@ from base import ActionResponse
 
 
 load_dotenv()
-workspace = Path.home()
-supported_extensions = {".pdf"}
-
 # ArXiv client configuration
 client = arxiv.Client(
     page_size=100,
     delay_seconds=3.0,  # Be respectful to ArXiv servers
     num_retries=3,
 )
-
-# Create downloads directory
-_downloads_dir = workspace / "arxiv_downloads"
-_downloads_dir.mkdir(exist_ok=True)
 
 # ArXiv subject categories mapping
 subject_categories = {
@@ -66,7 +58,6 @@ class PaperResult(BaseModel):
     updated: str | None = None
     categories: list[str]
     primary_category: str
-    pdf_url: str | None = None
     doi: str | None = None
     journal_ref: str | None = None
     comment: str | None = None
@@ -84,8 +75,6 @@ class ArxivMetadata(BaseModel):
     execution_time: float | None = None
     error_type: str | None = None
     paper_id: str | None = None
-    download_path: str | None = None
-    file_size: int | None = None
 
 
 mcp = FastMCP(
@@ -99,14 +88,12 @@ It supports paper search, metadata extraction, and content retrieval with LLM-fr
 Key features:
 - Search ArXiv papers by query, author, category, or ID
 - Extract paper metadata (title, authors, abstract, etc.)
-- Download and process paper PDFs
 - LLM-optimized content formatting
 - Comprehensive error handling and logging
 
 Main functions:
 - mcp_search_papers: Search ArXiv papers with flexible criteria
 - mcp_get_paper_details: Get detailed information about specific papers
-- mcp_download_paper: Download paper PDF and extract text content
 - mcp_get_categories: Get available ArXiv subject categories
 - mcp_get_arxiv_capabilities: Get service capabilities and configuration
 """,
@@ -344,183 +331,6 @@ async def get_paper_details(
 
 @mcp.tool(
     description="""
-Download ArXiv paper PDF and optionally extract text content.
-"""
-)
-async def download_paper(
-    paper_id: str = Field(
-        description="ArXiv paper ID (e.g., '2301.07041' or 'arxiv:2301.07041')"
-    ),
-    extract_text: bool = Field(
-        default=True, description="Whether to extract text content from PDF"
-    ),
-    output_format: str = Field(
-        default="markdown", description="Output format: 'markdown', 'json', or 'text'"
-    ),
-) -> Union[str, TextContent]:
-    if isinstance(paper_id, FieldInfo):
-        paper_id = paper_id.default
-    if isinstance(extract_text, FieldInfo):
-        extract_text = extract_text.default
-    if isinstance(output_format, FieldInfo):
-        output_format = output_format.default
-
-    try:
-        # Clean paper ID
-        clean_id = paper_id.replace("arxiv:", "").strip()
-
-        logging.info(f"📥 Downloading paper: {clean_id}")
-
-        start_time = datetime.now()
-
-        # Search for the paper
-        search = arxiv.Search(id_list=[clean_id])
-        paper = next(client.results(search), None)
-
-        if not paper:
-            action_response = ActionResponse(
-                success=False,
-                message=f"Paper not found: {clean_id}",
-                metadata=ArxivMetadata(
-                    operation="download_paper",
-                    paper_id=clean_id,
-                    error_type="paper_not_found",
-                ).model_dump(),
-            )
-            return TextContent(
-                type="text",
-                text=json.dumps(
-                    action_response.model_dump()
-                ),  # Empty string instead of None
-                **{"metadata": {}},  # Pass as additional fields
-            )
-
-        # Download PDF
-        filename = f"{clean_id.replace('/', '_')}.pdf"
-        download_path = _downloads_dir / filename
-
-        paper.download_pdf(dirpath=str(_downloads_dir), filename=filename)
-
-        execution_time = (datetime.now() - start_time).total_seconds()
-        file_size = download_path.stat().st_size if download_path.exists() else 0
-
-        # Prepare response message
-        if output_format == "json":
-            response_data = {
-                "paper_id": clean_id,
-                "title": paper.title,
-                "download_path": str(download_path),
-                "file_size": file_size,
-                "download_time": execution_time,
-            }
-
-            if extract_text:
-                try:
-                    # Basic text extraction (would need additional libraries like PyPDF2 or pdfplumber)
-                    response_data["text_extraction"] = (
-                        "Text extraction requires additional PDF processing libraries"
-                    )
-                except Exception:
-                    response_data["text_extraction"] = "Text extraction failed"
-
-            formatted_output = json.dumps(response_data, indent=2)
-
-        elif output_format == "text":
-            output_parts = [
-                "Paper Downloaded Successfully",
-                f"Paper ID: {clean_id}",
-                f"Title: {paper.title}",
-                f"Download Path: {download_path}",
-                f"File Size: {file_size:,} bytes",
-                f"Download Time: {execution_time:.2f} seconds",
-            ]
-
-            if extract_text:
-                output_parts.append(
-                    "\nNote: Text extraction requires additional PDF processing libraries"
-                )
-
-            formatted_output = "\n".join(output_parts)
-
-        else:  # markdown (default)
-            output_parts = [
-                "# 📥 Paper Download Complete",
-                "",
-                f"**Paper ID:** `{clean_id}`",
-                f"**Title:** {paper.title}",
-                f"**Download Path:** `{download_path}`",
-                f"**File Size:** {file_size:,} bytes",
-                f"**Download Time:** {execution_time:.2f} seconds",
-            ]
-
-            if extract_text:
-                output_parts.extend(
-                    [
-                        "",
-                        "## 📄 Text Extraction",
-                        (
-                            "*Note: Text extraction requires additional "
-                            "PDF processing libraries like PyPDF2 or pdfplumber*"
-                        ),
-                    ]
-                )
-
-            formatted_output = "\n".join(output_parts)
-
-        # Create metadata
-        metadata = ArxivMetadata(
-            operation="download_paper",
-            paper_id=clean_id,
-            download_path=str(download_path),
-            file_size=file_size,
-            execution_time=execution_time,
-        )
-
-        logging.info(
-            f"✅ Downloaded paper in {execution_time:.2f}s ({file_size:,} bytes)"
-        )
-
-        action_response = ActionResponse(
-            success=True, message=formatted_output, metadata=metadata.model_dump()
-        )
-        output_dict = {
-            "artifact_type": "MARKDOWN",
-            "artifact_data": json.dumps(
-                action_response.model_dump()
-            )
-        }
-        return TextContent(
-            type="text",
-            text=json.dumps(
-                action_response.model_dump()
-            ),  # Empty string instead of None
-            **{"metadata": output_dict},  # Pass as additional fields
-        )
-
-    except Exception as e:
-        error_msg = f"Failed to download paper: {str(e)}"
-        logging.error(f"Paper download error: {traceback.format_exc()}")
-
-        action_response = ActionResponse(
-            success=False,
-            message=error_msg,
-            metadata=ArxivMetadata(
-                operation="download_paper",
-                paper_id=paper_id,
-                error_type="download_error",
-            ).model_dump(),
-        )
-        return TextContent(
-            type="text",
-            text=json.dumps(
-                action_response.model_dump()
-            ),  # Empty string instead of None
-            **{"metadata": {}},  # Pass as additional fields
-        )
-
-
-@mcp.tool(
-    description="""
 Get information about ArXiv service capabilities and configuration.
 """
 )
@@ -529,7 +339,6 @@ async def get_arxiv_capabilities() -> Union[str, TextContent]:
         "supported_operations": [
             "Paper search with flexible criteria",
             "Detailed paper metadata retrieval",
-            "PDF download and storage",
             "Subject category filtering",
             "Multiple output formats (markdown, json, text)",
             "LLM-optimized result formatting",
@@ -544,7 +353,6 @@ async def get_arxiv_capabilities() -> Union[str, TextContent]:
         ],
         "supported_formats": ["markdown", "json", "text"],
         "configuration": {
-            "downloads_directory": str(_downloads_dir),
             "client_page_size": 100,
             "client_delay_seconds": 3.0,
             "client_num_retries": 3,
@@ -569,7 +377,6 @@ async def get_arxiv_capabilities() -> Union[str, TextContent]:
             {chr(10).join(f"- {fmt}" for fmt in capabilities["supported_formats"])}
 
             ## Current Configuration
-            - **Downloads Directory:** {capabilities["configuration"]["downloads_directory"]}
             - **Client Page Size:** {capabilities["configuration"]["client_page_size"]}
             - **Request Delay:** {capabilities["configuration"]["client_delay_seconds"]} seconds
             - **Retry Attempts:** {capabilities["configuration"]["client_num_retries"]}
@@ -703,7 +510,6 @@ def _format_paper_result(paper: arxiv.Result) -> PaperResult:
         updated=paper.updated.isoformat() if paper.updated else None,
         categories=paper.categories,
         primary_category=paper.primary_category,
-        pdf_url=paper.pdf_url,
         doi=paper.doi,
         journal_ref=paper.journal_ref,
         comment=paper.comment,
@@ -767,7 +573,6 @@ def _format_search_results(
                     f"**Published:** {paper.published[:10]}",
                     f"**Categories:** {', '.join(paper.categories)}",
                     f"**ArXiv ID:** `{arxiv_id}`",
-                    f"**PDF:** [Download]({paper.pdf_url})" if paper.pdf_url else "",
                     "",
                     f"**Abstract:** {paper.summary}",
                     "",
@@ -801,7 +606,6 @@ def _format_paper_details(paper: PaperResult, output_format: str = "markdown") -
             f"Primary Category: {paper.primary_category}",
             f"All Categories: {', '.join(paper.categories)}",
             f"ArXiv ID: {paper.entry_id.split('/')[-1]}",
-            f"PDF URL: {paper.pdf_url or 'N/A'}",
             f"DOI: {paper.doi or 'N/A'}",
             f"Journal Reference: {paper.journal_ref or 'N/A'}",
             f"Comment: {paper.comment or 'N/A'}",
@@ -825,9 +629,6 @@ def _format_paper_details(paper: PaperResult, output_format: str = "markdown") -
             f"**All Categories:** {', '.join(paper.categories)}",
             f"**ArXiv ID:** `{arxiv_id}`",
             (
-                f"**PDF:** [Download]({paper.pdf_url})"
-                if paper.pdf_url
-                else "**PDF:** N/A"
             ),
             f"**DOI:** {paper.doi}" if paper.doi else "**DOI:** N/A",
             (

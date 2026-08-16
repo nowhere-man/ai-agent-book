@@ -13,9 +13,9 @@ from agent import KVCacheAgent, KVCacheMode
 
 def check_agent_error_recovery():
     """Run the live agent against an intentionally failing tool path."""
-    api_key = os.getenv("MOONSHOT_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Please set MOONSHOT_API_KEY environment variable")
+        print("❌ Please set OPENAI_API_KEY environment variable")
         sys.exit(1)
 
     print("🧪 Testing agent error recovery")

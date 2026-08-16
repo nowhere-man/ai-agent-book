@@ -1,6 +1,6 @@
 # Log Sanitization / 日志脱敏
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — intelligent log sanitization that redacts secrets and PII while preserving debug value.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — intelligent log sanitization that redacts secrets and PII while preserving debug value.
 > 配套《深入理解 AI Agent》第 3 章——在保留调试信息的同时检测并脱敏日志中的敏感数据。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -57,7 +57,7 @@ Highly sensitive items in the privacy architecture, including: SSN, credit cards
 
 #### 1. Install Ollama (LLM path only)
 
-> **OpenRouter fallback:** Default is local Ollama. If Ollama is unavailable and `OPENROUTER_API_KEY` is set, the Agent falls back to OpenRouter (default hosted model `openai/gpt-5.6-luna`). To force fallback: `export OLLAMA_HOST=http://127.0.0.1:1`.
+> **OpenRouter fallback:** Default is local Ollama. If Ollama is unavailable and `OPENAI_API_KEY` is set, the Agent falls back to OpenRouter (default hosted model `openai/gpt-5.6-luna`). To force fallback: `export OLLAMA_HOST=http://127.0.0.1:1`.
 
 **macOS:**
 ```bash
@@ -99,7 +99,7 @@ source .venv/bin/activate
 cd chapter3/log-sanitization
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### Usage
@@ -176,39 +176,39 @@ output/
 
 ### Performance metrics
 
-**Timing:** Prefill (TTFT), Output Time, Total Time (ms)  
-**Tokens:** Input / Output counts; Prefill / Output speed (tok/s)  
+**Timing:** Prefill (TTFT), Output Time, Total Time (ms)
+**Tokens:** Input / Output counts; Prefill / Output speed (tok/s)
 **Sanitization:** PII items found; replacements with `[REDACTED]`
 
 ### Architecture
 
-1. **regex_sanitizer.py** — offline rule sanitizer  
-2. **samples.py** — offline demo samples  
-3. **config.py** — Ollama model and PII categories  
+1. **regex_sanitizer.py** — offline rule sanitizer
+2. **samples.py** — offline demo samples
+3. **config.py** — Ollama model and PII categories
 4. **test_loader.py** — loads user-memory-evaluation cases (support module, not pytest)
-5. **agent.py** — LLM sanitization via Ollama  
-6. **metrics.py** — metrics collection  
-7. **main.py** — entry / orchestration  
+5. **agent.py** — LLM sanitization via Ollama
+6. **metrics.py** — metrics collection
+7. **main.py** — entry / orchestration
 8. **tests/** — offline pytest regressions plus manual loader debug helper
 
 ### How it works (LLM path)
 
-1. Load conversations from user-memory-evaluation  
-2. Send each to local Qwen3 with a Level 3 PII detection prompt  
-3. Replace detected values with `[REDACTED]`  
-4. Collect performance metrics  
-5. Write sanitized logs and summaries under `output/`  
+1. Load conversations from user-memory-evaluation
+2. Send each to local Qwen3 with a Level 3 PII detection prompt
+3. Replace detected values with `[REDACTED]`
+4. Collect performance metrics
+5. Write sanitized logs and summaries under `output/`
 
 ### Privacy
 
-- Default local Ollama path sends no data to external APIs  
-- OpenRouter fallback (if used) does leave the machine  
-- Sanitized logs use placeholders; handle any logged original PII securely  
+- Default local Ollama path sends no data to external APIs
+- OpenRouter fallback (if used) does leave the machine
+- Sanitized logs use placeholders; handle any logged original PII securely
 
 ### Troubleshooting
 
-**Ollama not found:** install and `ollama serve`  
-**Model not found:** `ollama pull qwen3:0.6b`  
+**Ollama not found:** install and `ollama serve`
+**Model not found:** `ollama pull qwen3:0.6b`
 **Evaluation framework not found:** expect `../user-memory-evaluation/` (or chapter3 path used by the loader)
 
 ---
@@ -263,7 +263,7 @@ output/
 
 #### 1. 安装 Ollama（仅 LLM 路径需要）
 
-> **通用回退（OpenRouter）**：本实验默认用本地 Ollama 小模型。若 Ollama 不可用（未运行 / 不可达）且设置了 `OPENROUTER_API_KEY`，Agent 会自动改走 OpenRouter（默认托管模型 `openai/gpt-5.6-luna`）。想强制走回退做验证，可把 Ollama 指到一个不可达端口：`export OLLAMA_HOST=http://127.0.0.1:1`。
+> **通用回退（OpenRouter）**：本实验默认用本地 Ollama 小模型。若 Ollama 不可用（未运行 / 不可达）且设置了 `OPENAI_API_KEY`，Agent 会自动改走 OpenRouter（默认托管模型 `openai/gpt-5.6-luna`）。想强制走回退做验证，可把 Ollama 指到一个不可达端口：`export OLLAMA_HOST=http://127.0.0.1:1`。
 
 **macOS:**
 ```bash
@@ -305,7 +305,7 @@ source .venv/bin/activate
 cd chapter3/log-sanitization
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### 用法
@@ -382,44 +382,44 @@ output/
 
 ### 性能指标
 
-**时间：** Prefill（TTFT）、输出时间、总时间（毫秒）  
-**Token：** 输入/输出数量；Prefill/输出速度（tok/s）  
+**时间：** Prefill（TTFT）、输出时间、总时间（毫秒）
+**Token：** 输入/输出数量；Prefill/输出速度（tok/s）
 **脱敏：** 发现的 PII 条数；替换为 `[REDACTED]` 的次数
 
 ### 架构
 
-1. **regex_sanitizer.py**：离线规则脱敏（正则 + Luhn/身份证校验）  
-2. **samples.py**：离线演示用的代表性 Agent 日志样本  
-3. **config.py**：Ollama 模型与 PII 类别配置  
+1. **regex_sanitizer.py**：离线规则脱敏（正则 + Luhn/身份证校验）
+2. **samples.py**：离线演示用的代表性 Agent 日志样本
+3. **config.py**：Ollama 模型与 PII 类别配置
 4. **test_loader.py**：从 user-memory-evaluation 加载用例（支持模块，不是 pytest）
-5. **agent.py**：基于 Ollama 的 LLM 脱敏逻辑  
-6. **metrics.py**：性能指标采集与报告  
-7. **main.py**：入口与编排  
+5. **agent.py**：基于 Ollama 的 LLM 脱敏逻辑
+6. **metrics.py**：性能指标采集与报告
+7. **main.py**：入口与编排
 8. **tests/**：离线 pytest 回归测试与手动加载器调试助手
 
 ### 工作原理（LLM 路径）
 
-1. 从 user-memory-evaluation 加载对话历史  
-2. 将每段对话送入本地 Qwen3，用专用提示检测 Level 3 PII  
-3. 将检出值替换为 `[REDACTED]`  
-4. 采集性能指标  
-5. 将脱敏日志与性能摘要写入 `output/`  
+1. 从 user-memory-evaluation 加载对话历史
+2. 将每段对话送入本地 Qwen3，用专用提示检测 Level 3 PII
+3. 将检出值替换为 `[REDACTED]`
+4. 采集性能指标
+5. 将脱敏日志与性能摘要写入 `output/`
 
 ### 隐私考量
 
-- 默认本地 Ollama 路径不向外部 API 发送数据  
-- 若走 OpenRouter 回退则会离开本机  
-- 脱敏日志使用占位符；任何原始 PII 日志都应妥善保管  
+- 默认本地 Ollama 路径不向外部 API 发送数据
+- 若走 OpenRouter 回退则会离开本机
+- 脱敏日志使用占位符；任何原始 PII 日志都应妥善保管
 
 ### 故障排除
 
-**找不到 Ollama：** 安装并运行 `ollama serve`  
-**找不到模型：** `ollama pull qwen3:0.6b`  
+**找不到 Ollama：** 安装并运行 `ollama serve`
+**找不到模型：** `ollama pull qwen3:0.6b`
 **找不到评测框架：** 确认 loader 所期望的 `../user-memory-evaluation/`（或 chapter3 路径）存在
 
 ---
 
 ## Notes / 说明
 
-- Prefer `--demo` first; Ollama is optional for the rule path.  
+- Prefer `--demo` first; Ollama is optional for the rule path.
 - 建议先跑 `--demo`；规则路径无需 Ollama。

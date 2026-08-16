@@ -102,7 +102,7 @@ Navigate to the verl directory and install the required dependencies. This proce
 
 ```bash
 cd chapter7/verl
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 pip install -r requirements-cuda.txt
 pip install -e .
 ```
@@ -964,7 +964,7 @@ conda activate verl
 
 ```bash
 cd chapter7/verl
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 pip install -r requirements-cuda.txt
 pip install -e .
 ```

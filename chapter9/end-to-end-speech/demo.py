@@ -22,7 +22,6 @@ IMPLEMENTATION_FILES = (
     "demo.py",
     "speech_model.py",
     "validate_evidence.py",
-    "requirements.txt",
     "fixtures/cases.json",
 )
 
@@ -149,7 +148,8 @@ def main() -> int:
         },
         "speech_output": speech_output,
         "implementation_sha256": {
-            name: sha256_file(HERE / name) for name in IMPLEMENTATION_FILES
+            **{name: sha256_file(HERE / name) for name in IMPLEMENTATION_FILES},
+            "requirements.txt": sha256_file(HERE.parents[2] / "requirements.txt"),
         },
         "external_api_calls": 0,
     }

@@ -1,6 +1,6 @@
 # Experiment 5-7: Adaptive Log Parser / 自适应的日志解析系统（实验 5-7）
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — self-evolving log parser: on unknown formats, Agent generates `parse`, tests, hot-reloads into the engine.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — self-evolving log parser: on unknown formats, Agent generates `parse`, tests, hot-reloads into the engine.
 > 《深入理解 AI Agent》第 5 章「代码作为系统适配器」：遇新格式不报错，Agent 生成解析代码，测试通过后热更新。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -73,9 +73,9 @@ source .venv/bin/activate
 cd chapter5/adaptive-log-parser
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env      # OPENAI_API_KEY (default model gpt-5.6-luna); or OPENROUTER_API_KEY fallback
+cp env.example .env      # OPENAI_API_KEY (default model gpt-5.6-luna); or OPENAI_API_KEY fallback
 
 python demo.py                       # full demo (two new formats, two real Agent calls; needs API key)
 python demo.py --offline             # offline: canned parsers; no API key
@@ -225,9 +225,9 @@ source .venv/bin/activate
 cd chapter5/adaptive-log-parser
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env      # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）；未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter
+cp env.example .env      # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）；未配置时设 OPENAI_API_KEY 自动改走 OpenRouter
 
 python demo.py                       # 完整演示（两种新格式，两次真实 Agent 调用，需 API Key）
 python demo.py --offline             # 离线演示：用预置解析器跑完整机制，无需 API Key

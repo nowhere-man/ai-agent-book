@@ -1,6 +1,6 @@
 # Execution Tools MCP Server / 执行工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-3 ★★**. MCP execution tools with LLM approval, auto-verification, and long-output truncation/persist.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-3 ★★**. MCP execution tools with LLM approval, auto-verification, and long-output truncation/persist.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-3 ★★**。带 LLM 事前审批、自动校验、长输出截断与持久化的执行工具 MCP 服务器。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -63,7 +63,7 @@ source .venv/bin/activate
 cd chapter4/execution-tools
 
 # Exact legacy parity path, including optional scientific/ML spreadsheet packages:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### Configuration
@@ -79,13 +79,13 @@ cp env.example .env
 PROVIDER=kimi
 
 # API Keys (set the one for your provider)
-KIMI_API_KEY=your_kimi_key
+OPENAI_API_KEY=your_kimi_key
 # DashScope / Bailian (Qwen)
 # PROVIDER=dashscope  # qwen and bailian are accepted aliases
-# DASHSCOPE_API_KEY=your_dashscope_key
-# SILICONFLOW_API_KEY=your_siliconflow_key
+# OPENAI_API_KEY=your_dashscope_key
+# OPENAI_API_KEY=your_siliconflow_key
 # DOUBAO_API_KEY=your_doubao_key
-# OPENROUTER_API_KEY=your_openrouter_key
+# OPENAI_API_KEY=your_openrouter_key
 
 # Model (optional, defaults to provider's default)
 # MODEL=kimi-k3
@@ -107,12 +107,12 @@ AUTO_VERIFY_CODE=true
 **Supported Providers:**
 - `siliconflow`: Qwen/Qwen3-235B-A22B-Thinking-2507
 - `dashscope` / `qwen` / `bailian`: qwen3.7-plus (Alibaba Cloud Model Studio)
-- `doubao`: doubao-seed-1-6-thinking-250715  
+- `doubao`: doubao-seed-1-6-thinking-250715
 - `kimi`/`moonshot`: kimi-k3
 - `openrouter`: google/gemini-3.5-flash (or openai/gpt-5.6-luna, anthropic/claude-sonnet-4.6)
 
 > **Universal OpenRouter fallback**: when the configured `PROVIDER`'s key is
-> missing but `OPENROUTER_API_KEY` is set, the LLM steps (approval,
+> missing but `OPENAI_API_KEY` is set, the LLM steps (approval,
 > summarization, error/syntax analysis) transparently switch to `openrouter`
 > via `Config.effective_provider()`. Set `MODEL` to a `provider/model` id for
 > OpenRouter, e.g. `MODEL=openai/gpt-5.6-luna`.
@@ -309,7 +309,7 @@ source .venv/bin/activate
 cd chapter4/execution-tools
 
 # 精确复现旧版单项目环境，含可选科学计算/机器学习/表格处理依赖：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### 配置
@@ -325,13 +325,13 @@ cp env.example .env
 PROVIDER=kimi
 
 # API Keys (set the one for your provider)
-KIMI_API_KEY=your_kimi_key
+OPENAI_API_KEY=your_kimi_key
 # DashScope / Bailian (Qwen)
 # PROVIDER=dashscope  # qwen and bailian are accepted aliases
-# DASHSCOPE_API_KEY=your_dashscope_key
-# SILICONFLOW_API_KEY=your_siliconflow_key
+# OPENAI_API_KEY=your_dashscope_key
+# OPENAI_API_KEY=your_siliconflow_key
 # DOUBAO_API_KEY=your_doubao_key
-# OPENROUTER_API_KEY=your_openrouter_key
+# OPENAI_API_KEY=your_openrouter_key
 
 # Model (optional, defaults to provider's default)
 # MODEL=kimi-k3
@@ -353,12 +353,12 @@ AUTO_VERIFY_CODE=true
 **支持的 Provider：**
 - `siliconflow`：Qwen/Qwen3-235B-A22B-Thinking-2507
 - `dashscope` / `qwen` / `bailian`：qwen3.7-plus（阿里云百炼 / Model Studio）
-- `doubao`：doubao-seed-1-6-thinking-250715  
+- `doubao`：doubao-seed-1-6-thinking-250715
 - `kimi`/`moonshot`：kimi-k3
 - `openrouter`：google/gemini-3.5-flash（或 openai/gpt-5.6-luna、anthropic/claude-sonnet-4.6）
 
 > **OpenRouter 通用兜底**：当配置的 `PROVIDER` 对应 Key 缺失，但设置了
-> `OPENROUTER_API_KEY` 时，LLM 步骤（审批、总结、错误/语法分析）经
+> `OPENAI_API_KEY` 时，LLM 步骤（审批、总结、错误/语法分析）经
 > `Config.effective_provider()` 透明切换到 `openrouter`。
 > 为 OpenRouter 设置 `MODEL` 为 `provider/model` 形式，例如
 > `MODEL=openai/gpt-5.6-luna`。
@@ -482,7 +482,7 @@ python test_external_tools.py
 
 ## Notes / 说明
 
-- Start with `python cli.py demo` (no API key).  
-- 建议从 `python cli.py demo` 开始（无需 API Key）。  
-- Long-output truncation/persistence works offline without LLM.  
+- Start with `python cli.py demo` (no API key).
+- 建议从 `python cli.py demo` 开始（无需 API Key）。
+- Long-output truncation/persistence works offline without LLM.
 - 长输出截断与持久化不依赖 LLM，可离线。

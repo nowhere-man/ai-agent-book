@@ -1,0 +1,3 @@
+# Install the repository's supported CPU-friendly dependency set.
+# GPU-only stacks remain explicit extras in pyproject.toml.
+-e .[all]

@@ -20,8 +20,8 @@ def _reasoning_safe_temperature(model, requested=1.0):
 
 def _openrouter_model_id(model: Optional[str]) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins."""
-    override = os.getenv("OPENROUTER_MODEL")
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins."""
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -79,35 +79,35 @@ class LLMConfig:
     temperature: float = 0.7
     max_tokens: int = 2048
     stream: bool = True
-    
+
     # Provider-specific defaults
     PROVIDER_DEFAULTS = {
         "dashscope": {
             "model": "qwen3.7-plus",
             "base_url": os.getenv(
-                "DASHSCOPE_BASE_URL",
-                "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                "OPENAI_BASE_URL",
+                "https://api.openai.com/v1",
             ),
         },
         "siliconflow": {
             "model": "Qwen/Qwen3-235B-A22B-Thinking-2507",
-            "base_url": "https://api.siliconflow.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "doubao": {
             "model": "doubao-seed-1-6-thinking-250715",
-            "base_url": "https://ark.cn-beijing.volces.com/api/v3"
+            "base_url": "https://api.openai.com/v1"
         },
         "kimi": {
             "model": "kimi-k3",
-            "base_url": "https://api.moonshot.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "moonshot": {
             "model": "kimi-k3",
-            "base_url": "https://api.moonshot.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "openrouter": {
             "model": "openai/gpt-5.6-luna",
-            "base_url": "https://openrouter.ai/api/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "openai": {
             "model": "gpt-5.6-luna",
@@ -123,10 +123,10 @@ class LLMConfig:
         },
         "deepseek": {
             "model": "deepseek-reasoner",
-            "base_url": "https://api.deepseek.com/v1"
+            "base_url": "https://api.openai.com/v1/v1"
         }
     }
-    
+
     def get_client_config(self) -> tuple[Dict[str, Any], str]:
         """Get OpenAI client configuration"""
         provider = self.provider.lower()
@@ -134,30 +134,30 @@ class LLMConfig:
             provider, provider
         )
         defaults = self.PROVIDER_DEFAULTS.get(provider, {})
-        
+
         # Determine API key
         api_key = self.api_key or os.getenv(f"{provider.upper()}_API_KEY")
         if not api_key and provider == "moonshot":
-            api_key = os.getenv("KIMI_API_KEY")  # Fallback for moonshot
+            api_key = os.getenv("OPENAI_API_KEY")  # Fallback for moonshot
 
         # Determine model
         model = self.model or defaults.get("model", "gpt-5.6-luna")
 
         # Universal OpenRouter fallback: primary provider key absent but
-        # OPENROUTER_API_KEY present -> route through OpenRouter.
-        if not api_key and provider != "openrouter" and os.getenv("OPENROUTER_API_KEY"):
+        # OPENAI_API_KEY present -> route through OpenRouter.
+        if not api_key and provider != "openrouter" and os.getenv("OPENAI_API_KEY"):
             return {
-                "api_key": os.getenv("OPENROUTER_API_KEY"),
-                "base_url": "https://openrouter.ai/api/v1",
+                "api_key": os.getenv("OPENAI_API_KEY"),
+                "base_url": "https://api.openai.com/v1",
             }, _openrouter_model_id(model)
 
         # Build client config
         client_config = {"api_key": api_key}
-        
+
         # Add base URL if needed
         if base_url := defaults.get("base_url"):
             client_config["base_url"] = base_url
-        
+
         return client_config, model
 
 
@@ -216,31 +216,31 @@ class Config:
     index: IndexConfig = field(default_factory=IndexConfig)
     evaluation: EvaluationConfig = field(default_factory=EvaluationConfig)
     agent: AgentConfig = field(default_factory=AgentConfig)
-    
+
     @classmethod
     def from_env(cls) -> "Config":
         """Create configuration from environment variables"""
         config = cls()
-        
+
         # Override with environment variables
         if provider := os.getenv("LLM_PROVIDER"):
             config.llm.provider = provider
-        
+
         if model := os.getenv("LLM_MODEL"):
             config.llm.model = model
-        
+
         if rounds := os.getenv("ROUNDS_PER_CHUNK"):
             config.chunking.rounds_per_chunk = int(rounds)
-        
+
         if index_mode := os.getenv("INDEX_MODE"):
             config.index.mode = IndexMode(index_mode)
-        
+
         return config
-    
+
     def save(self, path: str):
         """Save configuration to JSON file"""
         import json
-        
+
         config_dict = {
             "llm": {
                 "provider": self.llm.provider,
@@ -273,10 +273,10 @@ class Config:
                 "confidence_threshold": self.agent.confidence_threshold
             }
         }
-        
+
         with open(path, 'w') as f:
             json.dump(config_dict, f, indent=2)
-    
+
     @classmethod
     def load(cls, path: str) -> "Config":
         """Load configuration from JSON file"""
@@ -284,14 +284,14 @@ class Config:
 
         with open(path, 'r') as f:
             config_dict = json.load(f)
-        
+
         config = cls()
-        
+
         # Update LLM config
         if "llm" in config_dict:
             for key, value in config_dict["llm"].items():
                 setattr(config.llm, key, value)
-        
+
         # Update other configs similarly
         for section in ["chunking", "index", "evaluation", "agent"]:
             if section in config_dict:
@@ -303,5 +303,5 @@ class Config:
                     elif key == "mode" and section == "index":
                         value = IndexMode(value)
                     setattr(section_config, key, value)
-        
+
         return config

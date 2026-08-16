@@ -35,7 +35,6 @@ Comprehensive test coverage for all tools and features from tools.json.
 - Empty files
 - Binary file detection
 - Image file handling
-- PDF file handling
 - Jupyter notebook reading
 - Error handling
 

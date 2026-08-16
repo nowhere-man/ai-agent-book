@@ -64,7 +64,7 @@ source .venv/bin/activate
 cd chapter6/elo-leaderboard
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ## Testing
@@ -144,7 +144,7 @@ python cli.py                     # 等价于 python cli.py pipeline
 
   **两种评判后端（`--judge-backend {anthropic,openrouter,auto}`，默认 `auto`）**：
   - `anthropic`：官方 `anthropic` SDK，用 `ANTHROPIC_API_KEY`。
-  - `openrouter`：OpenAI 兼容 SDK 指向 `https://openrouter.ai/api/v1`，用 `OPENROUTER_API_KEY`。内部 Claude 名字会自动映射为 OpenRouter id（`claude-opus-4-8` → `anthropic/claude-opus-4.8`，`claude-haiku-4-5` → `anthropic/claude-haiku-4.5`）；已含 `/` 的 id（如 `openai/gpt-5.6-luna`）原样透传。当直连 Anthropic key 缺失或失效时用它兜底。
+  - `openrouter`：OpenAI 兼容 SDK 指向 `https://api.openai.com/v1`，用 `OPENAI_API_KEY`。内部 Claude 名字会自动映射为 OpenRouter id（`claude-opus-4-8` → `anthropic/claude-opus-4.8`，`claude-haiku-4-5` → `anthropic/claude-haiku-4.5`）；已含 `/` 的 id（如 `openai/gpt-5.6-luna`）原样透传。当直连 Anthropic key 缺失或失效时用它兜底。
   - `auto`（默认）：有 `ANTHROPIC_API_KEY` 走 anthropic，否则回退 openrouter。注意 `auto` 只看 key 是否存在、不校验有效性；若 `ANTHROPIC_API_KEY` 存在但已失效，请显式 `--judge-backend openrouter`。
 
   位置偏差消除与 A/B/tie 解析逻辑与后端无关，两条路径完全一致。
@@ -169,7 +169,7 @@ export ANTHROPIC_API_KEY=your-anthropic-api-key
 python cli.py battle --source llm --candidate-models claude-opus-4-8 claude-haiku-4-5
 
 # LLM 评判对战——通过 OpenRouter 兜底（直连 Anthropic key 缺失/失效时）
-export OPENROUTER_API_KEY=your-openrouter-api-key
+export OPENAI_API_KEY=your-openrouter-api-key
 python cli.py battle --source llm --judge-backend openrouter \
   --judge-model claude-opus-4-8 \
   --candidate-models anthropic/claude-haiku-4.5 openai/gpt-5.6-luna
@@ -358,7 +358,7 @@ win_rate_df = calculate_win_rate_matrix_from_data(df)
 plot_win_rate_matrix(win_rate_df, top_n=15, save_path="matrix.png")
 
 # Rating evolution
-plot_rating_history(history_df, models=["gpt-4", "claude-v1"], 
+plot_rating_history(history_df, models=["gpt-4", "claude-v1"],
                    save_path="history.png")
 
 # Interactive chart
@@ -409,7 +409,7 @@ After running `main.py`, the following files are generated:
 ### Bradley-Terry Parameters
 
 - **SCALE** (400): Elo scale parameter - determines rating point interpretation
-- **BASE** (10): Base for logistic function - standard for Elo calculations  
+- **BASE** (10): Base for logistic function - standard for Elo calculations
 - **INIT_RATING** (1000): Initial rating for all models
 - **bootstrap_rounds** (100): Number of bootstrap samples for confidence intervals
 
@@ -632,7 +632,7 @@ The core Elo update loop is compiled to machine code using Numba:
 
 ```python
 @jit(nopython=True)
-def process_elo_updates_vectorized(ratings, model_a_indices, model_b_indices, 
+def process_elo_updates_vectorized(ratings, model_a_indices, model_b_indices,
                                    outcomes, k_factor, match_counts, win_counts):
     for i in range(len(model_a_indices)):
         # This loop runs at C speed, not Python speed
@@ -722,7 +722,7 @@ source .venv/bin/activate
 cd chapter6/elo-leaderboard
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### 测试

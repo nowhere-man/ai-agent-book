@@ -31,8 +31,8 @@ sys.path.insert(0, str(CHAPTER))
 from experiment_utils import ChatRecorder, jsonable, sha256_file, write_campaign_evidence
 
 
-ARK_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3"
-MOONSHOT_ENDPOINT = "https://api.moonshot.cn/v1"
+ARK_ENDPOINT = "https://api.openai.com/v1"
+MOONSHOT_ENDPOINT = "https://api.openai.com/v1"
 OFFICIAL_URL = "https://cail.oss-cn-qingdao.aliyuncs.com/CAIL2018_ALL_DATA.zip"
 OFFICIAL_REPOSITORY = "https://github.com/china-ai-law-challenge/CAIL2018"
 OFFICIAL_REVISION = "599781ffcbfb33237580c6766afe3af9e1ff7229"
@@ -165,7 +165,7 @@ class CachedCalls:
             if cached.get("signature") != signature:
                 raise RuntimeError(f"checkpoint signature mismatch: {path}")
             return cached["parsed"], cached["receipt"]
-        api_key = os.getenv("ARK_API_KEY") if provider == "ark" else (os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY"))
+        api_key = os.getenv("OPENAI_API_KEY") if provider == "ark" else (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"))
         client = OpenAI(api_key=api_key, base_url=endpoint, timeout=self.args.timeout, max_retries=3)
         recorder = ChatRecorder(client, provider, endpoint)
         response = recorder.create(
@@ -537,8 +537,8 @@ def main() -> int:
     parser.add_argument("--extraction-batch", type=int, default=10)
     parser.add_argument("--advice-per-charge", type=int, default=4)
     args = parser.parse_args()
-    if not os.getenv("ARK_API_KEY") or not (os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")):
-        raise RuntimeError("ARK_API_KEY and MOONSHOT_API_KEY/KIMI_API_KEY are required")
+    if not os.getenv("OPENAI_API_KEY") or not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")):
+        raise RuntimeError("OPENAI_API_KEY and OPENAI_API_KEY/OPENAI_API_KEY are required")
     archive, sample_path, rows, member_meta = load_or_build_sample(args)
     training = [row for row in rows if row["split"] == "train"]
     heldout = [row for row in rows if row["split"] == "heldout"]

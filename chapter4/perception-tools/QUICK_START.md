@@ -8,7 +8,7 @@ All tools work immediately with **no API keys** needed.
 
 ```bash
 cd projects/week4/perception-tools
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 ```
 
 ## Run Tests

@@ -14,8 +14,8 @@ import time
 from typing import Any, Dict, List, Tuple
 
 _PROVIDERS = {
-    "openrouter": ("OPENROUTER_API_KEY", "https://openrouter.ai/api/v1"),
-    "ark": ("ARK_API_KEY", "https://ark.cn-beijing.volces.com/api/v3"),
+    "openrouter": ("OPENAI_API_KEY", "https://api.openai.com/v1"),
+    "ark": ("OPENAI_API_KEY", "https://api.openai.com/v1"),
     "openai": ("OPENAI_API_KEY", None),
 }
 

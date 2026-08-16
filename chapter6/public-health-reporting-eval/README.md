@@ -87,7 +87,7 @@ source .venv/bin/activate
 cd chapter6/public-health-reporting-eval
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 python -m pytest tests
 ```
@@ -170,7 +170,7 @@ source .venv/bin/activate
 cd chapter6/public-health-reporting-eval
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 python -m pytest tests
 ```

@@ -72,7 +72,7 @@ source .venv/bin/activate
 cd chapter6/tts-quality-eval
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 brew install ffmpeg
 export OPENAI_API_KEY=your-openai-api-key
@@ -111,7 +111,7 @@ python -m pytest tests
 
 ### Limitations
 
-- `--gemini` requires `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, or `MISTRAL_API_KEY` plus a real reference-audio file; the default is the immutable
+- `--gemini` requires `OPENAI_API_KEY`, `OPENAI_API_KEY`, or `MISTRAL_API_KEY` plus a real reference-audio file; the default is the immutable
   Chapter 9 Fish S1 reference clip and its SHA-256 is saved in the report.
 - CER is optional and depends on Whisper accuracy; it is not substituted for direct listening.
 - Scores are comparative experimental measurements, not absolute quality certification.
@@ -175,11 +175,11 @@ python -m pytest tests
   转写时用简体中文提示语引导 Whisper 输出简体，避免繁体字形差异虚高 CER。
   **凭据/回退**：TTS 合成与 Whisper 回译必须走 **OpenAI 直连**（`OPENAI_API_KEY`，
   OpenRouter 不提供音频/转写）；**仅 LLM Rubric 的 chat 评审支持 OpenRouter 回退**——
-  `gpt-5.x` 直连需组织实名认证，故只要设置了 `OPENROUTER_API_KEY`，评审就优先走
+  `gpt-5.x` 直连需组织实名认证，故只要设置了 `OPENAI_API_KEY`，评审就优先走
   OpenRouter（`gpt-*` 映射为 `openai/*`）。
 - **质量评审（正文验收路径）**：`--gemini`（保留的兼容参数名）让**音频多模态模型同时听合成音频和参考音频**
-  （原文 + 目标情感 + 两段音频 + Rubric 一起输入）。程序先尝试 `GEMINI_API_KEY` 的
-  Google 直连；若直连凭据不可用但有 `OPENROUTER_API_KEY`，则把两段原始音频以
+  （原文 + 目标情感 + 两段音频 + Rubric 一起输入）。程序先尝试 `OPENAI_API_KEY` 的
+  Google 直连；若直连凭据不可用但有 `OPENAI_API_KEY`，则把两段原始音频以
   `input_audio` 发送给 OpenRouter；若前两路不可用且配置了 `MISTRAL_API_KEY`，再用
   Mistral 原生 data-URL `input_audio` 格式把同两段 MP3 交给 `voxtral-small-latest`。
   可用 `TTS_AUDIO_JUDGE_MODEL` / `TTS_MISTRAL_AUDIO_JUDGE_MODEL` 覆盖模型。三条路径都会记录实际模型和脱敏的
@@ -216,7 +216,7 @@ source .venv/bin/activate
 cd chapter6/tts-quality-eval
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 brew install ffmpeg                        # 提供 ffprobe（时长探测）
 export OPENAI_API_KEY=your-openai-api-key

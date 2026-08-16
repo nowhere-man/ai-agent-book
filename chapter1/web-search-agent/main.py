@@ -156,10 +156,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help=f"使用的模型名称（默认 {Config.DEFAULT_MODEL}）")
     parser.add_argument("--max-steps", type=int, default=Config.MAX_SEARCH_ITERATIONS,
                         help=f"最大 ReAct 迭代次数（默认 {Config.MAX_SEARCH_ITERATIONS}）")
-    parser.add_argument("--base-url", default=Config.KIMI_BASE_URL,
-                        help=f"API 基础 URL（默认 {Config.KIMI_BASE_URL}）")
+    parser.add_argument("--base-url", default=Config.OPENAI_BASE_URL,
+                        help=f"API 基础 URL（默认 {Config.OPENAI_BASE_URL}）")
     parser.add_argument("--api-key", default=None,
-                        help="Kimi API Key（默认从 MOONSHOT_API_KEY / KIMI_API_KEY 环境变量读取）")
+                        help="Kimi API Key（默认从 OPENAI_API_KEY / OPENAI_API_KEY 环境变量读取）")
     parser.add_argument("--output", "-o", default=None,
                         help="将问题、ReAct 轨迹和答案保存到指定 JSON 文件")
     parser.add_argument("--quiet", action="store_true",
@@ -193,9 +193,9 @@ def main(argv: Optional[list] = None):
 
     # 在线模式：需要 API Key
     api_key = Config.get_api_key(args.api_key)
-    if not api_key and not os.getenv("OPENROUTER_API_KEY"):
+    if not api_key and not os.getenv("OPENAI_API_KEY"):
         Config.validate()
-        print("提示：也可设置 OPENROUTER_API_KEY 作为通用兜底。")
+        print("提示：也可设置 OPENAI_API_KEY 作为通用兜底。")
         sys.exit(1)
 
     # 创建 Agent

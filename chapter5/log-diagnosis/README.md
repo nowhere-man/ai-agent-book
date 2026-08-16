@@ -108,9 +108,9 @@ source .venv/bin/activate
 cd chapter5/log-diagnosis
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env      # OPENAI_API_KEY (default gpt-5.6-luna); or OPENROUTER_API_KEY
+cp env.example .env      # OPENAI_API_KEY (default gpt-5.6-luna); or OPENAI_API_KEY
 python demo.py           # full pipeline (two real LLM calls)
 ```
 
@@ -176,7 +176,7 @@ Generated cases must use one of:
 - **Provider**: official `openai` SDK + `OPENAI_BASE_URL` + provider key/model, e.g.:
 
   ```bash
-  export OPENAI_BASE_URL=https://api.moonshot.cn/v1
+  export OPENAI_BASE_URL=https://api.openai.com/v1
   export OPENAI_API_KEY=your-openai-api-key
   export OPENAI_MODEL=kimi-k3
   python demo.py
@@ -263,9 +263,9 @@ source .venv/bin/activate
 cd chapter5/log-diagnosis
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env      # 填入 OPENAI_API_KEY（模型默认 gpt-5.6-luna）；未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter
+cp env.example .env      # 填入 OPENAI_API_KEY（模型默认 gpt-5.6-luna）；未配置时设 OPENAI_API_KEY 自动改走 OpenRouter
 python demo.py           # 完整流程（两次真实 LLM 调用）
 ```
 
@@ -330,7 +330,7 @@ Agent 生成的测试用例须使用以下断言之一，框架可自动求值�
 - **换模型**：设置 `OPENAI_MODEL`（或 `python demo.py --model <名称>`）。`diagnoser.py` 默认 `gpt-5.6-luna`，均走 JSON 模式；更强模型对复杂/隐性问题更稳。
 - **换供应商**：本项目用官方 `openai` SDK，只需再设 `OPENAI_BASE_URL` 指向兼容 OpenAI 接口的服务（如 Moonshot / 火山方舟 / 本地 vLLM），配合该供应商的 `OPENAI_API_KEY` 与 `OPENAI_MODEL` 即可，无需改代码。例如：
   ```bash
-  export OPENAI_BASE_URL=https://api.moonshot.cn/v1
+  export OPENAI_BASE_URL=https://api.openai.com/v1
   export OPENAI_API_KEY=your-openai-api-key          # 该供应商的 Key
   export OPENAI_MODEL=kimi-k3
   python demo.py

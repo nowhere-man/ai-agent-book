@@ -41,13 +41,13 @@ echo "✅ Environment activated"
 
 # Install requirements
 echo "📥 Installing dependencies from requirements.txt..."
-pip install -r requirements.txt
+pip install -r ../../../../../requirements.txt
 
 if [ $? -ne 0 ]; then
     echo "❌ Failed to install dependencies"
     echo "You can try installing them manually:"
     echo "conda activate $ENV_NAME"
-    echo "pip install -r requirements.txt"
+    echo "pip install -r ../../../../../requirements.txt"
     exit 1
 fi
 
@@ -77,4 +77,4 @@ echo "1. Activate the environment: conda activate $ENV_NAME"
 echo "2. Navigate to the imo directory: cd AWorld/examples/imo"
 echo "3. Run your script: python run.py --q imo6"
 echo ""
-echo "To deactivate the environment: conda deactivate" 
+echo "To deactivate the environment: conda deactivate"

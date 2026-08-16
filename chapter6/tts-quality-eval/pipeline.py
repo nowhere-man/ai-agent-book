@@ -48,10 +48,10 @@ def get_client() -> OpenAI:
 
 # ---------------------------------------------------------------------------
 # LLM Rubric 评审客户端：支持 OpenRouter 回退。
-# gpt-5.x 直连 OpenAI 需组织实名认证，只要有 OPENROUTER_API_KEY 就优先走 OpenRouter。
+# gpt-5.x 直连 OpenAI 需组织实名认证，只要有 OPENAI_API_KEY 就优先走 OpenRouter。
 # 注意：仅 chat 评审可回退；TTS / Whisper 仍需 OpenAI 直连（见 get_client）。
 # ---------------------------------------------------------------------------
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 _judge_client: Optional[OpenAI] = None
 _judge_client_kind: str = ""
 
@@ -71,12 +71,12 @@ def _to_openrouter_model(model: str) -> str:
 def get_judge_client_and_model(model: str):
     """构造 LLM 评审用的 client 并返回 (client, 实际模型名)。
 
-    回退：gpt-5.x 且有 OPENROUTER_API_KEY -> 优先 OpenRouter；否则有 OPENAI_API_KEY ->
-    直连；否则有 OPENROUTER_API_KEY -> OpenRouter（模型名映射）；皆无 -> 清晰报错。
+    回退：gpt-5.x 且有 OPENAI_API_KEY -> 优先 OpenRouter；否则有 OPENAI_API_KEY ->
+    直连；否则有 OPENAI_API_KEY -> OpenRouter（模型名映射）；皆无 -> 清晰报错。
     """
     global _judge_client, _judge_client_kind
     primary = os.environ.get("OPENAI_API_KEY", "").strip()
-    orkey = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    orkey = os.environ.get("OPENAI_API_KEY", "").strip()
     prefer_or = bool(orkey) and model.startswith("gpt-5")
 
     if not prefer_or and primary:
@@ -86,7 +86,7 @@ def get_judge_client_and_model(model: str):
         return _judge_client, model
     if orkey:
         if _judge_client_kind != "openrouter":
-            _judge_client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=orkey,
+            _judge_client = OpenAI(base_url=OPENAI_BASE_URL, api_key=orkey,
                                    max_retries=5, timeout=60.0)
             _judge_client_kind = "openrouter"
         return _judge_client, _to_openrouter_model(model)
@@ -96,7 +96,7 @@ def get_judge_client_and_model(model: str):
             _judge_client_kind = "openai"
         return _judge_client, model
     raise RuntimeError(
-        "缺少 OPENAI_API_KEY / OPENROUTER_API_KEY，无法运行 LLM Rubric 评审。"
+        "缺少 OPENAI_API_KEY / OPENAI_API_KEY，无法运行 LLM Rubric 评审。"
     )
 
 
@@ -594,9 +594,9 @@ def _judge_openrouter_audio(
     import urllib.error
     import urllib.request
 
-    key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not key:
-        raise RuntimeError("缺少 OPENROUTER_API_KEY，无法回退多模态音频评审。")
+        raise RuntimeError("缺少 OPENAI_API_KEY，无法回退多模态音频评审。")
     model = os.environ.get("TTS_AUDIO_JUDGE_MODEL", "google/gemini-3.5-flash").strip()
     content = [
         {"type": "text", "text": prompt},
@@ -616,7 +616,7 @@ def _judge_openrouter_audio(
         "messages": [{"role": "user", "content": content}],
     }
     req = urllib.request.Request(
-        f"{OPENROUTER_BASE_URL}/chat/completions",
+        f"{OPENAI_BASE_URL}/chat/completions",
         data=json.dumps(body).encode(),
         headers={
             "Authorization": f"Bearer {key}",
@@ -686,12 +686,12 @@ def judge_gemini_audio(
     """
     import urllib.error
     import urllib.request
-    key = os.environ.get("GEMINI_API_KEY", "").strip()
-    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    key = os.environ.get("OPENAI_API_KEY", "").strip()
+    openrouter_key = os.environ.get("OPENAI_API_KEY", "").strip()
     mistral_key = os.environ.get("MISTRAL_API_KEY", "").strip()
     if not key and not openrouter_key and not mistral_key:
         raise RuntimeError(
-            "缺少 GEMINI_API_KEY / OPENROUTER_API_KEY / MISTRAL_API_KEY，"
+            "缺少 OPENAI_API_KEY / OPENAI_API_KEY / MISTRAL_API_KEY，"
             "无法使用直接音频评审。"
         )
     with open(audio_path, "rb") as f:

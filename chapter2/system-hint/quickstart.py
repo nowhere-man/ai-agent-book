@@ -15,20 +15,20 @@ def main():
     """Quick start demonstration"""
 
     # Check for API key. 接受哪些环境变量由 agentbook 的 provider 注册表定义；
-    # Kimi 官方 key 缺失时用 OPENROUTER_API_KEY 兜底。
-    api_key = PROVIDERS["kimi"].api_key() or os.getenv("OPENROUTER_API_KEY")
+    # Kimi 官方 key 缺失时用 OPENAI_API_KEY 兜底。
+    api_key = PROVIDERS["kimi"].api_key() or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Error: Please set KIMI_API_KEY environment variable")
+        print("❌ Error: Please set OPENAI_API_KEY environment variable")
         print("\nSetup instructions:")
         print("  1. Copy env.example to .env")
         print("  2. Add your Kimi API key to .env")
-        print("  3. Run: export KIMI_API_KEY='your-api-key-here'")
+        print("  3. Run: export OPENAI_API_KEY='your-api-key-here'")
         return
-    
+
     print("\n" + "="*60)
     print("  🚀 System-Hint Agent Quick Start")
     print("="*60)
-    
+
     # Sample task for analyzing projects
     task = """Analyze and summarize the AI Agent projects in week1 and week2 directories:
 
@@ -38,18 +38,18 @@ def main():
    - Read the README.md or main.py from the 'context' project
    - Identify the key concepts implemented
 3. For week2 directory:
-   - List all project folders  
+   - List all project folders
    - Read the README.md from one project
    - Understand the advanced features
 4. Create a brief summary file 'quick_summary.txt' with your findings
 
 Use the TODO list to organize and track your analysis steps."""
-    
+
     print("\n📋 Task:")
     print("-"*60)
     print(task)
     print("-"*60)
-    
+
     # Create agent with all features enabled
     print("\n🔧 Initializing agent with full system hints...")
     config = SystemHintConfig(
@@ -59,32 +59,32 @@ Use the TODO list to organize and track your analysis steps."""
         enable_detailed_errors=True,
         enable_system_state=True
     )
-    
+
     agent = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config,
         verbose=False  # Set to True to see full API interactions
     )
-    
+
     # Set working directory to parent to access week1/week2
     agent.current_directory = str(Path(__file__).parent.parent)
     print(f"📁 Working directory: {agent.current_directory}")
-    
+
     print("\n🚀 Executing task (this may take a moment)...")
     print("-"*60)
-    
+
     # Execute the task
     result = agent.execute_task(task, max_iterations=25)
-    
+
     # Display results
     print("\n" + "="*60)
     print("  📊 Results")
     print("="*60)
-    
+
     if result.get('success'):
         print("\n✅ Task completed successfully!")
-        
+
         if result.get('final_answer'):
             print("\n📝 Summary:")
             print("-"*40)
@@ -98,28 +98,28 @@ Use the TODO list to organize and track your analysis steps."""
         print("\n⚠️ Task did not complete fully")
         if result.get('error'):
             print(f"Error: {result['error']}")
-    
+
     # Statistics
     print("\n📈 Execution Statistics:")
     print(f"  • Iterations: {result.get('iterations', 0)}")
     print(f"  • Tool calls: {len(result.get('tool_calls', []))}")
-    
+
     # Tool usage breakdown
     if result.get('tool_calls'):
         tool_counts = {}
         for call in result['tool_calls']:
             tool_counts[call.tool_name] = tool_counts.get(call.tool_name, 0) + 1
-        
+
         print("\n🔧 Tools Used:")
         for tool, count in sorted(tool_counts.items(), key=lambda x: x[1], reverse=True):
             print(f"  • {tool}: {count} call{'s' if count > 1 else ''}")
-    
+
     # TODO list summary
     if result.get('todo_list'):
         completed = sum(1 for item in result['todo_list'] if item['status'] == 'completed')
         total = len(result['todo_list'])
         print(f"\n📋 TODO Progress: {completed}/{total} tasks completed")
-        
+
         # Show first few TODO items
         print("\nTODO Items:")
         for item in result['todo_list'][:5]:
@@ -134,10 +134,10 @@ Use the TODO list to organize and track your analysis steps."""
             if len(content) > 60:
                 content = content[:57] + "..."
             print(f"  {status_symbol} [{item['id']}] {content}")
-        
+
         if total > 5:
             print(f"  ... and {total - 5} more items")
-    
+
     print("\n" + "="*60)
     print("  ✨ Quick Start Complete!")
     print("="*60)

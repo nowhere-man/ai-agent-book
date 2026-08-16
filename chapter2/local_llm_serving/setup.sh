@@ -47,7 +47,7 @@ pip install --upgrade pip
 
 # Install requirements
 echo -e "\n5. Installing requirements..."
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 
 # Check PyTorch CUDA
 echo -e "\n6. Checking PyTorch CUDA support..."

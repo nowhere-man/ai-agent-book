@@ -27,31 +27,14 @@ TEXT_MODEL = os.environ.get("TEXT_MODEL", "gpt-5.6-luna")
 # 视觉审查用的模型（Reviewer / 单 Agent 的看图部分），必须支持图像
 VISION_MODEL = os.environ.get("VISION_MODEL", "gpt-5.6-luna")
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-PROVIDER = os.environ.get("PPT_PROVIDER", "auto")
+PROVIDER = "openai"
 
 
 def configure_provider(provider: str) -> None:
     global PROVIDER
+    if provider != "openai":
+        raise ValueError("paper-to-ppt only supports the OpenAI provider")
     PROVIDER = provider
-
-
-def map_model_to_openrouter(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    return "openai/gpt-5.6-luna"
 
 # 发送给 Vision 前把截图缩放到该宽度，兼顾“看得清文字溢出”与“控制 token 成本”
 VISION_IMAGE_WIDTH = 1280
@@ -125,40 +108,18 @@ class TokenMeter:
 
 
 def _client() -> OpenAI:
-    # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
-    global TEXT_MODEL, VISION_MODEL
-    if PROVIDER == "ark":
-        api_key = os.environ.get("ARK_API_KEY")
-        base_url = "https://ark.cn-beijing.volces.com/api/v3"
-    elif PROVIDER == "moonshot":
-        api_key = os.environ.get("MOONSHOT_API_KEY")
-        base_url = "https://api.moonshot.cn/v1"
-    elif PROVIDER == "openrouter":
-        api_key = os.environ.get("OPENROUTER_API_KEY")
-        base_url = OPENROUTER_BASE_URL
-    else:
-        api_key = os.environ.get("OPENAI_API_KEY")
-        base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
-    prefer_or = PROVIDER == "auto" and bool(orkey) and (
-        (TEXT_MODEL or "").lower().startswith("gpt-5") or (VISION_MODEL or "").lower().startswith("gpt-5")
-    )
-    if PROVIDER == "openrouter" or prefer_or or (PROVIDER == "auto" and not api_key and orkey):
-        api_key, base_url = orkey, OPENROUTER_BASE_URL
-        # 走 OpenRouter 时把模型名映射为其 id（幂等：已带前缀的 id 原样返回）。
-        TEXT_MODEL = map_model_to_openrouter(TEXT_MODEL)
-        VISION_MODEL = map_model_to_openrouter(VISION_MODEL)
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise SystemExit(
-            "❌ 未检测到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底）。请先 `cp env.example .env` 并填入有效的 "
-            "OpenAI API Key（或 `export OPENAI_API_KEY=your-openai-api-key` / `export OPENROUTER_API_KEY=...`）后再运行。"
+            "❌ 未检测到 OPENAI_API_KEY。请先 `cp env.example .env` 并填入有效的 "
+            "OpenAI API Key（或 `export OPENAI_API_KEY=your-openai-api-key`）后再运行。"
         )
     # timeout + max_retries：单次网络抖动/SSL 中断会自动重试，而不是让整条流水线崩溃。
     return OpenAI(
         api_key=api_key,
-        base_url=base_url,
+        base_url="https://api.openai.com/v1",
         # Large single-agent requests carry the extracted paper plus several
-        # full slide revisions (and later image history). Ark can legitimately
+        # full slide revisions (and later image history). OpenAI can legitimately
         # take more than one minute to produce the complete Markdown deck.
         # Keep bounded retries, but give each real request enough time instead
         # of abandoning an otherwise healthy formal campaign mid-arm.

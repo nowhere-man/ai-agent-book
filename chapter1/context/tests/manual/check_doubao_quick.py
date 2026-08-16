@@ -18,9 +18,9 @@ print("="*60)
 print("QUICK TEST - Doubao Default Provider")
 print("="*60)
 
-ark_key = os.getenv("ARK_API_KEY")
+ark_key = os.getenv("OPENAI_API_KEY")
 if not ark_key:
-    print("❌ ARK_API_KEY not set")
+    print("❌ OPENAI_API_KEY not set")
     sys.exit(1)
 
 from agent import ContextAwareAgent, ContextMode
@@ -37,9 +37,9 @@ print("Processing...")
 try:
     result = agent.execute_task(task, max_iterations=2)
     elapsed = time.time() - start
-    
+
     print(f"\n✅ Completed in {elapsed:.2f} seconds")
-    
+
     if result.get('success'):
         print(f"Success: True")
         if result.get('final_answer'):
@@ -48,10 +48,10 @@ try:
         print(f"Success: False")
         if result.get('error'):
             print(f"Error: {result['error']}")
-    
+
     print(f"Iterations: {result.get('iterations', 0)}")
     print(f"Tool calls: {len(result['trajectory'].tool_calls)}")
-    
+
 except KeyboardInterrupt:
     print("\n⚠️ Interrupted")
 except Exception as e:

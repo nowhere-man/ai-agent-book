@@ -28,7 +28,7 @@ python -m unittest -v test_state_predicates.py
 `run_experiment_8_4.py` 启动一个仅监听 `127.0.0.1` 的可重置消息站。页面通过真实 HTTP/JavaScript 写入服务端状态；真实模型在四个观察—决策—动作回合中选择控件，Playwright Chromium 执行动作。所有收件人和消息均为虚构数据，运行不会发送电子邮件或产生站外副作用。
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 playwright install chromium
 python run_experiment_8_4.py \
   --provider ark \
@@ -88,7 +88,7 @@ source .venv/bin/activate
 cd chapter8/browser-use-rpa
 
 # 迁移期间仍支持单项目兼容路径（playwright-stealth 等历史可选依赖）：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 playwright install chromium
 export OPENAI_API_KEY=your_api_key_here

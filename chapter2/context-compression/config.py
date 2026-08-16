@@ -12,57 +12,57 @@ load_dotenv()
 
 class Config:
     """Configuration settings for the context compression experiment"""
-    
+
     # API Configuration
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "kimi").lower()
     LLM_PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(
         LLM_PROVIDER, LLM_PROVIDER
     )
-    DASHSCOPE_API_KEY: str = os.getenv("DASHSCOPE_API_KEY", "")
-    DASHSCOPE_BASE_URL: str = os.getenv(
-        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL: str = os.getenv(
+        "OPENAI_BASE_URL", "https://api.openai.com/v1"
     )
-    MOONSHOT_API_KEY: str = os.getenv("MOONSHOT_API_KEY", "")
-    MOONSHOT_BASE_URL: str = "https://api.moonshot.cn/v1"
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    MOONSHOT_BASE_URL: str = "https://api.openai.com/v1"
 
-    # Universal fallback: 当 MOONSHOT_API_KEY 缺失但设置了 OPENROUTER_API_KEY 时，
+    # Universal fallback: 当 OPENAI_API_KEY 缺失但设置了 OPENAI_API_KEY 时，
     # 自动改走 OpenRouter（kimi-* 模型名映射为 moonshotai/kimi-k2）。
-    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
-    
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+
     SERPER_API_KEY: str = os.getenv("SERPER_API_KEY", "")
     SERPER_BASE_URL: str = "https://google.serper.dev"
-    
+
     # Model Configuration
     MODEL_NAME: str = os.getenv(
         "MODEL_NAME", "qwen3.7-plus" if LLM_PROVIDER == "dashscope" else "kimi-k3"
     )
     MODEL_TEMPERATURE: float = float(os.getenv("MODEL_TEMPERATURE", "0.3"))
     MODEL_MAX_TOKENS: int = int(os.getenv("MODEL_MAX_TOKENS", "8192"))
-    
+
     # Agent Configuration
     MAX_ITERATIONS: int = int(os.getenv("MAX_ITERATIONS", "50"))
     ENABLE_VERBOSE: bool = os.getenv("ENABLE_VERBOSE", "false").lower() == "true"
-    
+
     # Compression Configuration
     MAX_WEBPAGE_LENGTH: int = int(os.getenv("MAX_WEBPAGE_LENGTH", "50000"))
     SUMMARY_MAX_TOKENS: int = int(os.getenv("SUMMARY_MAX_TOKENS", "500"))
-    
+
     # Context Window Configuration
     CONTEXT_WINDOW_SIZE: int = 128000  # 128K context budget for the compression demo (K3 supports up to 1M)
-    
+
     # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT: str = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-    
+
     # File paths
     RESULTS_DIR: str = "results"
     CACHE_DIR: str = "cache"
-    
+
     @classmethod
     def validate(cls) -> bool:
         """
         Validate required configuration
-        
+
         Returns:
             True if configuration is valid
         """
@@ -71,14 +71,14 @@ class Config:
         except ValueError as exc:
             print(f"ERROR: {exc}")
             return False
-        
+
         if not cls.SERPER_API_KEY:
             print("WARNING: SERPER_API_KEY is not set")
             print("Web search functionality will be limited")
             print("Get a free API key at: https://serper.dev")
-        
+
         return True
-    
+
     @classmethod
     def resolve_llm(cls):
         """Return ``(api_key, base_url, model)`` for the configured provider.
@@ -100,7 +100,7 @@ class Config:
         """Create necessary directories if they don't exist"""
         os.makedirs(cls.RESULTS_DIR, exist_ok=True)
         os.makedirs(cls.CACHE_DIR, exist_ok=True)
-    
+
     @classmethod
     def print_config(cls):
         """Print current configuration (hiding sensitive data)"""
@@ -115,7 +115,7 @@ class Config:
         print(f"Max Webpage Length: {cls.MAX_WEBPAGE_LENGTH:,} chars")
         print(f"Summary Max Tokens: {cls.SUMMARY_MAX_TOKENS}")
         print(f"Provider: {cls.LLM_PROVIDER}")
-        print(f"DashScope API Key Set: {'Yes' if cls.DASHSCOPE_API_KEY else 'No'}")
-        print(f"Kimi API Key Set: {'Yes' if cls.MOONSHOT_API_KEY else 'No'}")
+        print(f"DashScope API Key Set: {'Yes' if cls.OPENAI_API_KEY else 'No'}")
+        print(f"Kimi API Key Set: {'Yes' if cls.OPENAI_API_KEY else 'No'}")
         print(f"Serper API Key Set: {'Yes' if cls.SERPER_API_KEY else 'No'}")
         print("="*50 + "\n")

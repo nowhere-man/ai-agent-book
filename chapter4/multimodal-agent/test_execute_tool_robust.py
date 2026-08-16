@@ -24,7 +24,6 @@ def _make_agent():
     agent.tools = types.SimpleNamespace(
         analyze_image=fake_analyze,
         analyze_audio=fake_analyze,
-        analyze_pdf=fake_analyze,
     )
     return agent, calls
 
@@ -37,13 +36,6 @@ def _run(agent, name, arguments):
 def test_missing_query_returns_error_not_keyerror():
     agent, calls = _make_agent()
     result = _run(agent, "analyze_image", json.dumps({"image_path": "cat.png"}))
-    assert result.startswith("Error:")
-    assert calls == []
-
-
-def test_missing_path_returns_error_not_keyerror():
-    agent, calls = _make_agent()
-    result = _run(agent, "analyze_pdf", json.dumps({"query": "what is this?"}))
     assert result.startswith("Error:")
     assert calls == []
 

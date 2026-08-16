@@ -33,7 +33,7 @@ def _timeout_handler(signum, frame):
 
 
 def get_client():
-    return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return genai.Client(api_key=os.environ["OPENAI_API_KEY"])
 
 
 SCHEMA_SHORT = "Table 'objects': id TEXT, type_name TEXT, content JSONB, owner_id TEXT, org_id TEXT. Candidate content: name, email, status, position_id, salary_expectation. Position content: title, department, status, salary_min, salary_max."

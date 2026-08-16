@@ -165,18 +165,24 @@ def main() -> int:
     add_check(checks, "credential_scan", not findings, {"findings": findings})
 
     source_root = Path(__file__).resolve().parent
-    runtime_sources = ["config.py", "evidence.py", "main.py", "requirements.txt"]
+    repository_root = source_root.parents[1]
+    runtime_sources = [
+        source_root / "config.py",
+        source_root / "evidence.py",
+        source_root / "main.py",
+        repository_root / "requirements.txt",
+    ]
     write_json(
         run_dir / "source-snapshot.json",
         {
             "capture_scope": "post-run hashes of unchanged runtime files",
             "sources": [
                 {
-                    "path": relative,
-                    "bytes": (source_root / relative).stat().st_size,
-                    "sha256": sha256_file(source_root / relative),
+                    "path": str(path.relative_to(repository_root)),
+                    "bytes": path.stat().st_size,
+                    "sha256": sha256_file(path),
                 }
-                for relative in runtime_sources
+                for path in runtime_sources
             ],
         },
     )

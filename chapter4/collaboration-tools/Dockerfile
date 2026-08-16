@@ -38,13 +38,14 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
 # Set up working directory
 WORKDIR /app
 
-# Copy requirements and install Python packages
-COPY requirements.txt .
+# Build with the repository root as the Docker context.
+COPY pyproject.toml README.md requirements.txt ./
+COPY agentbook ./agentbook
 RUN python3 -m pip install --upgrade pip setuptools wheel && \
     python3 -m pip install -r requirements.txt
 
 # Copy application files
-COPY . .
+COPY chapter4/collaboration-tools/ .
 
 # Set environment variables
 ENV DISPLAY=:99

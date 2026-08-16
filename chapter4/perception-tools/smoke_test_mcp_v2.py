@@ -40,7 +40,7 @@ async def smoke_test() -> None:
 
         result = await client.call_tool(
             "file_reader",
-            arguments={"file_path": str(HERE / "requirements.txt"), "max_length": 2_000},
+            arguments={"file_path": str(HERE.parents[1] / "requirements.txt"), "max_length": 2_000},
         )
         if result.is_error:
             raise RuntimeError(f"tools/call failed: {result.content!r}")

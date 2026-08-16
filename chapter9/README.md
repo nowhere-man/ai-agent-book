@@ -42,10 +42,10 @@ requested model 与提供商实际返回的 model ID。
 cd chapter9/computer-use-open-model
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r ../requirements.txt
 python -m playwright install chromium
 
-export OPENROUTER_API_KEY='replace-with-your-key'
+export OPENAI_API_KEY='replace-with-your-key'
 python main.py --dry-run
 python main.py \
   --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \
@@ -144,7 +144,7 @@ uvx playwright --version | tee "$RECEIPT_DIR/playwright-version-before-install.t
 uv run browser-use install 2>&1 | tee "$RECEIPT_DIR/browser-install.txt"
 uvx playwright install --list | tee "$RECEIPT_DIR/playwright-browsers.txt"
 
-export OPENROUTER_API_KEY='replace-with-your-api-key'
+export OPENAI_API_KEY='replace-with-your-api-key'
 export BROWSER_USE_LOGGING_LEVEL=debug
 uv run python ../computer-use-open-model/main.py \
   --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \

@@ -59,7 +59,7 @@ class SimulatedVoiceSession:
         if requested == "auto":
             requested = (
                 "openai" if os.getenv("OPENAI_API_KEY")
-                else "openrouter-system" if os.getenv("OPENROUTER_API_KEY")
+                else "openrouter-system" if os.getenv("OPENAI_API_KEY")
                 else "gemini-system"
             )
         if requested not in {"openai", "openrouter-system", "gemini-system"}:
@@ -81,18 +81,18 @@ class SimulatedVoiceSession:
                 api_key=os.environ["OPENAI_API_KEY"], timeout=90, max_retries=1
             )
         else:
-            if requested == "gemini-system" and not os.getenv("GEMINI_API_KEY"):
-                raise RuntimeError("gemini-system simulator speech requires GEMINI_API_KEY")
+            if requested == "gemini-system" and not os.getenv("OPENAI_API_KEY"):
+                raise RuntimeError("gemini-system simulator speech requires OPENAI_API_KEY")
             if requested == "openrouter-system":
                 from openai import OpenAI
 
-                if not os.getenv("OPENROUTER_API_KEY"):
+                if not os.getenv("OPENAI_API_KEY"):
                     raise RuntimeError(
-                        "openrouter-system simulator speech requires OPENROUTER_API_KEY"
+                        "openrouter-system simulator speech requires OPENAI_API_KEY"
                     )
                 self.client = OpenAI(
-                    api_key=os.environ["OPENROUTER_API_KEY"],
-                    base_url="https://openrouter.ai/api/v1",
+                    api_key=os.environ["OPENAI_API_KEY"],
+                    base_url="https://api.openai.com/v1",
                     timeout=90,
                     max_retries=1,
                 )
@@ -241,7 +241,7 @@ class SimulatedVoiceSession:
                 },
                 ensure_ascii=False,
             ).encode("utf-8")
-            key = os.environ["GEMINI_API_KEY"]
+            key = os.environ["OPENAI_API_KEY"]
             request = urllib.request.Request(
                 f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
                 data=payload,

@@ -62,8 +62,8 @@ class ResolvedBackend:
             "OPENAI_API_KEY": self.api_key,
             "OPENAI_BASE_URL": self.base_url or "https://api.openai.com/v1",
             "OPENAI_MODEL": self.model,
-            "OPENROUTER_API_KEY": "",
-            "OPENROUTER_MODEL": "",
+            "OPENAI_API_KEY": "",
+            "OPENAI_MODEL": "",
             "AGENT_PROVIDER": "openai",
         }
 
@@ -80,14 +80,14 @@ def resolve_client() -> ResolvedBackend:
     candidates: list[tuple[str, str | None, str | None, str | None]] = [
         (
             "moonshot",
-            os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY"),
-            os.getenv("MOONSHOT_BASE_URL") or os.getenv("KIMI_BASE_URL") or "https://api.moonshot.cn/v1",
+            os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"),
+            os.getenv("MOONSHOT_BASE_URL") or os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1",
             os.getenv("AGENT_CREATOR_MODEL") or os.getenv("KIMI_MODEL") or "kimi-k3",
         ),
         (
             "ark",
-            os.getenv("ARK_API_KEY"),
-            os.getenv("ARK_BASE_URL") or "https://ark.cn-beijing.volces.com/api/v3",
+            os.getenv("OPENAI_API_KEY"),
+            os.getenv("ARK_BASE_URL") or "https://api.openai.com/v1",
             os.getenv("AGENT_CREATOR_MODEL") or os.getenv("ARK_MODEL") or os.getenv("ARK_ENDPOINT"),
         ),
         (
@@ -98,9 +98,9 @@ def resolve_client() -> ResolvedBackend:
         ),
         (
             "openrouter",
-            os.getenv("OPENROUTER_API_KEY"),
-            "https://openrouter.ai/api/v1",
-            os.getenv("AGENT_CREATOR_MODEL") or os.getenv("OPENROUTER_MODEL") or "openai/gpt-5.6-luna",
+            os.getenv("OPENAI_API_KEY"),
+            "https://api.openai.com/v1",
+            os.getenv("AGENT_CREATOR_MODEL") or os.getenv("OPENAI_MODEL") or "openai/gpt-5.6-luna",
         ),
     ]
     for provider, api_key, base_url, model in candidates:

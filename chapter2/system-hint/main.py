@@ -39,14 +39,14 @@ def print_result(result: dict):
         print("\n❌ Task failed!")
         if result.get('error'):
             print(f"Error: {result['error']}")
-    
+
     print(f"\n📊 Statistics:")
     print(f"  - Iterations: {result.get('iterations', 0)}")
     print(f"  - Tool calls: {len(result.get('tool_calls', []))}")
-    
+
     if result.get('trajectory_file'):
         print(f"\n💾 Trajectory saved to: {result['trajectory_file']}")
-    
+
     if result.get('todo_list'):
         print(f"\n📋 Final TODO List:")
         for item in result['todo_list']:
@@ -57,7 +57,7 @@ def print_result(result: dict):
                 'cancelled': '❌'
             }.get(item['status'], '❓')
             print(f"  [{item['id']}] {status_emoji} {item['content']} ({item['status']})")
-    
+
     # Show tool call summary
     if result.get('tool_calls'):
         print(f"\n🔧 Tool Call Summary:")
@@ -75,7 +75,7 @@ def print_result(result: dict):
                 tool_summary[tool_name]['failed'] += 1
             else:
                 tool_summary[tool_name]['success'] += 1
-        
+
         for tool_name, stats in tool_summary.items():
             print(f"  - {tool_name}: {stats['count']} calls "
                   f"({stats['success']} success, {stats['failed']} failed)")
@@ -93,10 +93,10 @@ def get_sample_task() -> str:
 def execute_single_task(task: str, config: SystemHintConfig = None, verbose: bool = False,
                         provider: str = "kimi", model: str = None):
     """Execute a single task with the agent"""
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Error: Please set KIMI_API_KEY environment variable")
-        print("   export KIMI_API_KEY='your-api-key-here'")
+        print("❌ Error: Please set OPENAI_API_KEY environment variable")
+        print("   export OPENAI_API_KEY='your-api-key-here'")
         print("   （如果只想离线查看状态栏效果，请运行 python main.py --mode preview）")
         return None
 
@@ -116,12 +116,12 @@ def execute_single_task(task: str, config: SystemHintConfig = None, verbose: boo
         config=config,
         verbose=verbose
     )
-    
+
     # For project analysis tasks, navigate to parent directory
     if "week1" in task.lower() and "week2" in task.lower():
         agent.current_directory = str(Path(__file__).parent.parent)
         print(f"📁 Working directory set to: {agent.current_directory}")
-    
+
     print("\n🚀 Executing task...")
     result = agent.execute_task(task, max_iterations=30)
     return result
@@ -130,13 +130,13 @@ def execute_single_task(task: str, config: SystemHintConfig = None, verbose: boo
 def interactive_mode():
     """Run the agent in interactive mode"""
     print_section("Interactive Mode - System-Hint Agent")
-    
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Error: Please set KIMI_API_KEY environment variable")
-        print("   export KIMI_API_KEY='your-api-key-here'")
+        print("❌ Error: Please set OPENAI_API_KEY environment variable")
+        print("   export OPENAI_API_KEY='your-api-key-here'")
         return
-    
+
     # Initialize agent with full features
     config = SystemHintConfig(
         enable_timestamps=True,
@@ -145,14 +145,14 @@ def interactive_mode():
         enable_detailed_errors=True,
         enable_system_state=True
     )
-    
+
     agent = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config,
         verbose=False
     )
-    
+
     print("\n✅ Agent initialized with full system hints")
     print("\nAvailable commands:")
     print("  'sample' - Run the sample project analysis task")
@@ -160,38 +160,38 @@ def interactive_mode():
     print("  'config' - Show current configuration")
     print("  'quit'   - Exit interactive mode")
     print("\nOr enter any task for the agent to complete.")
-    
+
     while True:
         try:
             print("\n" + "-"*60)
             user_input = input("Task > ").strip()
-            
+
             if not user_input:
                 continue
-            
+
             if user_input.lower() == 'quit':
                 print("👋 Goodbye!")
                 break
-            
+
             elif user_input.lower() == 'sample':
                 task = get_sample_task()
                 print("\n📋 Running sample task:")
                 print(task)
-                
+
                 # Navigate to parent directory for project analysis
                 original_dir = agent.current_directory
                 agent.current_directory = str(Path(__file__).parent.parent)
-                
+
                 result = agent.execute_task(task, max_iterations=100)
                 print_result(result)
-                
+
                 # Restore directory
                 agent.current_directory = original_dir
-                
+
             elif user_input.lower() == 'reset':
                 agent.reset()
                 print("✅ Agent state reset")
-                
+
             elif user_input.lower() == 'config':
                 print("\n📋 Current Configuration:")
                 print(f"  - Timestamps: {'✅' if config.enable_timestamps else '❌'}")
@@ -200,12 +200,12 @@ def interactive_mode():
                 print(f"  - Detailed Errors: {'✅' if config.enable_detailed_errors else '❌'}")
                 print(f"  - System State: {'✅' if config.enable_system_state else '❌'}")
                 print(f"  - Current Directory: {agent.current_directory}")
-                
+
             else:
                 # Execute user task
                 result = agent.execute_task(user_input, max_iterations=25)
                 print_result(result)
-                
+
         except KeyboardInterrupt:
             print("\n\n⚠️ Interrupted. Type 'quit' to exit.")
         except Exception as e:
@@ -216,12 +216,12 @@ def interactive_mode():
 def demo_basic_features():
     """Demonstrate basic system hint features"""
     print_section("Demo: Basic System Hint Features")
-    
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Please set KIMI_API_KEY environment variable")
+        print("❌ Please set OPENAI_API_KEY environment variable")
         return
-    
+
     config = SystemHintConfig(
         enable_timestamps=True,
         enable_tool_counter=True,
@@ -229,22 +229,22 @@ def demo_basic_features():
         enable_detailed_errors=True,
         enable_system_state=True
     )
-    
+
     agent = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config,
         verbose=False
     )
-    
+
     task = """Please complete the following tasks:
     1. Create a test directory called 'demo_output'
     2. Write a Python script that counts files in the current directory
     3. Execute the script and save the output
     4. Create a summary report of what was done
-    
+
     Use the TODO list to track your progress."""
-    
+
     result = agent.execute_task(task)
     print_result(result)
 
@@ -252,12 +252,12 @@ def demo_basic_features():
 def demo_tool_loop_prevention():
     """Demonstrate tool call loop prevention"""
     print_section("Demo: Tool Call Loop Prevention")
-    
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Please set KIMI_API_KEY environment variable")
+        print("❌ Please set OPENAI_API_KEY environment variable")
         return
-    
+
     config = SystemHintConfig(
         enable_timestamps=False,
         enable_tool_counter=True,
@@ -265,20 +265,20 @@ def demo_tool_loop_prevention():
         enable_detailed_errors=True,
         enable_system_state=False
     )
-    
+
     agent = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config,
         verbose=False
     )
-    
+
     task = """Try to read a file called 'nonexistent_file.txt' up to 3 times.
     After each failed attempt, note the failure and stop after 3 attempts."""
-    
+
     result = agent.execute_task(task, max_iterations=10)
     print_result(result)
-    
+
     if result.get('tool_calls'):
         read_file_calls = [c for c in result['tool_calls'] if c.tool_name == 'read_file']
         print(f"\n🛡️ Tool counter prevented loop: {len(read_file_calls)} read_file attempts")
@@ -289,14 +289,14 @@ def demo_tool_loop_prevention():
 def demo_comparison():
     """Compare with and without system hints"""
     print_section("Demo: System Hints Comparison")
-    
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("❌ Please set KIMI_API_KEY environment variable")
+        print("❌ Please set OPENAI_API_KEY environment variable")
         return
-    
+
     task = """Create a simple Python script that prints 'Hello World' and save it as 'hello.py'."""
-    
+
     # With system hints
     print("\n📋 WITH System Hints:")
     config_with = SystemHintConfig(
@@ -306,19 +306,19 @@ def demo_comparison():
         enable_detailed_errors=True,
         enable_system_state=True
     )
-    
+
     agent_with = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config_with,
         verbose=False
     )
-    
+
     result_with = agent_with.execute_task(task, max_iterations=10)
     print(f"  - Success: {result_with.get('success')}")
     print(f"  - Iterations: {result_with.get('iterations')}")
     print(f"  - Tool calls: {len(result_with.get('tool_calls', []))}")
-    
+
     # Without system hints
     print("\n📋 WITHOUT System Hints:")
     config_without = SystemHintConfig(
@@ -328,19 +328,19 @@ def demo_comparison():
         enable_detailed_errors=False,
         enable_system_state=False
     )
-    
+
     agent_without = SystemHintAgent(
         api_key=api_key,
         provider="kimi",
         config=config_without,
         verbose=False
     )
-    
+
     result_without = agent_without.execute_task(task, max_iterations=10)
     print(f"  - Success: {result_without.get('success')}")
     print(f"  - Iterations: {result_without.get('iterations')}")
     print(f"  - Tool calls: {len(result_without.get('tool_calls', []))}")
-    
+
     print("\n💡 System hints typically lead to more efficient task completion!")
 
 
@@ -476,7 +476,7 @@ def main():
             "  python main.py --mode preview\n"
             "  # 只看某一类技术的前后对比（例如关闭其它四类）\n"
             "  python main.py --mode preview --no-todo --no-errors --no-state --no-timestamps\n"
-            "  # 用真实模型执行单个任务（需要 KIMI_API_KEY）\n"
+            "  # 用真实模型执行单个任务（需要 OPENAI_API_KEY）\n"
             "  python main.py --mode single --task \"创建一个 hello world 脚本\"\n"
             "  # 对比“启用/禁用状态栏”的实际执行效果\n"
             "  python main.py --mode demo --demo comparison\n"
@@ -588,7 +588,7 @@ def main():
             print("❌ Error: --task required for single mode")
             print("Example: python main.py --mode single --task 'Create a hello world script'")
             sys.exit(1)
-        
+
         result = execute_single_task(args.task, config, verbose=args.verbose,
                                      provider=args.provider, model=args.model)
         if result:
@@ -606,7 +606,7 @@ def main():
                                      provider=args.provider, model=args.model)
         if result:
             print_result(result)
-    
+
     elif args.mode == "demo":
         if args.demo == "basic":
             demo_basic_features()
@@ -622,10 +622,10 @@ def main():
             demo_tool_loop_prevention()
             input("\nPress Enter to continue...")
             demo_comparison()
-    
+
     else:  # interactive mode
         interactive_mode()
-    
+
     print("\n👋 Thank you for using System-Hint Enhanced Agent!")
 
 

@@ -22,9 +22,9 @@ source .venv/bin/activate
 cd chapter8/ai-style-skill
 
 # 未安装 uv 时可用 pip 兜底：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-export ARK_API_KEY=your_api_key_here
+export OPENAI_API_KEY=your_api_key_here
 python run_experiment_8_9.py --provider ark --model doubao-seed-1-6-250615
 
 # 也可改用 OpenAI 直连或 OpenRouter：

@@ -1,6 +1,6 @@
 """
 Test cases for Read tool
-Tests all features from tools.json including images, PDFs, notebooks
+Tests the supported image, text, and notebook reading paths.
 """
 
 import pytest
@@ -132,21 +132,6 @@ class TestReadTool:
         assert result.success
         assert result.data["file_type"] == "image"
         assert "PNG" in result.data["format"]
-    
-    def test_pdf_file_handling(self, system_state, sample_files):
-        """Test PDF file handling"""
-        tool = ReadTool(system_state)
-        
-        # Create a dummy PDF file
-        pdf_file = sample_files["temp_dir"] / "test.pdf"
-        pdf_file.write_bytes(b'%PDF-1.4')
-        
-        result = tool.execute({
-            "file_path": str(pdf_file)
-        })
-        
-        assert result.success
-        assert result.data["file_type"] == "pdf"
     
     def test_jupyter_notebook_reading(self, system_state, sample_files):
         """Test Jupyter notebook reading"""

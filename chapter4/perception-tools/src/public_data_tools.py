@@ -421,7 +421,6 @@ async def search_arxiv(
                 "summary": result.summary[:500] + "...",
                 "published": result.published.isoformat(),
                 "url": result.entry_id,
-                "pdf_url": result.pdf_url,
                 "categories": result.categories
             })
         

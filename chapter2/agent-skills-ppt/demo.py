@@ -233,13 +233,13 @@ def dispatch(catalog: dict, name: str, args: dict, out_path: Path) -> str:
 # ---------------------------------------------------------------------------
 def run_agent(paper_path: Path, model: str, out_path: Path,
               max_turns: int = 8) -> Path | None:
-    # OPENAI_API_KEY 存在则官方直连；否则回退 OPENROUTER_API_KEY
+    # OPENAI_API_KEY 存在则官方直连；否则回退 OPENAI_API_KEY
     # （gpt-* 模型名会被映射为 openai/…）。两者皆无则给出清晰错误。
     from agentbook.providers import resolve_backend
 
-    if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENROUTER_API_KEY"):
-        log("错误：未设置 OPENAI_API_KEY，也未设置 OPENROUTER_API_KEY（通用回退）。")
-        log("请 export OPENAI_API_KEY=your-openai-api-key 或 export OPENROUTER_API_KEY=your-openrouter-api-key")
+    if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENAI_API_KEY"):
+        log("错误：未设置 OPENAI_API_KEY，也未设置 OPENAI_API_KEY（通用回退）。")
+        log("请 export OPENAI_API_KEY=your-openai-api-key 或 export OPENAI_API_KEY=your-openrouter-api-key")
         log("（无 key 时可用 --offline 走内置大纲、确定性地复现三层渐进式披露并生成 pptx。）")
         sys.exit(1)
 

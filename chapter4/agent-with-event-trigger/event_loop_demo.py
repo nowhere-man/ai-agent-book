@@ -244,10 +244,10 @@ def make_agent_dispatch(provider: str, model: Optional[str],
     """真实处理器：接入 EventTriggeredAgent，由大模型处理每个事件。"""
     from agent import EventTriggeredAgent, SystemHintConfig, resolve_provider_and_key
 
-    # 通用兜底：直连 provider 的 key 缺失时，若有 OPENROUTER_API_KEY 则自动改走 openrouter。
+    # 通用兜底：直连 provider 的 key 缺失时，若有 OPENAI_API_KEY 则自动改走 openrouter。
     resolved_provider, api_key = resolve_provider_and_key(provider)
     if not api_key:
-        print(f"❌ 未检测到 provider '{provider}' 对应的 API Key（也未配置 OPENROUTER_API_KEY 兜底）。")
+        print(f"❌ 未检测到 provider '{provider}' 对应的 API Key（也未配置 OPENAI_API_KEY 兜底）。")
         print(f"   请先设置环境变量，或改用离线演示：python event_loop_demo.py --mock")
         sys.exit(1)
     if resolved_provider != provider:

@@ -1,6 +1,6 @@
 # Experiment 5-6: API-Driven Smart Video Editing / 实验 5-6：基于 API 的智能视频剪辑
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — NL request + multi-scene video → two-step Vision locate → Blender bpy script / ffmpeg cut → Proposer–Reviewer.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — NL request + multi-scene video → two-step Vision locate → Blender bpy script / ffmpeg cut → Proposer–Reviewer.
 > 《深入理解 AI Agent》配套：自然语言需求 + 多场景视频 → 两步 Vision 定位 → 生成 Blender bpy / ffmpeg 剪辑 → 提议者-审核者。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -64,9 +64,9 @@ source .venv/bin/activate
 cd chapter5/video-edit
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env        # OPENAI_API_KEY (or OPENROUTER_API_KEY fallback)
+cp env.example .env        # OPENAI_API_KEY (or OPENAI_API_KEY fallback)
 python demo.py             # default: "把冲浪的部分剪出来" (full pipeline)
 python demo.py "把滑雪部分剪出来，并加上字幕 Winter"   # custom request
 python demo.py -i my.mp4 -o out.mp4 "把演讲开场剪出来"  # own video + output
@@ -147,7 +147,7 @@ Token stats: tens of screenshots (2934 tok) only in **sub-agent**; main history 
 ### Dependencies
 
 - **ffmpeg / ffprobe** for cuts and frames. `brew install ffmpeg` (macOS) / `apt install ffmpeg` (Ubuntu). Validated on ffmpeg 8.0.
-- **OPENAI_API_KEY**: `gpt-5.6-luna` for vision locate/review and text planning (vision model must accept images); or `OPENROUTER_API_KEY` fallback via OpenRouter.
+- **OPENAI_API_KEY**: `gpt-5.6-luna` for vision locate/review and text planning (vision model must accept images); or `OPENAI_API_KEY` fallback via OpenRouter.
 
 ### Adapt / extend
 
@@ -279,9 +279,9 @@ source .venv/bin/activate
 cd chapter5/video-edit
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env        # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter）
+cp env.example .env        # 填入 OPENAI_API_KEY（未配置时设 OPENAI_API_KEY 自动改走 OpenRouter）
 python demo.py             # 默认需求"把冲浪的部分剪出来"（完整流程）
 python demo.py "把滑雪部分剪出来，并加上字幕 Winter"   # 自定义需求
 python demo.py -i my.mp4 -o out.mp4 "把演讲开场剪出来"  # 用自己的视频 + 自定义输出
@@ -372,7 +372,7 @@ Token 统计印证了核心结论：几十张截图（2934 tokens）只进入**�
 
 - **ffmpeg / ffprobe**：本机实际剪辑与抽帧。`brew install ffmpeg`（macOS）/
   `apt install ffmpeg`（Ubuntu）。本项目在 ffmpeg 8.0 上验证通过。
-- **OPENAI_API_KEY**：用 `gpt-5.6-luna` 做视觉定位/审查与文本规划（视觉模型须支持图像输入）；未配置时用 `OPENROUTER_API_KEY` 兜底，自动改走 OpenRouter。
+- **OPENAI_API_KEY**：用 `gpt-5.6-luna` 做视觉定位/审查与文本规划（视觉模型须支持图像输入）；未配置时用 `OPENAI_API_KEY` 兜底，自动改走 OpenRouter。
 
 ### 如何适配 / 扩展
 

@@ -1,6 +1,6 @@
 # Experiment 3-12: Extracting Latent Knowledge from Structured Data / 实验 3-12：从结构化数据中提取隐性知识
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — judicial case analysis pipeline: bottom-up factor discovery → structured extraction → archetype clustering → conversational advisory Agent.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — judicial case analysis pipeline: bottom-up factor discovery → structured extraction → archetype clustering → conversational advisory Agent.
 > 配套《深入理解 AI Agent》第 3 章——以司法判例分析为例：因子发现 → 结构化抽取 → 案件原型聚类 → 对话式建议 Agent。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -51,21 +51,21 @@ Unlike “rigid predefined schema + black-box regression,” the two key ideas h
 
 ### Four-stage pipeline
 
-**① Bottom-up factor discovery (`discovery.py`)**  
+**① Bottom-up factor discovery (`discovery.py`)**
 No fields are predefined. Case texts are batched to the LLM so it can **freely list** factors that may affect the judgment; a second LLM pass **merges, deduplicates, and normalizes** raw factors into a modular schema: `core` (cross-charge factors: surrender, compensation, guilty plea, prior record, …) + `extensions` (charge-specific: theft → amount/home invasion/gang; intentional injury → injury level/weapon/premeditation; fraud → amount/victim count). Output: `data/schema.json` (cached).
 
-**② Structured extraction (`extractor.py`)**  
+**② Structured extraction (`extractor.py`)**
 Using the discovered schema, extract “core + that charge’s extensions” per case (LLM structured output, `response_format=json_object`). Factors not mentioned in the text return `null`. Results cache to `data/extracted.jsonl`; after one full pass, re-runs are nearly free.
 
-**③ Clustering into case archetypes + hierarchical factor importance (`archetypes.py`)**  
+**③ Clustering into case archetypes + hierarchical factor importance (`archetypes.py`)**
 Factors become numeric vectors: charge / categorical factors (e.g. injury level) as one-hot (not 1/2/3, to avoid implying order); amounts / counts use `ln` scaling; binary facts as 0/1. **Within each charge**, KMeans clusters (k chosen by silhouette score) produce “case archetypes”—e.g. intentional injury may cluster into “minor injury,” “light injury,” “premeditated armed serious injury,” etc. Two levels of importance:
 
-- **Global factor importance**: how well each factor separates all archetypes (between-cluster variance share) → global ranking  
+- **Global factor importance**: how well each factor separates all archetypes (between-cluster variance share) → global ranking
 - **Within-archetype defining factors**: factors most distinctive for each archetype vs global, plus typical sentence distribution (median / range)
 
 Readable output: `data/archetypes.json` (with normalization params and centroids).
 
-**④ Conversational sentencing-advice Agent (`advisor_agent.py`)**  
+**④ Conversational sentencing-advice Agent (`advisor_agent.py`)**
 Uses “archetypes + hierarchical factor importance” as decision logic: extract known factors from the user’s free-form description → ask for still-missing **globally important** factors → **match the nearest case archetype** (filter by charge, then distance on known dims only) → LLM writes an interpretable suggestion grounded in that archetype’s stats (typical sentence range, defining factors), with a legal disclaimer. All sentence numbers come from archetype statistics; the LLM only explains them.
 
 ### Run
@@ -86,7 +86,7 @@ source .venv/bin/activate
 cd chapter3/structured-knowledge-extraction
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # set the selected provider key (OpenAI or DashScope/Bailian)
 python generate_data.py    # optional: regenerate synthetic cases (repo ships data/cases.jsonl)
@@ -170,13 +170,13 @@ The **intended real dataset is CAIL2018** (Chinese criminal judgments, millions 
 
 ### 四段流水线
 
-**① 自下而上因子发现（`discovery.py`）**  
+**① 自下而上因子发现（`discovery.py`）**
 不预先定义任何字段。把判例文本分批喂给 LLM，让它**自由列出**每一批案例中所有可能影响判决的因素；再用一次 LLM 调用把各批发现的原始因子**归并、去重、规范化**成一个模块化 schema：`core`（适用所有罪名的通用因子：自首、赔偿、认罪认罚、前科累犯……）+ `extensions`（各罪名特有扩展因子：盗窃→涉案金额/入户/团伙，故意伤害→伤害等级/持械/预谋，诈骗→金额/受害人数）。产出 `data/schema.json`（带缓存）。
 
-**② 结构化抽取（`extractor.py`）**  
+**② 结构化抽取（`extractor.py`）**
 用发现出来的 schema，从每条判例抽取「核心 + 该罪名扩展」因子（LLM 结构化输出，`response_format=json_object`）。文本未提及的因子返回 `null`。抽取结果缓存到 `data/extracted.jsonl`，一次性抽取后重跑几乎免费。
 
-**③ 聚类成案件原型 + 层次因子重要性（`archetypes.py`）**  
+**③ 聚类成案件原型 + 层次因子重要性（`archetypes.py`）**
 把因子翻译成数值向量：罪名 / 分类因子（如伤害等级）用 one-hot 开关位（不用 1/2/3，避免暗示大小关系）；金额 / 人数取 `ln` 压缩量纲；是非情节取 0/1。**在每个罪名内部**用 KMeans 聚类（k 由轮廓系数自动挑选），得到若干「案件原型」——例如故意伤害罪会自动聚出“轻微伤”、“轻伤”、“持械预谋致重伤”等典型模式。再算两级重要性：
 
 - **全局因子重要性**：每个因子在所有原型之间的区分度（簇间方差占比）→ 全局排序；
@@ -184,7 +184,7 @@ The **intended real dataset is CAIL2018** (Chinese criminal judgments, millions 
 
 产出可读、自洽的 `data/archetypes.json`（含标准化参数与簇心）。
 
-**④ 对话式量刑建议 Agent（`advisor_agent.py`）**  
+**④ 对话式量刑建议 Agent（`advisor_agent.py`）**
 把「案件原型 + 层次因子重要性」当决策逻辑：从用户口语描述抽取已知因子 → 对照**全局因子重要性**追问仍缺失的关键因子 → 把案件**匹配到最近的案件原型**（先按罪名圈定候选，再只在已知维度上比距离）→ 让 LLM 基于该原型的统计数据（典型刑期区间、定义性因子）给出一段有判例支持、可解释的建议（附法律免责声明）。所有刑期数字均来自原型统计，LLM 只负责讲清楚。
 
 ### 运行
@@ -205,7 +205,7 @@ source .venv/bin/activate
 cd chapter3/structured-knowledge-extraction
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）
 python generate_data.py    # 可选：重新生成合成判例数据集（已自带 data/cases.jsonl）
@@ -266,8 +266,8 @@ python demo.py             # 跑通 因子发现 → 抽取 → 聚类 → 对�
 
 This experiment supports a **universal OpenRouter fallback** for its chat LLM.
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
+- If the primary provider key (e.g. `OPENAI_API_KEY` / `OPENAI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
+- Else if `OPENAI_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://api.openai.com/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENAI_MODEL` to force a specific OpenRouter model id.
 - Else a clear error lists the accepted keys.
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+Add `OPENAI_API_KEY=...` to your `.env` (see `env.example`) to enable it.

@@ -123,7 +123,7 @@ def main():
     build_parser = subparsers.add_parser(
         "build", help="从文档构建结构化索引（需要 OPENAI_API_KEY）")
     build_parser.add_argument("file", type=str,
-                              help="待索引的文档路径（支持 .pdf/.txt/.md/.html）")
+                              help="待索引的文档路径（支持 .txt/.md/.html）")
     build_parser.add_argument("--type", choices=["raptor", "graphrag", "both"],
                               default="both", help="要构建的索引类型（默认 both）")
     build_parser.add_argument("--output", type=str, default=None,

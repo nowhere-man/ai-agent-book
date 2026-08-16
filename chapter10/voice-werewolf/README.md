@@ -67,7 +67,7 @@ source .venv/bin/activate
 cd chapter10/voice-werewolf
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 python demo.py --simulate-user \
@@ -78,7 +78,7 @@ python demo.py --confirm-human-consent                # 1 consenting human + 6 r
 python demo.py --confirm-human-consent --human-seat 3 # human is P3; role remains randomized
 ```
 
-The simulator can use `OPENROUTER_API_KEY` alone when `espeak` and `ffmpeg` are installed. It can instead use a funded `OPENAI_API_KEY`, or `GEMINI_API_KEY` with local synthesis. AI reasoning and the post-game strategy audit can also use ARK or Moonshot via their OpenAI-compatible endpoints.
+The simulator can use `OPENAI_API_KEY` alone when `espeak` and `ffmpeg` are installed. It can instead use a funded `OPENAI_API_KEY`, or `OPENAI_API_KEY` with local synthesis. AI reasoning and the post-game strategy audit can also use ARK or Moonshot via their OpenAI-compatible endpoints.
 The live path refuses to open the microphone unless `--confirm-human-consent` is present.
 
 Text-only and deterministic paths remain supplemental:

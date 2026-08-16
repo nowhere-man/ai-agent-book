@@ -93,7 +93,7 @@ async def run(args: argparse.Namespace, endpoint: ModelEndpoint) -> int:
         from browser_use import Agent, BrowserSession, ChatOpenAI
     except ImportError as exc:
         raise RuntimeError(
-            "browser-use is not installed; run `python -m pip install -r requirements.txt`"
+            "browser-use is not installed; run `python -m pip install -r ../../requirements.txt`"
         ) from exc
 
     run_dir = (args.output_dir or default_run_dir()).expanduser().resolve()

@@ -17,7 +17,7 @@ from openai import OpenAI
 MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
 
 # --- 通用 OpenRouter 兜底 ---
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _map_to_openrouter_model(model: str) -> str:
@@ -50,10 +50,10 @@ class Diagnoser:
         # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL")
-        orkey = os.getenv("OPENROUTER_API_KEY")
+        orkey = os.getenv("OPENAI_API_KEY")
         prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
         if prefer_or or (not api_key and orkey):
-            api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
+            api_key, base_url, model = orkey, OPENAI_BASE_URL, _map_to_openrouter_model(model)
         # timeout / max_retries：让偶发的网络/SSL 抖动自动重试，不至于整轮崩溃
         kw = {"timeout": 60.0, "max_retries": 3}
         if api_key:

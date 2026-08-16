@@ -65,15 +65,15 @@ def _llm_reply(message: str, model: str) -> str:
 
     api_key = os.getenv("OPENAI_API_KEY")
     base_url = os.getenv("OPENAI_BASE_URL")
-    orkey = os.getenv("OPENROUTER_API_KEY")
+    orkey = os.getenv("OPENAI_API_KEY")
     # 通用 OpenRouter 兜底：无直连 key，或 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
     prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
     if prefer_or or (not api_key and orkey):
-        api_key, base_url = orkey, "https://openrouter.ai/api/v1"
+        api_key, base_url = orkey, "https://api.openai.com/v1"
         if "/" not in model:
             model = ("openai/" + model) if model.lower().startswith(("gpt-", "o1", "o3", "o4")) else "openai/gpt-5.6-luna"
     if not api_key:
-        return "（未配置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，无法启用 LLM 模式；已回退占位回复）"
+        return "（未配置 OPENAI_API_KEY 或 OPENAI_API_KEY，无法启用 LLM 模式；已回退占位回复）"
 
     client_kwargs = {"api_key": api_key, "timeout": 60.0, "max_retries": 2}
     if base_url:

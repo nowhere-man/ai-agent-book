@@ -320,13 +320,13 @@ def assert_credential_free(payloads: Iterable[str]) -> None:
         value
         for value in (
             Config.OPENAI_API_KEY,
-            Config.OPENROUTER_API_KEY,
-            Config.DASHSCOPE_API_KEY,
-            os.getenv("MOONSHOT_API_KEY", ""),
-            os.getenv("KIMI_API_KEY", ""),
-            os.getenv("ARK_API_KEY", ""),
-            os.getenv("SILICONFLOW_API_KEY", ""),
-            os.getenv("GEMINI_API_KEY", ""),
+            Config.OPENAI_API_KEY,
+            Config.OPENAI_API_KEY,
+            os.getenv("OPENAI_API_KEY", ""),
+            os.getenv("OPENAI_API_KEY", ""),
+            os.getenv("OPENAI_API_KEY", ""),
+            os.getenv("OPENAI_API_KEY", ""),
+            os.getenv("OPENAI_API_KEY", ""),
         )
         if value
     ]

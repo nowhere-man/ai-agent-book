@@ -43,7 +43,6 @@ main.py
 ├── multimodal_tools.py
 │   ├── base.py (ActionResponse, validate_file_path, download_file_from_url)
 │   ├── beautifulsoup4
-│   ├── PyPDF2
 │   ├── python-docx
 │   ├── python-pptx
 │   ├── Pillow
@@ -143,11 +142,11 @@ main.py
 - **Role**: Content extraction from various media
 - **Tools**:
   - read_webpage: HTML parsing
-  - read_document: Document extraction (PDF/DOCX/PPTX)
+  - read_document: Document extraction (DOCX/PPTX)
   - parse_image: Image metadata and analysis
   - parse_video: Video metadata extraction
-- **File Formats**: HTML, PDF, DOCX, PPTX, JPG, PNG, MP4, etc.
-- **Dependencies**: beautifulsoup4, PyPDF2, python-docx, python-pptx, Pillow, opencv-python, base
+- **File Formats**: HTML, DOCX, PPTX, JPG, PNG, MP4, etc.
+- **Dependencies**: beautifulsoup4, python-docx, python-pptx, Pillow, opencv-python, base
 
 ### filesystem_tools.py
 - **Role**: File system operations
@@ -181,7 +180,7 @@ main.py
 
 ```
 Environment Variables (.env)
-├── GOOGLE_API_KEY (required for web search)
+├── OPENAI_API_KEY (required for web search)
 ├── GOOGLE_CSE_ID (required for web search)
 ├── OPENWEATHER_API_KEY (required for weather)
 ├── NOTION_API_KEY (optional for Notion)

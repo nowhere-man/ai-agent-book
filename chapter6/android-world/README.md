@@ -207,7 +207,7 @@ The controlled runner expects a separate adjacent AndroidWorld checkout (the cur
 
 1. Clone [google-research/android_world](https://github.com/google-research/android_world) (or the fork your course materials specify).
 2. Provide an Android emulator / device environment as required by that project.
-3. Install the companion requirements in that environment, set the selected provider credential (the default is `ARK_API_KEY`), and run one of the commands above. For the retained local run, the OpenAI-compatible endpoint was `http://127.0.0.1:18111/v1` on the host (`http://host.docker.internal:18111/v1` from the emulator containers). Set `LOCAL_API_KEY` only in the launching process environment; the runner records only its variable name and never persists its value.
+3. Install the companion requirements in that environment, set the selected provider credential (the default is `OPENAI_API_KEY`), and run one of the commands above. For the retained local run, the OpenAI-compatible endpoint was `http://127.0.0.1:18111/v1` on the host (`http://host.docker.internal:18111/v1` from the emulator containers). Set `LOCAL_API_KEY` only in the launching process environment; the runner records only its variable name and never persists its value.
 4. Provision the exact upstream Pixel 6 / API-33 apps before attempting `--full-suite`; do not use the API-35 Wi-Fi-only deviations for the full benchmark.
 
 Run one trial per isolated emulator, changing `<N>`, ports, and output directory for shards 1–5:
@@ -319,10 +319,10 @@ Reading order if you only study the notes: **`t3a_summary.md` → `t3a_failed_an
 
 按书中五步闭环：
 
-1. **诊断** — 交叉逐任务表与能力矩阵，把表面失败映射到能力缺陷。  
-2. **假设** — 表层 → 中层 → 深层（如设置导航提示、修复多模态输入管道、截图+UI 树、更强视觉模型、仅对计数任务开思考）。  
-3. **实验** — 先做低成本对照；同时量成功率与时延/成本副作用。  
-4. **决策** — 优先部署高 ROI；拒绝为少数标签让全局任务承担数倍延迟/成本。  
+1. **诊断** — 交叉逐任务表与能力矩阵，把表面失败映射到能力缺陷。
+2. **假设** — 表层 → 中层 → 深层（如设置导航提示、修复多模态输入管道、截图+UI 树、更强视觉模型、仅对计数任务开思考）。
+3. **实验** — 先做低成本对照；同时量成功率与时延/成本副作用。
+4. **决策** — 优先部署高 ROI；拒绝为少数标签让全局任务承担数倍延迟/成本。
 5. **迭代** — 重跑全集，新失败模式成为下一轮起点。
 
 ### 已执行的对照闭环（2026-07-29 至 2026-08-04）
@@ -398,9 +398,9 @@ chapter6/android-world/
 
 配套 runner 需要一个独立的相邻 AndroidWorld checkout（当前工作区使用 `chapter6/android_world`）、已配置模拟器以及真实模型凭证。自行重跑请：
 
-1. 克隆 [google-research/android_world](https://github.com/google-research/android_world)（或课程指定 fork）。  
-2. 按上游文档准备模拟器/真机环境。  
-3. 在对应环境中安装配套依赖，设置所选 provider 凭证（默认 `ARK_API_KEY`），运行英文部分给出的命令。本地保留运行在 host 使用 `http://127.0.0.1:18111/v1`，container 内使用 `http://host.docker.internal:18111/v1`；`LOCAL_API_KEY` 只设在启动进程环境中，runner 只记录变量名，不保存其值。
+1. 克隆 [google-research/android_world](https://github.com/google-research/android_world)（或课程指定 fork）。
+2. 按上游文档准备模拟器/真机环境。
+3. 在对应环境中安装配套依赖，设置所选 provider 凭证（默认 `OPENAI_API_KEY`），运行英文部分给出的命令。本地保留运行在 host 使用 `http://127.0.0.1:18111/v1`，container 内使用 `http://host.docker.internal:18111/v1`；`LOCAL_API_KEY` 只设在启动进程环境中，runner 只记录变量名，不保存其值。
 4. 只有在完整配置上游 Pixel 6 / API-33 App 后才能尝试 `--full-suite`；不要把 API-35 的 Wi-Fi 专用偏差用于完整 benchmark。
 
 五分片的本地 GPU 命令与严格合并流程见英文复现节；每个隔离 emulator 运行一个 `--trial-indices`，全部完成后再调用 `merge_candidate_shards.py`。
@@ -420,7 +420,7 @@ chapter6/android-world/
 
 ## Notes / 说明
 
-- Log files can be **very large** (`t3a.md` ~1MB+). Prefer summary + failed analysis first.  
-- 日志文件体积很大，建议先读摘要与失败分析。  
+- Log files can be **very large** (`t3a.md` ~1MB+). Prefer summary + failed analysis first.
+- 日志文件体积很大，建议先读摘要与失败分析。
 - Project type: historical **reading / analysis notes** plus a runnable companion that requires a separately provisioned upstream AndroidWorld environment.
 - 项目类型：历史**阅读/分析材料** + 可运行配套工具；后者依赖另行配置的上游 AndroidWorld 环境。

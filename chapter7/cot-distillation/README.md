@@ -42,7 +42,7 @@ source .venv/bin/activate
 cd chapter7/cot-distillation
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 
@@ -148,9 +148,9 @@ source .venv/bin/activate
 cd chapter7/cot-distillation
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-export OPENROUTER_API_KEY=your-openrouter-api-key
+export OPENAI_API_KEY=your-openrouter-api-key
 
 # 小规模冒烟（2 道题）
 python generate_data.py --max_problems 2 \

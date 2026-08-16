@@ -28,7 +28,7 @@ response = completion(
 
 ### 3. Reasoning Effort Levels
 - **"low"**: Minimal thinking tokens (~7-333 completion tokens)
-- **"medium"**: Moderate thinking (~7-500 completion tokens)  
+- **"medium"**: Moderate thinking (~7-500 completion tokens)
 - **"high"**: Deep thinking (~71-1500+ completion tokens)
 - **Not specified**: Defaults to variable, often high usage
 
@@ -54,7 +54,7 @@ if "gpt-5" in self.model:
 
 ```bash
 # Required for OpenRouter
-export OPENROUTER_API_KEY="your_key"
+export OPENAI_API_KEY="your_key"
 
 # Optional debugging
 export DEBUG_API_CALLS="true"  # Show API call details

@@ -62,7 +62,7 @@ class ModelClient:
 class GeminiClient(ModelClient):
     def __init__(self, model_id: str = "gemini-2.5-flash"):
         from google import genai
-        self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        self.client = genai.Client(api_key=os.environ["OPENAI_API_KEY"])
         self.model_id = model_id
 
     @property

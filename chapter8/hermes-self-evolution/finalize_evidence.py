@@ -131,7 +131,7 @@ def main() -> int:
         "started_from_commit": PINNED_COMMIT,
         "provider": "openrouter",
         "requested_model": "openai/gpt-5.6-luna",
-        "credential_environment_variable": "OPENROUTER_API_KEY",
+        "credential_environment_variable": "OPENAI_API_KEY",
         "candidate_gaps_supplied_in_prompt": False,
         "task_prompt_sha256": digest(ROOT / "task.md"),
         "proposer_exit_codes": [0] * 4,

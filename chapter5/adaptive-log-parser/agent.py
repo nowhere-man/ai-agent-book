@@ -71,7 +71,7 @@ def _extract_code(text: str) -> str:
     return (m.group(1) if m else text).strip()
 
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _map_to_openrouter_model(model: str) -> str:
@@ -97,13 +97,13 @@ class CodeGenAgent:
         model = model or os.getenv("MODEL", "gpt-5.6-luna")
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL")
-        orkey = os.getenv("OPENROUTER_API_KEY")
+        orkey = os.getenv("OPENAI_API_KEY")
         # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
         prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
         if prefer_or or (not api_key and orkey):
-            api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
+            api_key, base_url, model = orkey, OPENAI_BASE_URL, _map_to_openrouter_model(model)
         if not api_key:
-            raise SystemExit("未找到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请在环境变量或 .env 中设置。")
+            raise SystemExit("未找到 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请在环境变量或 .env 中设置。")
         # timeout / max_retries：让偶发的网络/SSL 抖动自动重试，不至于整轮崩溃
         client_kwargs = {"api_key": api_key, "timeout": 60.0, "max_retries": 3}
         if base_url:

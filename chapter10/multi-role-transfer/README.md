@@ -106,7 +106,7 @@ source .venv/bin/activate
 cd chapter10/multi-role-transfer
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Configure API key (choose one)
 export OPENAI_API_KEY=your-openai-api-key        # Direct export
@@ -209,9 +209,9 @@ Configurable environment variables (all have defaults):
 `OPENAI_MODEL` (default `gpt-5.6-luna`), and `TAVILY_API_KEY` for the research role's real web search.
 
 **General fallback**: Prefers direct OpenAI connection via `OPENAI_API_KEY`; if that variable is not set but
-`OPENROUTER_API_KEY` is set, it automatically switches to OpenRouter and maps the model name to its namespace
+`OPENAI_API_KEY` is set, it automatically switches to OpenRouter and maps the model name to its namespace
 (`gpt-5.6-luna` → `openai/gpt-5.6-luna`). Note: The `gpt-5.6` series requires organization verification for direct OpenAI access;
-setting only `OPENROUTER_API_KEY` (without `OPENAI_API_KEY`) forces OpenRouter, which is simpler.
+setting only `OPENAI_API_KEY` (without `OPENAI_API_KEY`) forces OpenRouter, which is simpler.
 
 ### Command-Line Arguments
 
@@ -463,7 +463,7 @@ source .venv/bin/activate
 cd chapter10/multi-role-transfer
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 配置 key（二选一）
 export OPENAI_API_KEY=your-openai-api-key        # 直接 export
@@ -551,9 +551,9 @@ python run_comparison.py --replay validation/comparison/previous.json \
 `OPENAI_MODEL`（默认 `gpt-5.6-luna`），以及供检索角色真实联网使用的 `TAVILY_API_KEY`。
 
 **通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
-`OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
+`OPENAI_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
 （`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
-只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
+只填 `OPENAI_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
 
 ### 命令行参数
 

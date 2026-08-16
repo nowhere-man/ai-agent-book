@@ -42,7 +42,7 @@ source .venv-orpheus/bin/activate
 # Windows cmd: .venv-orpheus\Scripts\activate.bat
 
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 ```
 
 For Colab or specific environments, you may need:
@@ -305,7 +305,7 @@ source .venv-orpheus/bin/activate
 # Windows cmd：.venv-orpheus\Scripts\activate.bat
 
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 ```
 
 ## 项目结构

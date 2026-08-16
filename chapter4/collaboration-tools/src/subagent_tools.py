@@ -60,7 +60,7 @@ def _env_or_default(name: str, default, cast):
 
 # Default model + client tuning. Kept consistent with intelligence_tools.py
 # (gpt-5.6-luna) but overridable via env, with timeout + retries on the client.
-# When only OPENROUTER_API_KEY is set, resolve_llm() maps the model id to
+# When only OPENAI_API_KEY is set, resolve_llm() maps the model id to
 # provider/model form (e.g. gpt-5.6-luna -> openai/gpt-5.6-luna).
 DEFAULT_MODEL = (
     resolve_llm()[2] if has_llm() else os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
@@ -70,7 +70,7 @@ _CLIENT_MAX_RETRIES = _env_or_default("OPENAI_MAX_RETRIES", 2, int)
 
 
 def _offline() -> bool:
-    """离线模式：既无 OPENAI_API_KEY 也无 OPENROUTER_API_KEY 时启用确定性模拟。"""
+    """离线模式：既无 OPENAI_API_KEY 也无 OPENAI_API_KEY 时启用确定性模拟。"""
     return not has_llm()
 
 

@@ -1,6 +1,6 @@
 # Multimodal Agent — Three Extraction Paradigms / 多模态 Agent——三种抽取范式对比
 
-> Companion material for *AI Agents in Depth*, Chapter 4 — **Experiment 4-2**: native multimodal vs extract-to-text vs tool-based analysis.  
+> Companion material for *AI Agents in Depth*, Chapter 4 — **Experiment 4-2**: native multimodal vs extract-to-text vs tool-based analysis.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-2**：原生多模态 vs 先抽文本 vs 工具化分析。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -11,18 +11,18 @@
 
 ### Features — three extraction modes
 
-1. **Native Multimodality**: model built-in multimodal  
-   - Gemini 2.5 Pro: PDF, image, audio  
-   - GPT-5/GPT-4o: images (OpenAI multimodal format)  
-   - Doubao 1.6: images  
+1. **Native Multimodality**: model built-in multimodal
+   - Gemini 2.5 Pro: PDF, image, audio
+   - GPT-5/GPT-4o: images (OpenAI multimodal format)
+   - Doubao 1.6: images
 
-2. **Extract to Text**: convert first, then reason  
-   - PDF OCR (Gemini or GPT-5)  
-   - Image captions (GPT-5 or Doubao 1.6)  
-   - Audio: Whisper or Gemini  
+2. **Extract to Text**: convert first, then reason
+   - PDF OCR (Gemini or GPT-5)
+   - Image captions (GPT-5 or Doubao 1.6)
+   - Audio: Whisper or Gemini
 
-3. **Multimodal analysis tools**: add-on for follow-ups  
-   - Image / audio / PDF analysis tools  
+3. **Multimodal analysis tools**: add-on for follow-ups
+   - Image / audio / PDF analysis tools
 
 ### Architecture
 
@@ -51,7 +51,7 @@ source .venv/bin/activate
 cd chapter4/multimodal-agent
 
 # Exact legacy parity path, including python-magic file sniffing:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # Edit .env with API keys
@@ -149,8 +149,8 @@ Runs: (1) native (2) extract-to-text (3) extract + tools (4) cross-model unless 
 
 ### Supported files / models
 
-- PDF (best native Gemini), images (JPEG/PNG/GIF/BMP/WebP), audio (MP3/WAV/M4A/FLAC/AAC/OGG)  
-- Size limits: PDF/images 20MB, audio 25MB  
+- PDF (best native Gemini), images (JPEG/PNG/GIF/BMP/WebP), audio (MP3/WAV/M4A/FLAC/AAC/OGG)
+- Size limits: PDF/images 20MB, audio 25MB
 
 | Model | Native PDF | Native Image | Native Audio | Extract | Tools |
 |-------|------------|--------------|--------------|---------|-------|
@@ -160,9 +160,9 @@ Runs: (1) native (2) extract-to-text (3) extract + tools (4) cross-model unless 
 
 ### API keys
 
-- `GOOGLE_API_KEY` or `GEMINI_API_KEY` — PDF/audio native  
-- `OPENAI_API_KEY` — GPT + Whisper  
-- `DOUBAO_API_KEY` or `ARK_API_KEY`  
+- `OPENAI_API_KEY` or `OPENAI_API_KEY` — PDF/audio native
+- `OPENAI_API_KEY` — GPT + Whisper
+- `DOUBAO_API_KEY` or `OPENAI_API_KEY`
 
 ### Testing / best practices
 
@@ -182,9 +182,9 @@ MIT License — educational project.
 
 ### 功能——三种抽取模式
 
-1. **原生多模态**：直接用模型内置能力（Gemini PDF/图/音频；GPT/豆包图像等）  
-2. **先抽文本再推理**：PDF OCR、图像描述、Whisper/Gemini 转写  
-3. **多模态分析工具**：跟进问题的图像 / 音频 / PDF 工具  
+1. **原生多模态**：直接用模型内置能力（Gemini PDF/图/音频；GPT/豆包图像等）
+2. **先抽文本再推理**：PDF OCR、图像描述、Whisper/Gemini 转写
+3. **多模态分析工具**：跟进问题的图像 / 音频 / PDF 工具
 
 ### 架构
 
@@ -213,7 +213,7 @@ source .venv/bin/activate
 cd chapter4/multimodal-agent
 
 # 精确复现旧版单项目环境，含 python-magic 文件类型检测：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # 编辑 API Key
@@ -284,9 +284,9 @@ python demo.py --file test_files/sample_chart.png \
 
 ### API Key
 
-- `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`  
-- `OPENAI_API_KEY`  
-- `DOUBAO_API_KEY` 或 `ARK_API_KEY`  
+- `OPENAI_API_KEY` 或 `OPENAI_API_KEY`
+- `OPENAI_API_KEY`
+- `DOUBAO_API_KEY` 或 `OPENAI_API_KEY`
 
 ### 测试
 
@@ -304,4 +304,4 @@ MIT — 教学项目。
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-Chat / vision can route via OpenRouter when `OPENROUTER_API_KEY` is set and primary keys are missing. **Audio transcription (Whisper) and native-PDF extraction still need direct OpenAI/Gemini keys.**
+Chat / vision can route via OpenRouter when `OPENAI_API_KEY` is set and primary keys are missing. **Audio transcription (Whisper) and native-PDF extraction still need direct OpenAI/Gemini keys.**

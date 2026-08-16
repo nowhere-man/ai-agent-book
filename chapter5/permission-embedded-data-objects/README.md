@@ -50,7 +50,7 @@ reachable. The default is `dbname=pedo_test`.
 
 ```bash
 cd chapter5/permission-embedded-data-objects
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 createdb pedo_test                 # if the database does not exist yet
 python demo.py
 pytest -q
@@ -90,7 +90,7 @@ generated code by design and is not a production security boundary.
 
 ```bash
 cd chapter5/permission-embedded-data-objects
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 createdb pedo_test
 python demo.py
 pytest -q

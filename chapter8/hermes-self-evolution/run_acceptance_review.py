@@ -29,8 +29,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if not os.getenv("OPENROUTER_API_KEY"):
-        print("OPENROUTER_API_KEY is required", file=sys.stderr)
+    if not os.getenv("OPENAI_API_KEY"):
+        print("OPENAI_API_KEY is required", file=sys.stderr)
         return 2
 
     source = ROOT / "worktree" / "hermes-agent"

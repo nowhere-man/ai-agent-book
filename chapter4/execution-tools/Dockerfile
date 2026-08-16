@@ -96,13 +96,14 @@ RUN apt-get update && apt-get install -y bash && \
 # Set up working directory
 WORKDIR /app
 
-# Copy requirements and install Python packages
-COPY requirements.txt .
+# Build with the repository root as the Docker context.
+COPY pyproject.toml README.md requirements.txt ./
+COPY agentbook ./agentbook
 RUN python3 -m pip install --upgrade pip setuptools wheel && \
     python3 -m pip install -r requirements.txt
 
 # Copy application files
-COPY . .
+COPY chapter4/execution-tools/ .
 
 # Expose default MCP stdio interface (no port needed for stdio)
 # The server communicates via stdin/stdout

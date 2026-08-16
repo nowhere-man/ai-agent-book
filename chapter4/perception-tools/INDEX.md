@@ -90,7 +90,7 @@
 ### Installation
 ```bash
 cd projects/week3/perception-tools
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 cp env.example .env
 # Edit .env with your API keys
 ```

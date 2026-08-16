@@ -3,7 +3,7 @@
 
 import os
 # Set a dummy API key for testing initialization
-os.environ["KIMI_API_KEY"] = "test_key"
+os.environ["OPENAI_API_KEY"] = "test_key"
 
 from rich.console import Console
 
@@ -18,7 +18,7 @@ def test_imports():
         from tools import MemoryTools
         from agent import UserMemoryRAGAgent
         from evaluator import UserMemoryEvaluator
-        
+
         console.print("[green]✓ All imports successful[/green]")
         return True
     except Exception as e:
@@ -31,16 +31,16 @@ def test_initialization():
         from config import Config
         from chunker import ConversationChunker
         from indexer import MemoryIndexer
-        
+
         config = Config.from_env()
         console.print("[green]✓ Config loaded[/green]")
-        
+
         chunker = ConversationChunker(config.chunking)
         console.print("[green]✓ Chunker initialized[/green]")
-        
+
         indexer = MemoryIndexer(config.index)
         console.print("[green]✓ Indexer initialized[/green]")
-        
+
         return True
     except Exception as e:
         console.print(f"[red]✗ Initialization error: {e}[/red]")
@@ -50,11 +50,11 @@ def test_initialization():
 
 if __name__ == "__main__":
     console.print("[bold]Testing Agentic RAG for User Memory - Startup[/bold]\n")
-    
+
     imports_ok = test_imports()
     if imports_ok:
         init_ok = test_initialization()
-        
+
         if init_ok:
             console.print("\n[bold green]✓ System startup successful![/bold green]")
             console.print("\nThe system is ready to use. To run the full demo:")

@@ -87,9 +87,9 @@ def main() -> int:
         parser.error("canonical Experiment 7-2 requires 10,000 RL training and 100 RL evaluation episodes")
     if args.llm_eval_episodes < 0:
         parser.error("--llm-eval-episodes must be non-negative")
-    if not os.getenv("MOONSHOT_API_KEY"):
+    if not os.getenv("OPENAI_API_KEY"):
         parser.error(
-            "MOONSHOT_API_KEY is required: an OpenRouter substitute is not exact Kimi K3 evidence"
+            "OPENAI_API_KEY is required: an OpenRouter substitute is not exact Kimi K3 evidence"
         )
 
     random.seed(args.seed)

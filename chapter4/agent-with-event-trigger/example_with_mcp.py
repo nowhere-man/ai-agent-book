@@ -18,15 +18,15 @@ async def main():
     print("Event-Triggered Agent with MCP Tools Example")
     print("=" * 80)
     print()
-    
+
     # Get API credentials
     provider = os.getenv("LLM_PROVIDER", "kimi")
     provider, api_key = resolve_provider_and_key(provider)
-    
+
     if not api_key:
-        print("❌ Please set the provider API key in your .env file (DASHSCOPE_API_KEY for dashscope/qwen/bailian)")
+        print("❌ Please set the provider API key in your .env file (OPENAI_API_KEY for dashscope/qwen/bailian)")
         return
-    
+
     # Create agent configuration
     config = SystemHintConfig(
         enable_timestamps=True,
@@ -38,7 +38,7 @@ async def main():
         trajectory_file="example_trajectory.json",
         use_mcp_servers=True  # Enable MCP servers
     )
-    
+
     # Initialize agent
     print("Initializing agent...")
     agent = EventTriggeredAgent(
@@ -47,16 +47,16 @@ async def main():
         config=config,
         verbose=True
     )
-    
+
     # Load MCP tools
     print("\nLoading MCP tools...")
     await agent.load_mcp_tools()
-    
+
     print("\n" + "=" * 80)
     print("Testing Event Processing")
     print("=" * 80)
     print()
-    
+
     # Create a test event
     event = Event(
         event_type=EventType.WEB_MESSAGE,
@@ -67,24 +67,24 @@ async def main():
             "session_id": "test_session_001"
         }
     )
-    
+
     # Handle the event
     try:
         result = agent.handle_event(event, max_iterations=15)
-        
+
         print("\n" + "=" * 80)
         print("Result Summary")
         print("=" * 80)
         print(f"Success: {result['success']}")
         print(f"Iterations: {result['iterations']}")
         print(f"Tool Calls: {len(result['tool_calls'])}")
-        
+
         if result.get('final_answer'):
             print(f"\nFinal Answer:\n{result['final_answer']}")
-        
+
         if result.get('trajectory_file'):
             print(f"\nTrajectory saved to: {result['trajectory_file']}")
-            
+
     except Exception as e:
         print(f"\n❌ Error processing event: {e}")
         import traceback

@@ -56,7 +56,7 @@ class FakeClient:
 @pytest.fixture(autouse=True)
 def provider_environment(monkeypatch):
     monkeypatch.setenv("PHONE_MODEL_PROVIDER", "ark")
-    monkeypatch.setenv("ARK_API_KEY", "test-key-not-retained")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-retained")
 
 
 def test_direct_plan_requires_fixed_parameters_and_has_no_planner_receipt():

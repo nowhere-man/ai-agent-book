@@ -41,9 +41,7 @@ async def compare_extraction_modes(file_path: str, query: str, model: str = "gem
     path = Path(file_path)
     suffix = path.suffix.lower()
     
-    if suffix == '.pdf':
-        content_type = "pdf"
-    elif suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+    if suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
         content_type = "image"
     elif suffix in ['.mp3', '.wav', '.m4a', '.flac', '.aac', '.ogg']:
         content_type = "audio"
@@ -121,8 +119,6 @@ async def compare_extraction_modes(file_path: str, query: str, model: str = "gem
         # Follow-up question that might use tools
         if content_type == "image":
             follow_up = f"What colors are dominant in the image at {file_path}?"
-        elif content_type == "pdf":
-            follow_up = f"What specific data or figures are mentioned in the PDF at {file_path}?"
         else:  # audio
             follow_up = f"What is the tone or mood of the audio at {file_path}?"
             
@@ -148,9 +144,7 @@ async def compare_models(file_path: str, query: str):
     path = Path(file_path)
     suffix = path.suffix.lower()
     
-    if suffix == '.pdf':
-        content_type = "pdf"
-    elif suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+    if suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
         content_type = "image"
     elif suffix in ['.mp3', '.wav', '.m4a', '.flac', '.aac', '.ogg']:
         content_type = "audio"
@@ -211,9 +205,8 @@ async def demo_conversation_with_tools():
     
     # Simulate a conversation
     conversations = [
-        ("I need help analyzing some documents. I have PDFs, images, and audio files.", None),
+        ("I need help analyzing some files. I have images and audio files.", None),
         ("Can you analyze the image at test_files/sample.jpg and tell me what you see?", None),
-        ("Now analyze the PDF at test_files/document.pdf and summarize its main points.", None),
         ("What's in the audio file at test_files/recording.mp3?", None),
         ("Based on all these files, what's the common theme?", None)
     ]
@@ -247,12 +240,12 @@ def build_parser() -> argparse.ArgumentParser:
             "  python demo.py --file test_files/sample_chart.png \\\n"
             '      --query \"Which quarter had the highest revenue, and what was the exact value?\"\n'
             "  # 兼容旧写法（位置参数）\n"
-            "  python demo.py document.pdf \"总结这份文档的要点\""
+            "  python demo.py test_files/sample_chart.png \"总结图像内容\""
         ),
     )
     parser.add_argument(
         "file", nargs="?", default=None,
-        help="要处理的多模态文件（图像 / PDF 文档 / 音频）。也可用 --file 指定",
+        help="要处理的多模态文件（图像 / 音频）。也可用 --file 指定",
     )
     parser.add_argument(
         "query", nargs="?", default=None,
@@ -301,7 +294,7 @@ async def main():
     parser = build_parser()
     args = parser.parse_args()
 
-    # 离线样例生成：不需要 API Key，直接产出图表 + PDF 报告
+    # 离线样例生成：不需要 API Key，直接产出图表
     if args.generate_sample:
         import create_sample
         sys.argv = ["create_sample.py"]  # 用默认输出目录 test_files/

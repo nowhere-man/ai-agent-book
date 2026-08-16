@@ -9,7 +9,7 @@
 
 2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   pip install -r ../../requirements.txt
    ```
 
 3. **Configure environment variables:**
@@ -47,7 +47,7 @@
 8. Get your Search Engine ID (cx parameter)
 9. Add to `.env`:
    ```
-   GOOGLE_API_KEY=your_api_key
+   OPENAI_API_KEY=your_api_key
    GOOGLE_CSE_ID=your_search_engine_id
    ```
 
@@ -110,7 +110,7 @@ Add the server configuration:
       "command": "python",
       "args": ["/absolute/path/to/perception-tools/src/main.py"],
       "env": {
-        "GOOGLE_API_KEY": "your_key",
+        "OPENAI_API_KEY": "your_key",
         "GOOGLE_CSE_ID": "your_cse_id",
         "OPENWEATHER_API_KEY": "your_key"
       }
@@ -130,7 +130,7 @@ The server uses stdio transport and can be integrated with any MCP-compatible cl
 If you see import errors, make sure all dependencies are installed:
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 ```
 
 ### API Errors

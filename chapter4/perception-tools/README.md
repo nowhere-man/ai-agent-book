@@ -1,6 +1,6 @@
 # Perception Tools MCP Server / 感知工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-1 ★★**. MCP perception tools: search, multimodal, filesystem, public/private data. Most free APIs need no key.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-1 ★★**. MCP perception tools: search, multimodal, filesystem, public/private data. Most free APIs need no key.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-1 ★★**。感知 MCP 工具：搜索、多模态、文件系统、公开/私有数据。多数免费 API 无需 Key。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -61,7 +61,7 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 
 # Offline protocol smoke test: starts stdio, lists tools, and calls file_reader.
 python smoke_test_mcp_v2.py
@@ -80,7 +80,7 @@ not compatible with this experiment.
 
 The following features work immediately without any API keys:
 - **Web Search**: DuckDuckGo
-- **Weather**: Open-Meteo  
+- **Weather**: Open-Meteo
 - **Stock Prices**: Yahoo Finance
 - **Crypto Prices**: CoinGecko
 - **Currency Conversion**: ExchangeRate-API
@@ -254,13 +254,13 @@ Parameters:
 
 > **Vision LLM keys / OpenRouter fallback**: AI image/video analysis
 > (`analyze_image_ai` / `analyze_video_ai`) use `OPENAI_API_KEY` when set.
-> If it is absent but `OPENROUTER_API_KEY` is set, they transparently route
-> through OpenRouter (`base_url=https://openrouter.ai/api/v1`, model mapped to
+> If it is absent but `OPENAI_API_KEY` is set, they transparently route
+> through OpenRouter (`base_url=https://api.openai.com/v1`, model mapped to
 > `provider/model` form). Override the model via `PERCEPTION_VISION_MODEL`.
 > (Local Whisper transcription still needs `OPENAI_API_KEY` — OpenRouter has no
 > audio-transcription API.)
 > Gemini is also supported through its OpenAI-compatible endpoint: set
-> `GEMINI_API_KEY`, `PERCEPTION_VISION_PROVIDER=gemini`, and optionally
+> `OPENAI_API_KEY`, `PERCEPTION_VISION_PROVIDER=gemini`, and optionally
 > `PERCEPTION_VISION_MODEL` (the campaign uses `gemini-2.5-flash`).
 
 ##### `video_parser`
@@ -490,7 +490,7 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows PowerShell：.venv\Scripts\Activate.ps1
 # Windows cmd：.venv\Scripts\activate.bat
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 
 # 离线协议冒烟测试：启动 stdio、列出工具并调用 file_reader
 python smoke_test_mcp_v2.py
@@ -508,7 +508,7 @@ MCP 1.x 的共享环境与本实验不兼容。
 
 以下功能立即可用，无需任何 API Key：
 - **网络搜索**：DuckDuckGo
-- **天气**：Open-Meteo  
+- **天气**：Open-Meteo
 - **股价**：Yahoo Finance
 - **加密货币**：CoinGecko
 - **汇率换算**：ExchangeRate-API
@@ -667,8 +667,8 @@ python cli.py demo --offline  # 离线演示（只跑文件系统 / 本地知识
 
 > **视觉 LLM Key / OpenRouter 兜底**：AI 图像/视频分析
 > （`analyze_image_ai` / `analyze_video_ai`）在设置了 `OPENAI_API_KEY` 时使用它。
-> 若缺失但设置了 `OPENROUTER_API_KEY`，则透明走 OpenRouter
-> （`base_url=https://openrouter.ai/api/v1`，模型映射为 `provider/model`）。
+> 若缺失但设置了 `OPENAI_API_KEY`，则透明走 OpenRouter
+> （`base_url=https://api.openai.com/v1`，模型映射为 `provider/model`）。
 > 可用 `PERCEPTION_VISION_MODEL` 覆盖模型。
 > （本地 Whisper 转写仍需 `OPENAI_API_KEY`——OpenRouter 无音频转写 API。）
 
@@ -851,7 +851,7 @@ perception-tools/
 
 ## Notes / 说明
 
-- Prefer `python cli.py demo --offline` for a first run without network-heavy steps.  
-- 首次可先跑 `python cli.py demo --offline`，避免重度联网步骤。  
-- Most public-data tools need no API key; vision LLM and Whisper paths may need keys.  
+- Prefer `python cli.py demo --offline` for a first run without network-heavy steps.
+- 首次可先跑 `python cli.py demo --offline`，避免重度联网步骤。
+- Most public-data tools need no API key; vision LLM and Whisper paths may need keys.
 - 多数公开数据工具无需 Key；视觉 LLM 与 Whisper 路径可能需要 Key。

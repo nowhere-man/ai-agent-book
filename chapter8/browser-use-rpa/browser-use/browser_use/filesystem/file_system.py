@@ -7,9 +7,6 @@ from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 INVALID_FILENAME_ERROR_MESSAGE = 'Error: Invalid filename format. Must be alphanumeric with supported extension.'
 DEFAULT_FILE_SYSTEM_PATH = 'browseruse_agent_data'
@@ -112,50 +109,6 @@ class CsvFile(BaseFile):
 		return 'csv'
 
 
-class PdfFile(BaseFile):
-	"""PDF file implementation"""
-
-	@property
-	def extension(self) -> str:
-		return 'pdf'
-
-	def sync_to_disk_sync(self, path: Path) -> None:
-		file_path = path / self.full_name
-		try:
-			# Create PDF document
-			doc = SimpleDocTemplate(str(file_path), pagesize=letter)
-			styles = getSampleStyleSheet()
-			story = []
-
-			# Convert markdown content to simple text and add to PDF
-			# For basic implementation, we'll treat content as plain text
-			# This avoids the AGPL license issue while maintaining functionality
-			content_lines = self.content.split('\n')
-
-			for line in content_lines:
-				if line.strip():
-					# Handle basic markdown headers
-					if line.startswith('# '):
-						para = Paragraph(line[2:], styles['Title'])
-					elif line.startswith('## '):
-						para = Paragraph(line[3:], styles['Heading1'])
-					elif line.startswith('### '):
-						para = Paragraph(line[4:], styles['Heading2'])
-					else:
-						para = Paragraph(line, styles['Normal'])
-					story.append(para)
-				else:
-					story.append(Spacer(1, 6))
-
-			doc.build(story)
-		except Exception as e:
-			raise FileSystemError(f"Error: Could not write to file '{self.full_name}'. {str(e)}")
-
-	async def sync_to_disk(self, path: Path) -> None:
-		with ThreadPoolExecutor() as executor:
-			await asyncio.get_event_loop().run_in_executor(executor, lambda: self.sync_to_disk_sync(path))
-
-
 class FileSystemState(BaseModel):
 	"""Serializable state of the file system"""
 
@@ -184,7 +137,6 @@ class FileSystem:
 			'txt': TxtFile,
 			'json': JsonFile,
 			'csv': CsvFile,
-			'pdf': PdfFile,
 		}
 
 		self.files = {}
@@ -267,18 +219,6 @@ class FileSystem:
 					async with await anyio.open_file(full_filename, 'r') as f:
 						content = await f.read()
 						return f'Read from file {full_filename}.\n<content>\n{content}\n</content>'
-				elif extension == 'pdf':
-					import pypdf
-
-					reader = pypdf.PdfReader(full_filename)
-					num_pages = len(reader.pages)
-					MAX_PDF_PAGES = 10
-					extra_pages = num_pages - MAX_PDF_PAGES
-					extracted_text = ''
-					for page in reader.pages[:MAX_PDF_PAGES]:
-						extracted_text += page.extract_text()
-					extra_pages_text = f'{extra_pages} more pages...' if extra_pages > 0 else ''
-					return f'Read from file {full_filename}.\n<content>\n{extracted_text}\n{extra_pages_text}</content>'
 				else:
 					return f'Error: Cannot read file {full_filename} as {extension} extension is not supported.'
 			except FileNotFoundError:
@@ -491,8 +431,6 @@ class FileSystem:
 				file_obj = JsonFile(**file_info)
 			elif file_type == 'CsvFile':
 				file_obj = CsvFile(**file_info)
-			elif file_type == 'PdfFile':
-				file_obj = PdfFile(**file_info)
 			else:
 				# Skip unknown file types
 				continue

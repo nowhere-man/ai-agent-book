@@ -32,7 +32,7 @@ request that merely contains similarly named tool objects. The active agent in
 ```
 
 The DashScope backend speaks the same `/responses` protocol against
-`{DASHSCOPE_BASE_URL}/responses` with the provider's hosted-tool shapes:
+`{OPENAI_BASE_URL}/responses` with the provider's hosted-tool shapes:
 
 ```json
 {
@@ -116,7 +116,7 @@ source .venv/bin/activate
 cd chapter1/search-codegen
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 export OPENAI_API_KEY=your-openai-api-key
 
@@ -126,7 +126,7 @@ python main.py --backend openai --mode single \
   --reasoning high --verbosity high --output result.json
 
 # Equivalent-provider path (eligible for acceptance): Alibaba Model Studio
-export DASHSCOPE_API_KEY=your-dashscope-api-key
+export OPENAI_API_KEY=your-dashscope-api-key
 python main.py --backend dashscope --mode single \
   --request "东盟 10 国首都之间最近的一对是哪两个？请搜索并用 Python 计算" \
   --output result.json
@@ -137,7 +137,7 @@ python main.py --backend openai --dry-run \
   --reasoning max --verbosity high
 
 # Proxy diagnostic only; not canonical acceptance
-export OPENROUTER_API_KEY=your-openrouter-api-key
+export OPENAI_API_KEY=your-openrouter-api-key
 python main.py --backend openrouter --mode single --request "Search current news"
 ```
 

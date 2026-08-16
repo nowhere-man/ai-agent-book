@@ -38,8 +38,8 @@ DATASET_REVISION = "aa56583bf2bc52b0565770607d6fc3faebecf9e2"
 STUDENT_MODEL = "HuggingFaceTB/SmolLM2-135M-Instruct"
 STUDENT_REVISION = "12fd25f77366fa6b3b4b768ec3050bf629380bac"
 TEACHER_MODEL = "kimi-k3"
-TEACHER_BASE_URL = "https://api.moonshot.cn/v1"
-TEACHER_KEY_ENV = "MOONSHOT_API_KEY"
+TEACHER_BASE_URL = "https://api.openai.com/v1"
+TEACHER_KEY_ENV = "OPENAI_API_KEY"
 
 # Dated native Kimi K3 pricing copied from the verified Chapter 6 campaign
 # configuration.  We preserve both the native rate and the dated FX rate.

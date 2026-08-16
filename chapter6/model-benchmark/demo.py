@@ -8,8 +8,8 @@ demo.py —— 一条命令跑出多提供商性能对比表 / 并发压测表�
     python demo.py --list               # 仅列出将要测试的提供商
 
     # 指定任意一个 OpenAI 兼容端点（不改代码即可测新模型/新提供商）：
-    python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
-                   --api-key-env DEEPSEEK_API_KEY
+    python demo.py --base-url https://api.openai.com/v1 --model deepseek-chat \
+                   --api-key-env OPENAI_API_KEY
 
     # 并发压测：对同一模型逐步提升并发，找限流点、看延迟长尾随并发的变化：
     python demo.py --model gpt-5.6-luna --concurrency-sweep 1,2,4,8

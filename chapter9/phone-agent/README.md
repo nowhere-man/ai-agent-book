@@ -30,7 +30,7 @@ uv sync --locked --python 3.12 --extra ch9 --extra dev
 
 cd chapter9/phone-agent
 cp env.example .env
-# 填入 ARK_API_KEY；也可按 env.example 显式改用 OpenAI/OpenRouter
+# 填入 OPENAI_API_KEY；也可按 env.example 显式改用 OpenAI/OpenRouter
 
 # ReAct treatment
 uv run --extra ch9 python demo.py \

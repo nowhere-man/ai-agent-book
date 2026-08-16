@@ -27,20 +27,20 @@ def _extract_json(text: str) -> dict[str, Any]:
 
 def _client(provider: str) -> tuple[OpenAI, dict[str, Any]]:
     if provider == "openrouter":
-        key = os.getenv("OPENROUTER_API_KEY")
+        key = os.getenv("OPENAI_API_KEY")
         if not key:
-            raise RuntimeError("OPENROUTER_API_KEY is required")
-        base = "https://openrouter.ai/api/v1"
+            raise RuntimeError("OPENAI_API_KEY is required")
+        base = "https://api.openai.com/v1"
         return OpenAI(api_key=key, base_url=base), {
-            "provider": provider, "endpoint": base + "/chat/completions", "credential_env": "OPENROUTER_API_KEY"
+            "provider": provider, "endpoint": base + "/chat/completions", "credential_env": "OPENAI_API_KEY"
         }
     if provider == "ark":
-        key = os.getenv("ARK_API_KEY")
+        key = os.getenv("OPENAI_API_KEY")
         if not key:
-            raise RuntimeError("ARK_API_KEY is required")
-        base = "https://ark.cn-beijing.volces.com/api/v3"
+            raise RuntimeError("OPENAI_API_KEY is required")
+        base = "https://api.openai.com/v1"
         return OpenAI(api_key=key, base_url=base), {
-            "provider": provider, "endpoint": base + "/chat/completions", "credential_env": "ARK_API_KEY"
+            "provider": provider, "endpoint": base + "/chat/completions", "credential_env": "OPENAI_API_KEY"
         }
     key = os.getenv("OPENAI_API_KEY")
     if not key:

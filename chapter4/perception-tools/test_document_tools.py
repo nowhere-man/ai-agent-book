@@ -12,72 +12,10 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from document_processing_tools import (
-    extract_pdf_text,
     extract_docx_content,
     extract_pptx_content,
     extract_csv_content
 )
-
-
-class TestPDFExtraction:
-    """Tests for PDF extraction."""
-    
-    @pytest.mark.asyncio
-    async def test_extract_pdf_basic(self):
-        """Test basic PDF extraction."""
-        # Create a simple PDF for testing
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import letter
-        
-        pdf_path = Path(tempfile.mktemp(suffix=".pdf"))
-        
-        # Create PDF
-        c = canvas.Canvas(str(pdf_path), pagesize=letter)
-        c.drawString(100, 750, "Hello World")
-        c.drawString(100, 730, "This is a test PDF")
-        c.showPage()
-        c.drawString(100, 750, "Page 2 content")
-        c.save()
-        
-        try:
-            result = await extract_pdf_text(str(pdf_path))
-            data = json.loads(result.text)
-            
-            assert data["success"] is True
-            message = data["message"]
-            assert message["file_type"] == "pdf"
-            assert message["total_pages"] == 2
-            assert "Hello World" in message["text"]
-            
-            print(f"✅ PDF extraction successful: {message['total_pages']} pages")
-        finally:
-            pdf_path.unlink(missing_ok=True)
-    
-    @pytest.mark.asyncio
-    async def test_extract_pdf_page_range(self):
-        """Test PDF extraction with page range."""
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import letter
-        
-        pdf_path = Path(tempfile.mktemp(suffix=".pdf"))
-        
-        c = canvas.Canvas(str(pdf_path), pagesize=letter)
-        for i in range(1, 6):
-            c.drawString(100, 750, f"Page {i}")
-            c.showPage()
-        c.save()
-        
-        try:
-            result = await extract_pdf_text(str(pdf_path), page_range="1-3")
-            data = json.loads(result.text)
-            
-            assert data["success"] is True
-            message = data["message"]
-            assert message["pages_extracted"] == 3
-            
-            print(f"✅ PDF page range: extracted {message['pages_extracted']} pages")
-        finally:
-            pdf_path.unlink(missing_ok=True)
 
 
 class TestDOCXExtraction:

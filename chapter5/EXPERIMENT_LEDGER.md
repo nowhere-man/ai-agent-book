@@ -10,7 +10,7 @@ a complete experiment and is reported as such.
 | 5-1 | `code-for-math/validation/runs/exp5-1-ark-doubao-flash-aime2024-20260730-v1/manifest.json` | passed | true | not supported | `3f4508457ae620efdb8864ed52ef150d3e584da128f2249ca18553904d6f571a` |
 | 5-2 | `code-for-logic/validation/real_ark_doubao_flash_hf84_20260730.json` | passed | true | contradicted | `ac602aebf67e9b2ee508f3472f4348fd7c30edd05098fed8cbc6ebef15d2df28` |
 | 5-3 | `small-model-codified-rules/validation/real_ollama_qwen3_4b_60x2_20260730.json` | passed | true | not supported | `003c8e0593623b700a173b463199ae080a6c7bcbcedce1f5568d579515da66ab` |
-| 5-4 | `paper-to-ppt/validation/runs/exp5-4-real-pdf-both-20260730-v9/comparison_summary.json` | passed | true | context advantage supported; quality tied | `bfd913d311ab4d6ad5a8cae93b61ce54ce6d19f9d2d10ee2afdef06becd1e09f` |
+| 5-4 | `paper-to-ppt/README.md` and local dry-run | available | false | compares split review and single-agent self-review context | — |
 | 5-5 | `paper-to-video/validation/runs/exp5-5-kimi-fish-qwen-20260730-v1/manifest.json` | passed | true | supported | `93bb69a916a76d12de56270928971f6e39f47755214f7a135817d7effd8b3f09` |
 | 5-6 | `video-edit/validation/runs/exp5-6-real-blender-20260730-055102/manifest.json` | passed | true | supported | `fd044738e812faa832863f4c112880a9583c268afb7d08f388c00623498ab7a8` |
 | 5-7 | `adaptive-log-parser/validation/runs/20260729T212342Z-5_7-live/manifest.json` | passed | true | supported | `00851a7b15fba8bad94422b7870b9eda1a9f3b12f3e509b2d768db244edc2507` |
@@ -33,13 +33,10 @@ a complete experiment and is reported as such.
 - **5-3:** local Ollama `qwen3:4b` completed all 60 frozen cases in both arms
   with database/server-clock truth and full messages/tool receipts. Codified
   rules were 91.7% versus control 95.0% (p=0.6875).
-- **5-4:** both arms produced twenty-page Slidev decks from the hash-pinned
-  real PDF and all three provenance-tracked original figure crops. Real
-  rendering, iterative Vision review and the same independent judge all ran;
-  both final decks scored 95 and passed with no high/medium defect. Quality
-  tied, while peak context was 24,186 tokens for the split design versus
-  92,601 for single-agent self-review (3.83×), and total tokens were 73,227
-  versus 298,259.
+- **5-4:** the maintained implementation reads a local Markdown manuscript,
+  renders Slidev pages as PNG, and compares split review with single-agent
+  self-review. The offline dry-run exercises the complete loop without an API
+  key; a real run uses only OpenAI text and Vision calls.
 - **5-5:** twelve real Experiment 5-4 pages received live Kimi K3 narration,
   independent Qwen-VL-Max pixel review, and Fish Audio S1 speech. The H.264/AAC
   result is 513.010 seconds (8.55 minutes); summed page audio is 512.913

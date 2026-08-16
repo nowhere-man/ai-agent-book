@@ -47,7 +47,7 @@ def _timeout_handler(signum, frame):
 
 
 def get_client():
-    return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return genai.Client(api_key=os.environ["OPENAI_API_KEY"])
 
 
 # ── The Application Scenario ─────────────────────────────────

@@ -57,12 +57,12 @@ def search_impl(arguments: Dict[str, Any]) -> Any:
     """
     When using the search tool provided by Moonshot AI, you just need to return the arguments as they are,
     without any additional processing logic.
- 
-    But if you want to use other models and keep the internet search functionality, you just need to modify 
-    the implementation here (for example, calling search and fetching web page content), the function signature 
+
+    But if you want to use other models and keep the internet search functionality, you just need to modify
+    the implementation here (for example, calling search and fetching web page content), the function signature
     remains the same and still works.
- 
-    This ensures maximum compatibility, allowing you to switch between different models without making 
+
+    This ensures maximum compatibility, allowing you to switch between different models without making
     destructive changes to the code.
     """
     return arguments
@@ -92,8 +92,8 @@ class WebSearchAgent:
     kimi-k3 的当前官方路径是标准 ``function`` tool 声明加
     ``moonshot/web-search:latest`` Formula Fiber 执行。
     """
-    
-    def __init__(self, api_key: str = None, base_url: str = "https://api.moonshot.cn/v1",
+
+    def __init__(self, api_key: str = None, base_url: str = "https://api.openai.com/v1",
                  model: str = "kimi-k3", verbose: bool = False):
         """
         初始化 Agent
@@ -105,14 +105,14 @@ class WebSearchAgent:
             verbose: 是否实时打印 ReAct 轨迹（思考/行动/观察）
         """
         # 优先使用传入的 api_key，否则从环境变量获取
-        # Moonshot 为主，OpenRouter 为通用兜底（当 MOONSHOT_API_KEY 缺失时启用）
+        # Moonshot 为主，OpenRouter 为通用兜底（当 OPENAI_API_KEY 缺失时启用）
         from config import resolve_llm_backend, Config
-        primary_key = api_key or os.environ.get("MOONSHOT_API_KEY") or os.environ.get("KIMI_API_KEY")
+        primary_key = api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
         resolved_key, resolved_base_url, model, self.using_openrouter = \
             resolve_llm_backend(primary_key, base_url, model)
         if self.using_openrouter:
             logger.info(
-                f"MOONSHOT_API_KEY 未设置，改用 OpenRouter 兜底（模型: {model}）。"
+                f"OPENAI_API_KEY 未设置，改用 OpenRouter 兜底（模型: {model}）。"
                 "注意：Moonshot Formula web_search 工具在 OpenRouter 上不可用，"
                 "此模式下模型将仅凭自身知识作答，不做实时联网搜索。"
             )
@@ -146,7 +146,7 @@ class WebSearchAgent:
         self.trace.append(step)
         if self.verbose:
             print(format_trace_step(step))
-        
+
     def _get_tools(self) -> List[Dict[str, Any]]:
         """Fetch and cache Kimi's authoritative Formula declaration."""
         if getattr(self, "using_openrouter", False):
@@ -276,7 +276,7 @@ class WebSearchAgent:
         if isinstance(result, str):
             return result
         return json.dumps(result, ensure_ascii=False)
-    
+
     def _get_system_prompt(self) -> str:
         """
         获取系统提示
@@ -294,14 +294,14 @@ class WebSearchAgent:
 - 优先获取最新、最权威的信息
 - 答案要结构清晰，有理有据
 """
-    
+
     def _chat(self, messages: List[Dict[str, Any]]) -> Choice:
         """
         调用 Kimi API 进行对话
-        
+
         Args:
             messages: 消息列表
-            
+
         Returns:
             API 响应的 Choice 对象
         """
@@ -345,17 +345,17 @@ class WebSearchAgent:
     def search_and_answer(self, user_question: str, max_iterations: int = 5) -> str:
         """
         执行搜索并生成答案
-        
+
         Args:
             user_question: 用户问题
             max_iterations: 最大搜索迭代次数（防止无限循环）
-            
+
         Returns:
             最终答案
         """
         # 构建系统提示
         system_prompt = self._get_system_prompt()
-        
+
         # 重置对话历史并添加新的系统提示
         self.conversation_history = [
             {"role": "system", "content": system_prompt},
@@ -371,16 +371,16 @@ class WebSearchAgent:
         try:
             finish_reason = None
             iteration = 0
-            
+
             # 循环处理，直到获得最终答案或达到最大迭代次数
             while (finish_reason is None or finish_reason == "tool_calls") and iteration < max_iterations:
                 iteration += 1
                 logger.info(f"迭代 {iteration}/{max_iterations}")
-                
+
                 # 调用 Kimi API
                 choice = self._chat(self.conversation_history)
                 finish_reason = choice.finish_reason
-                
+
                 # 捕获模型的思考过程（Kimi K3 等推理模型通过 reasoning_content 暴露思考模式）
                 reasoning = getattr(choice.message, "reasoning_content", None)
                 if reasoning:
@@ -486,23 +486,23 @@ class WebSearchAgent:
                         })
 
                         return answer
-            
+
             # 如果达到最大迭代次数仍未完成
             if iteration >= max_iterations:
                 logger.warning(f"达到最大迭代次数 {max_iterations}")
                 return MAX_ITERATIONS_MESSAGE
 
             return NO_INFO_MESSAGE
-                
+
         except Exception as e:
             logger.error(f"{SEARCH_ERROR_PREFIX}: {str(e)}")
             return f"{SEARCH_ERROR_PREFIX}: {str(e)}"
-    
+
     def clear_history(self):
         """清空对话历史"""
         self.conversation_history = []
         logger.info("对话历史已清空")
-    
+
     def get_conversation_history(self) -> List[Dict[str, str]]:
         """获取对话历史"""
         return self.conversation_history
@@ -514,11 +514,11 @@ class WebSearchAgent:
     def get_api_turns(self) -> List[Dict[str, Any]]:
         """Return detached real-provider evidence for the latest question."""
         return json.loads(json.dumps(self.api_turns, ensure_ascii=False, default=str))
-    
+
     def set_temperature(self, temperature: float):
         """
         设置温度参数
-        
+
         Args:
             temperature: 温度值 (0.0 - 2.0)
         """
@@ -576,19 +576,19 @@ def main():
     """
     独立运行示例，演示基本用法
     """
-    # 设置 API key (确保已设置环境变量 MOONSHOT_API_KEY)
+    # 设置 API key (确保已设置环境变量 OPENAI_API_KEY)
     agent = WebSearchAgent()
-    
+
     # 示例问题
     test_question = "请搜索 Moonshot AI Context Caching 技术，告诉我这是什么。"
-    
+
     print(f"问题: {test_question}")
     print("-" * 60)
     print("搜索中...")
-    
+
     # 获取答案
     answer = agent.search_and_answer(test_question)
-    
+
     print("\n答案:")
     print("-" * 60)
     print(answer)

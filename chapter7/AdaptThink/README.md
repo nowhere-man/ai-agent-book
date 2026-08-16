@@ -347,7 +347,7 @@ conda activate adapt_think
 
 # Install dependencies
 cd chapter7/AdaptThink-original
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 pip install flash-attn --no-build-isolation
 ```
 
@@ -892,7 +892,7 @@ conda activate adapt_think
 
 # 安装依赖
 cd chapter7/AdaptThink-original
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 pip install flash-attn --no-build-isolation
 ```
 

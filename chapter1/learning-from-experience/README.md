@@ -1,6 +1,6 @@
 # Learning from Experience: RL vs LLM In-Context Learning / 从经验中学习：RL 与 LLM 上下文学习对比
 
-> Compares tabular Q-learning with LLM in-context learning on a treasure-hunt game with hidden mechanics (Shunyu Yao, “The Second Half”).  
+> Compares tabular Q-learning with LLM in-context learning on a treasure-hunt game with hidden mechanics (Shunyu Yao, “The Second Half”).
 > 代码位于第 1 章项目树；对应书中 **实验 7-1 ★（Q-learning 在寻宝游戏中的表现）** 与 **实验 7-2 ★★（传统 RL 与 LLM Agent 的对比研究）**。
 
 ← [Chapter 1 index / 返回第 1 章目录](../README.md) · 📖 [Read Chapter 7 / 读第 7 章正文](../../book/chapter7.md)（[EN](../../book-en/chapter7.md)）
@@ -46,7 +46,7 @@ LLM DECISION PROCESS
   1. The red key opens the locked door to the guard room
   2. Crafting rusty sword + magic crystal creates a silver sword
   3. The silver sword can defeat the strong guard
-  
+
   Since I have the silver sword and I'm in the hallway...
 ----------------------------------------
 
@@ -92,7 +92,7 @@ source .venv/bin/activate
 cd chapter1/learning-from-experience
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 - Q-learning runs fully offline with **no API key**.
@@ -107,24 +107,24 @@ To run the LLM experiments, you need a Kimi (Moonshot) API key:
 
 ```bash
 export LLM_PROVIDER="moonshot"  # or dashscope/qwen/bailian
-export MOONSHOT_API_KEY="your-api-key-here"
+export OPENAI_API_KEY="your-api-key-here"
 # For Alibaba Cloud Model Studio / Bailian (Qwen), use:
 # export LLM_PROVIDER="dashscope"
-# export DASHSCOPE_API_KEY="your-dashscope-api-key-here"
+# export OPENAI_API_KEY="your-dashscope-api-key-here"
 # export DASHSCOPE_MODEL="qwen3.7-plus"
 ```
 
 Or create a `.env` file:
 
 ```bash
-echo "MOONSHOT_API_KEY=your-api-key-here" > .env
+echo "OPENAI_API_KEY=your-api-key-here" > .env
 ```
 
-**Universal OpenRouter fallback**: if `MOONSHOT_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the LLM path routes through OpenRouter. Because Kimi models are not stably available on OpenRouter, the fallback uses `OPENROUTER_MODEL` (default `openai/gpt-5.6-luna`):
+**Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset but `OPENAI_API_KEY` is set, the LLM path routes through OpenRouter. Because Kimi models are not stably available on OpenRouter, the fallback uses `OPENAI_MODEL` (default `openai/gpt-5.6-luna`):
 
 ```bash
-export OPENROUTER_API_KEY=your-openrouter-api-key
-python quick_demo.py   # runs via OpenRouter when MOONSHOT_API_KEY is missing
+export OPENAI_API_KEY=your-openrouter-api-key
+python quick_demo.py   # runs via OpenRouter when OPENAI_API_KEY is missing
 ```
 
 ### Running the Experiment
@@ -393,10 +393,10 @@ Edit `game_environment.py` to:
 
 ### 要验证的关键洞察
 
-1. **样本效率**：LLM 用远少于传统 RL 的样例即可学习  
-2. **泛化**：LLM 用推理理解模式；RL 记忆状态-动作映射  
-3. **先验知识**：语言预训练为新任务推理提供强大先验  
-4. **隐藏机制发现**：LLM 可形成假设并检验；RL 往往需要穷尽式探索  
+1. **样本效率**：LLM 用远少于传统 RL 的样例即可学习
+2. **泛化**：LLM 用推理理解模式；RL 记忆状态-动作映射
+3. **先验知识**：语言预训练为新任务推理提供强大先验
+4. **隐藏机制发现**：LLM 可形成假设并检验；RL 往往需要穷尽式探索
 
 ### 你会看到什么
 
@@ -422,7 +422,7 @@ LLM DECISION PROCESS
   1. The red key opens the locked door to the guard room
   2. Crafting rusty sword + magic crystal creates a silver sword
   3. The silver sword can defeat the strong guard
-  
+
   Since I have the silver sword and I'm in the hallway...
 ----------------------------------------
 
@@ -435,17 +435,17 @@ LLM DECISION PROCESS
 
 文本寻宝游戏，智能体需要：
 
-- 在多个房间间导航  
-- 收集物品与钥匙  
-- 使用合适武器击败守卫  
-- 通过经验发现隐藏机制  
+- 在多个房间间导航
+- 收集物品与钥匙
+- 使用合适武器击败守卫
+- 通过经验发现隐藏机制
 
 #### 隐藏机制（不对智能体公开）
 
-1. **颜色锁**：特定颜色钥匙开对应门  
-2. **武器有效性**：不同武器对不同敌人有效  
-3. **合成系统**：特定物品可合成更强物品  
-4. **药水效果**：消耗药水获得临时能力  
+1. **颜色锁**：特定颜色钥匙开对应门
+2. **武器有效性**：不同武器对不同敌人有效
+3. **合成系统**：特定物品可合成更强物品
+4. **药水效果**：消耗药水获得临时能力
 
 ### 快速开始
 
@@ -468,34 +468,34 @@ source .venv/bin/activate
 cd chapter1/learning-from-experience
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
-- Q-learning 完全离线，**无需任何 API Key**。  
-- LLM 部分需要 Moonshot/Kimi API Key（或 OpenRouter 兜底）。  
+- Q-learning 完全离线，**无需任何 API Key**。
+- LLM 部分需要 Moonshot/Kimi API Key（或 OpenRouter 兜底）。
 
 #### 配置 Kimi K3 API
 
 运行 LLM 实验需要 Kimi（Moonshot）API Key：
 
-1. 从 [Moonshot AI](https://platform.moonshot.cn/) 获取 Key  
+1. 从 [Moonshot AI](https://platform.moonshot.cn/) 获取 Key
 2. 设置环境变量：
 
 ```bash
-export MOONSHOT_API_KEY="your-api-key-here"
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
 或创建 `.env`：
 
 ```bash
-echo "MOONSHOT_API_KEY=your-api-key-here" > .env
+echo "OPENAI_API_KEY=your-api-key-here" > .env
 ```
 
-**通用兜底（OpenRouter）**：若未设置 `MOONSHOT_API_KEY` 但设置了 `OPENROUTER_API_KEY`，LLM 部分会自动改走 OpenRouter。由于 Kimi 模型在 OpenRouter 上不稳定可用，兜底时会使用 `OPENROUTER_MODEL`（默认 `openai/gpt-5.6-luna`）：
+**通用兜底（OpenRouter）**：若未设置 `OPENAI_API_KEY` 但设置了 `OPENAI_API_KEY`，LLM 部分会自动改走 OpenRouter。由于 Kimi 模型在 OpenRouter 上不稳定可用，兜底时会使用 `OPENAI_MODEL`（默认 `openai/gpt-5.6-luna`）：
 
 ```bash
-export OPENROUTER_API_KEY=your-openrouter-api-key
-python quick_demo.py   # MOONSHOT_API_KEY 缺失时自动经 OpenRouter 运行
+export OPENAI_API_KEY=your-openrouter-api-key
+python quick_demo.py   # OPENAI_API_KEY 缺失时自动经 OpenRouter 运行
 ```
 
 ### 运行实验
@@ -508,9 +508,9 @@ python quick_demo.py
 
 会展示：
 
-- 每一步的完整思考过程  
-- 经验如何累积并影响后续决策  
-- 与传统 RL 在学习速度上的巨大差异  
+- 每一步的完整思考过程
+- 经验如何累积并影响后续决策
+- 与传统 RL 在学习速度上的巨大差异
 
 #### 命令行接口（`experiment.py`）
 
@@ -564,11 +564,11 @@ ID/正文或任何 parser fallback 都会使验收失败。若模型调用已经
 
 流程：
 
-1. 训练 Q-learning 10000 局（约 3 秒）并打印学习曲线  
-2. 训练 LLM Agent 20 局，并展示详细推理  
-3. 评估双方  
-4. 生成对比图  
-5. 结果写入 `results/`  
+1. 训练 Q-learning 10000 局（约 3 秒）并打印学习曲线
+2. 训练 LLM Agent 20 局，并展示详细推理
+3. 评估双方
+4. 生成对比图
+5. 结果写入 `results/`
 
 **说明**：`experiment.py` 是多局探索入口；正文规范入口只测第一局。2026-07-30
 验收运行包含 17 次串行推理调用，共耗时 416.11 秒，因此没有复现旧版
@@ -622,18 +622,18 @@ python tests/manual/rl_learning_check.py --episodes 1000
 
 #### 对比指标
 
-1. **样本效率** — 达到良好表现所需局数、学习速度  
-2. **性能** — 评估胜率、平均回报与回合长度  
-3. **计算成本** — 训练时间；内存（Q 表规模 vs. 经验存储）；LLM 的 API 调用  
+1. **样本效率** — 达到良好表现所需局数、学习速度
+2. **性能** — 评估胜率、平均回报与回合长度
+3. **计算成本** — 训练时间；内存（Q 表规模 vs. 经验存储）；LLM 的 API 调用
 
 #### 可视化
 
 实验会生成对比图，包括：
 
-- 随时间的学习曲线  
-- 胜率演进  
-- 样本效率对比  
-- 关键洞察摘要  
+- 随时间的学习曲线
+- 胜率演进
+- 样本效率对比
+- 关键洞察摘要
 
 #### 预期结果
 
@@ -659,9 +659,9 @@ Kimi 恰好 18 步和 Q-learning 恰好 11 步。详见[规范证据](validation
 
 ##### RL vs LLM（实验 7-2 的对比结论）
 
-- **Q-Learning**：需要近 10000 局才达到稳定通关；把“门/钥匙/剑”当作无意义符号，只能靠统计式暴力探索。  
-- **LLM In-Context**：携带预训练先验，往往第一局就能在十几步内通关；靠推理理解游戏概念结构。  
-- **样本效率**：LLM 高出 2–3 个数量级；但单局推理慢（API 调用 ~1–2 分钟），Q-learning 跑 10000 局只需约 3 秒——权衡取决于交互成本，详见书中实验 7-2。  
+- **Q-Learning**：需要近 10000 局才达到稳定通关；把“门/钥匙/剑”当作无意义符号，只能靠统计式暴力探索。
+- **LLM In-Context**：携带预训练先验，往往第一局就能在十几步内通关；靠推理理解游戏概念结构。
+- **样本效率**：LLM 高出 2–3 个数量级；但单局推理慢（API 调用 ~1–2 分钟），Q-learning 跑 10000 局只需约 3 秒——权衡取决于交互成本，详见书中实验 7-2。
 
 ### 项目结构
 
@@ -696,60 +696,60 @@ learning-from-experience/
 
 #### Q-Learning Agent
 
-- **算法**：表格 Q-learning + ε-贪婪探索  
-- **状态表示**：房间、背包与游戏状态的哈希组合  
-- **学习率**：0.2（`--learning-rate`）  
-- **折扣因子**：0.99（`--discount`）  
-- **探索**：ε 从 1.0 起，按 `--epsilon-decay`（0.9995）衰减到 `--epsilon-min`（0.1）  
+- **算法**：表格 Q-learning + ε-贪婪探索
+- **状态表示**：房间、背包与游戏状态的哈希组合
+- **学习率**：0.2（`--learning-rate`）
+- **折扣因子**：0.99（`--discount`）
+- **探索**：ε 从 1.0 起，按 `--epsilon-decay`（0.9995）衰减到 `--epsilon-min`（0.1）
 
 #### LLM Agent（Kimi K3）
 
-- **模型**：`kimi-k3`（可用 `--model` 或 `MOONSHOT_MODEL` 覆盖）  
-- **推理模型**：Kimi K3 会在最终答案（`message.content`）前输出思维链（`message.reasoning_content`），因此代码使用较大的 `max_tokens=2048`，避免 `ACTION:` 行被思考预算截断。  
-- **学习方式**：上下文学习 + 经验记忆（最多 50 条）  
-- **上下文管理**：存储成功与失败经验  
-- **推理**：行动前提示模型基于过往经验推理  
-- **Temperature**：请求 0.7，但推理模型（Kimi K3、GPT-5）只接受 `temperature=1`，代码会自动强制为 `1`（见 `_reasoning_safe_temperature`）  
+- **模型**：`kimi-k3`（可用 `--model` 或 `MOONSHOT_MODEL` 覆盖）
+- **推理模型**：Kimi K3 会在最终答案（`message.content`）前输出思维链（`message.reasoning_content`），因此代码使用较大的 `max_tokens=2048`，避免 `ACTION:` 行被思考预算截断。
+- **学习方式**：上下文学习 + 经验记忆（最多 50 条）
+- **上下文管理**：存储成功与失败经验
+- **推理**：行动前提示模型基于过往经验推理
+- **Temperature**：请求 0.7，但推理模型（Kimi K3、GPT-5）只接受 `temperature=1`，代码会自动强制为 `1`（见 `_reasoning_safe_temperature`）
 
 ### 扩展实验
 
 #### 进一步研究思路
 
-1. **不同游戏**：尝试其他隐藏机制游戏  
-2. **混合方法**：RL 与 LLM 引导结合  
-3. **迁移学习**：测试向相似游戏的迁移  
-4. **消融研究**：去掉推理提示以隔离其影响  
-5. **其他 LLM**：对比不同语言模型  
+1. **不同游戏**：尝试其他隐藏机制游戏
+2. **混合方法**：RL 与 LLM 引导结合
+3. **迁移学习**：测试向相似游戏的迁移
+4. **消融研究**：去掉推理提示以隔离其影响
+5. **其他 LLM**：对比不同语言模型
 
 #### 修改游戏
 
 编辑 `game_environment.py` 可：
 
-- 增加房间与物品  
-- 设计更复杂的隐藏机制  
-- 调整难度与奖励  
-- 加入新类型谜题  
+- 增加房间与物品
+- 设计更复杂的隐藏机制
+- 调整难度与奖励
+- 加入新类型谜题
 
 ### 教学价值
 
-1. **先验的力量**：语言预训练如何提供有用知识  
-2. **推理 vs. 记忆**：不同学习路径  
-3. **样本效率**：为何对现实任务重要  
-4. **“The Second Half” 论点**：从“能否解决”转向“多高效”  
+1. **先验的力量**：语言预训练如何提供有用知识
+2. **推理 vs. 记忆**：不同学习路径
+3. **样本效率**：为何对现实任务重要
+4. **“The Second Half” 论点**：从“能否解决”转向“多高效”
 
 ### 参考文献
 
-- [The Second Half](https://ysymyth.github.io/The-Second-Half/) — Shunyu Yao  
-- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)  
-- Q-learning 原文：Watkins & Dayan (1992)  
+- [The Second Half](https://ysymyth.github.io/The-Second-Half/) — Shunyu Yao
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- Q-learning 原文：Watkins & Dayan (1992)
 
 ---
 
 ## Notes / 说明
 
-- Project type: **✅ standalone runnable** (Q-learning offline; LLM needs API key).  
-  项目类型：**✅ 可独立运行**（Q-learning 离线；LLM 需 API Key）。  
-- For educational purposes; inspired by academic work on AI and RL.  
-  教学用途，灵感来自 AI 与强化学习相关研究。  
-- Feel free to add mechanics, other RL algorithms (DQN, PPO, …), providers, or richer metrics.  
-  欢迎增加隐藏机制、其他 RL 算法、提供商或更完善的评估指标。  
+- Project type: **✅ standalone runnable** (Q-learning offline; LLM needs API key).
+  项目类型：**✅ 可独立运行**（Q-learning 离线；LLM 需 API Key）。
+- For educational purposes; inspired by academic work on AI and RL.
+  教学用途，灵感来自 AI 与强化学习相关研究。
+- Feel free to add mechanics, other RL algorithms (DQN, PPO, …), providers, or richer metrics.
+  欢迎增加隐藏机制、其他 RL 算法、提供商或更完善的评估指标。

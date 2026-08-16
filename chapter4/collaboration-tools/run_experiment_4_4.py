@@ -26,10 +26,10 @@ VALIDATION = HERE / "validation" / "experiment_4_4"
 CREDENTIAL = re.compile(r"\b(?:sk|gh[opusr])-[A-Za-z0-9_-]{12,}\b")
 SENSITIVE_ENV_NAMES = {
     "ANTHROPIC_API_KEY",
-    "KIMI_API_KEY",
-    "MOONSHOT_API_KEY",
     "OPENAI_API_KEY",
-    "OPENROUTER_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
     "SENDGRID_API_KEY",
     "SMTP_PASSWORD",
     "SMTP_USERNAME",

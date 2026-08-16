@@ -276,11 +276,11 @@ def main():
               file=sys.stderr)
         sys.exit(1)
     if (args.gemini
-            and not os.environ.get("GEMINI_API_KEY", "").strip()
-            and not os.environ.get("OPENROUTER_API_KEY", "").strip()
+            and not os.environ.get("OPENAI_API_KEY", "").strip()
+            and not os.environ.get("OPENAI_API_KEY", "").strip()
             and not os.environ.get("MISTRAL_API_KEY", "").strip()):
         print(
-            "错误：--gemini 需要 GEMINI_API_KEY、OPENROUTER_API_KEY 或 MISTRAL_API_KEY。",
+            "错误：--gemini 需要 OPENAI_API_KEY、OPENAI_API_KEY 或 MISTRAL_API_KEY。",
             file=sys.stderr,
         )
         sys.exit(1)

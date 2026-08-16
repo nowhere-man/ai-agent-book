@@ -231,7 +231,7 @@ def summarize(protocol: dict[str, Any], protocol_hash: str, run_dir: Path, rows:
             }
     configured_secrets = [
         value for name in (
-            "MOONSHOT_API_KEY", "KIMI_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"
+            "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY"
         ) if (value := os.getenv(name))
     ]
     credential_findings = []
@@ -308,9 +308,9 @@ def main() -> int:
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args()
     load_dotenv(HERE / ".env")
-    key = os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
+    key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not key:
-        raise RuntimeError("MOONSHOT_API_KEY or KIMI_API_KEY is required")
+        raise RuntimeError("OPENAI_API_KEY or OPENAI_API_KEY is required")
     protocol_bytes = PROTOCOL_PATH.read_bytes()
     protocol = json.loads(protocol_bytes)
     protocol_hash = sha256_bytes(protocol_bytes)

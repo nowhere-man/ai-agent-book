@@ -20,8 +20,8 @@ ROOT = Path(__file__).resolve().parent
 
 PROVIDER_DEFAULTS = {
     "openai": ("OPENAI_API_KEY", None, "gpt-4o-mini"),
-    "ark": ("ARK_API_KEY", "https://ark.cn-beijing.volces.com/api/v3", None),
-    "openrouter": ("OPENROUTER_API_KEY", "https://openrouter.ai/api/v1", "openai/gpt-4o-mini"),
+    "ark": ("OPENAI_API_KEY", "https://api.openai.com/v1", None),
+    "openrouter": ("OPENAI_API_KEY", "https://api.openai.com/v1", "openai/gpt-4o-mini"),
 }
 
 

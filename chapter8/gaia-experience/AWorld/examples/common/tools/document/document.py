@@ -35,7 +35,7 @@ class DocumentTool(Tool):
     def __init__(self, conf: ToolConfig, **kwargs) -> None:
         """Init document tool."""
         import_package('cv2', install_name='opencv-python')
-        import_packages(['xmltodict', 'pandas', 'docx2markdown', 'PyPDF2', 'numpy'])
+        import_packages(['xmltodict', 'pandas', 'docx2markdown', 'numpy'])
         super(DocumentTool, self).__init__(conf, **kwargs)
         self.cur_observation = None
         self.content = None
@@ -161,22 +161,6 @@ class DocumentTool(Tool):
                 with open(md_file_path, "r") as f:
                     self.content = f.read()
                 f.close()
-
-            if any(document_path.endswith(ext) for ext in ["pdf"]):
-                # try using pypdf to extract text from pdf
-                try:
-                    from PyPDF2 import PdfReader
-
-                    # Open file in binary mode for PdfReader
-                    f = open(document_path, "rb")
-                    reader = PdfReader(f)
-                    extracted_text = ""
-                    for page in reader.pages:
-                        extracted_text += page.extract_text()
-                    self.content = extracted_text
-                    f.close()
-                except Exception as pdf_error:
-                    error = str(pdf_error)
 
             # audio
             if any(document_path.endswith(ext.lower()) for ext in [".mp3", ".wav", ".wave"]):

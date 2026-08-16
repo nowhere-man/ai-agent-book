@@ -68,10 +68,10 @@ source .venv/bin/activate
 cd chapter8/self-evolving-tools
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # Fill in OPENAI_API_KEY (default model gpt-5.6-luna)
-# Fallback: if no OPENAI_API_KEY but OPENROUTER_API_KEY is set, automatically switch to OpenRouter (maps to openai/gpt-5.6-luna, etc.)
+# Fallback: if no OPENAI_API_KEY but OPENAI_API_KEY is set, automatically switch to OpenRouter (maps to openai/gpt-5.6-luna, etc.)
 python demo.py             # Run the two default "evolution + reuse" tasks (requires API + internet)
 python demo.py --fresh     # Clear tool_library/ first, then run, reproducing "evolution from scratch" (recommended for repeated demos)
 python demo.py --offline   # Offline mechanism self-check: no API/network required, verify the evolution loop itself
@@ -113,7 +113,7 @@ Did the pre-save validation gate block the broken tool: Yes ✅
 1. **NVDA** (demonstrates evolution): Starting from zero base tools, search → read documentation → sandbox test → package `get_stock_price` tool → provide NVIDIA's real stock price and weekly change.
 2. **AAPL** (demonstrates reuse): `search_tools` hits the just-created `get_stock_price`, **directly reuses** it, no re-searching/creating.
 
-> You can also switch to other OpenAI-compatible providers: `LLM_PROVIDER=moonshot|ark` (with corresponding `MOONSHOT_API_KEY` / `ARK_API_KEY`), or use `LLM_MODEL` to override the model name. Search uses DuckDuckGo, no search key required.
+> You can also switch to other OpenAI-compatible providers: `LLM_PROVIDER=moonshot|ark` (with corresponding `OPENAI_API_KEY` / `OPENAI_API_KEY`), or use `LLM_MODEL` to override the model name. Search uses DuckDuckGo, no search key required.
 
 ## A Real Run Trace (Excerpt, Real Internet + Real OpenAI Calls)
 
@@ -239,10 +239,10 @@ source .venv/bin/activate
 cd chapter8/self-evolving-tools
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）
-# 兜底：若无 OPENAI_API_KEY 但设置了 OPENROUTER_API_KEY，自动改走 OpenRouter（映射到 openai/gpt-5.6-luna 等）
+# 兜底：若无 OPENAI_API_KEY 但设置了 OPENAI_API_KEY，自动改走 OpenRouter（映射到 openai/gpt-5.6-luna 等）
 python demo.py             # 跑「进化 + 复用」两个默认任务（需 API + 联网）
 python demo.py --fresh     # 先清空 tool_library/ 再跑，重现「从零进化」（重复演示时推荐）
 python demo.py --offline   # 离线机制自检：无需 API/网络，验证进化闭环本身
@@ -288,7 +288,7 @@ python demo.py --help      # 查看全部参数
 1. **NVDA**（演示进化）：从零基础工具出发，搜索→读文档→沙箱测试→封装 `get_stock_price` 工具→给出 NVIDIA 真实股价与周涨跌幅。
 2. **AAPL**（演示复用）：`search_tools` 命中刚创建的 `get_stock_price`，**直接复用**，不再重新搜索/创建。
 
-> 也可切换到其它 OpenAI 兼容供应商：`LLM_PROVIDER=moonshot|ark`（配合对应的 `MOONSHOT_API_KEY` / `ARK_API_KEY`），
+> 也可切换到其它 OpenAI 兼容供应商：`LLM_PROVIDER=moonshot|ark`（配合对应的 `OPENAI_API_KEY` / `OPENAI_API_KEY`），
 > 或用 `LLM_MODEL` 覆盖模型名。搜索用 DuckDuckGo，不需要任何搜索 key。
 
 ## 一次真实运行的轨迹（节选，真实联网 + 真实调用 OpenAI）

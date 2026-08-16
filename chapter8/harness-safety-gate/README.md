@@ -20,7 +20,7 @@ uv sync --locked --python 3.12 --extra ch8
 source .venv/bin/activate  # Windows 见 chapter8/self-modifying-agent/README.md
 
 cd chapter8/harness-safety-gate
-# 未安装 uv 时的兜底：python -m pip install -r requirements.txt
+# 未安装 uv 时的兜底：python -m pip install -r ../../requirements.txt
 # 所需环境变量见 env.example
 
 python run_experiment_8_8.py --provider ark --model doubao-seed-1-6-250615 --seed 8801

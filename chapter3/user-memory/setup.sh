@@ -26,7 +26,7 @@ echo "✓ Virtual environment activated"
 # Install requirements
 echo "Installing dependencies..."
 pip install -q --upgrade pip
-pip install -q -r requirements.txt
+pip install -q -r ../../requirements.txt
 echo "✓ Dependencies installed"
 
 # Create .env file if it doesn't exist
@@ -34,7 +34,7 @@ if [ ! -f ".env" ]; then
     cp env.example .env
     echo "✓ Created .env file from template"
     echo ""
-    echo "⚠️  IMPORTANT: Please edit .env and add your MOONSHOT_API_KEY"
+    echo "⚠️  IMPORTANT: Please edit .env and add your OPENAI_API_KEY"
     echo "   Get your API key from: https://platform.moonshot.cn/"
 else
     echo "✓ .env file already exists"
@@ -59,7 +59,7 @@ echo "Setup Complete!"
 echo "=========================================="
 echo ""
 echo "Next steps:"
-echo "1. Edit .env and add your MOONSHOT_API_KEY"
+echo "1. Edit .env and add your OPENAI_API_KEY"
 echo "2. Run: python quickstart.py"
 echo "3. Run: python main.py interactive <your_name>"
 echo ""

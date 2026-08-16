@@ -13,7 +13,7 @@ def test_parser_defaults_to_interactive_kimi_mode():
     assert args.provider == "kimi"
     assert args.model == Config.DEFAULT_MODEL
     assert args.max_steps == Config.MAX_SEARCH_ITERATIONS
-    assert args.base_url == Config.KIMI_BASE_URL
+    assert args.base_url == Config.OPENAI_BASE_URL
     assert args.output is None
     assert args.quiet is False
 

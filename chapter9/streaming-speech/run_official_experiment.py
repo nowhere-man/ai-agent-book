@@ -36,10 +36,10 @@ AUDIO_FILES = [
     "validation/scenarios/background_noise.wav",
 ]
 SECRET_ENV_NAMES = (
-    "ARK_API_KEY",
-    "MOONSHOT_API_KEY",
     "OPENAI_API_KEY",
-    "OPENROUTER_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
     "TAVILY_API_KEY",
 )
 

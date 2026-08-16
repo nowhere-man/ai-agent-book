@@ -26,7 +26,7 @@ DEFAULT_MODEL=claude-sonnet-5
 ```bash
 # .env
 PROVIDER=openrouter
-OPENROUTER_API_KEY=your-openrouter-api-key
+OPENAI_API_KEY=your-openrouter-api-key
 DEFAULT_MODEL=anthropic/claude-sonnet-4
 ```
 
@@ -116,7 +116,7 @@ Just change your `.env`:
 ```bash
 # From Anthropic to OpenRouter
 PROVIDER=openrouter  # Changed this line
-OPENROUTER_API_KEY=your-openrouter-api-key  # Add this
+OPENAI_API_KEY=your-openrouter-api-key  # Add this
 DEFAULT_MODEL=anthropic/claude-sonnet-4  # Update model name
 ```
 
@@ -140,7 +140,7 @@ agent1 = CodingAgent(
 agent2 = CodingAgent(
     api_key="your-openrouter-api-key",
     model="anthropic/claude-sonnet-4",
-    base_url="https://openrouter.ai/api/v1",
+    base_url="https://api.openai.com/v1",
     provider="openrouter"
 )
 
@@ -187,7 +187,7 @@ DEFAULT_MODEL=google/gemini-pro-1.5
 
 Make sure you copied an OpenRouter API key from the OpenRouter dashboard:
 ```bash
-OPENROUTER_API_KEY=your-openrouter-api-key
+OPENAI_API_KEY=your-openrouter-api-key
 ```
 
 ### "Model not found"

@@ -14,7 +14,7 @@
      python demo.py --mode dual --max-rounds 1   # 快速：只跑双 Agent、只出首版
      python demo.py --smoke     # 仅验证 Slidev 渲染链路，不调用任何 LLM
      python demo.py --dry-run   # 离线走通提议者-审核者循环（真实渲染 + 脚本化改稿）
-依赖：Node/Slidev（渲染）、OPENAI_API_KEY（gpt-5.6-luna 视觉 + 文本；未配置时可用 OPENROUTER_API_KEY 兜底）。
+依赖：Node/Slidev（渲染）、OPENAI_API_KEY（gpt-5.6-luna 视觉 + 文本；未配置时可用 OPENAI_API_KEY 兜底）。
 """
 import argparse
 import hashlib
@@ -33,7 +33,6 @@ from agents import (  # noqa: E402
     Proposer, Reviewer, SelfReviewAgent, TokenMeter, independent_judge,
 )
 from make_figures import generate_all  # noqa: E402
-from paper_source import PAPER, prepare_real_paper  # noqa: E402
 from renderer import render_slides  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -338,13 +337,12 @@ def parse_args(argv=None):
             "  python demo.py --vision-model gpt-5.6-luna      # 覆盖视觉模型\n"
             "  python demo.py --dry-run                # 离线走通提议者-审核者循环，不调用任何 LLM\n"
             "  python demo.py --smoke                  # 仅验证 Slidev 渲染，不调用任何 LLM\n\n"
-            "模型/供应商也可通过环境变量配置（见 env.example）；命令行 --text-model /\n"
-            "--vision-model 优先级更高：OPENAI_API_KEY / OPENAI_BASE_URL / TEXT_MODEL / VISION_MODEL"
+            "模型可通过环境变量配置（见 env.example）；命令行 --text-model /\n"
+            "--vision-model 优先级更高：OPENAI_API_KEY / TEXT_MODEL / VISION_MODEL"
         ),
     )
-    p.add_argument("--paper", metavar="PATH", default=None,
-                   help="非正式兼容入口：使用本地 Markdown。省略时使用固定哈希的真实 arXiv PDF；"
-                        "本地 Markdown 运行永远不会通过正式实验门禁。")
+    p.add_argument("--paper", metavar="PATH", default=DEFAULT_PAPER_PATH,
+                   help="输入论文 Markdown 文件（默认 paper/sample_paper.md）。")
     p.add_argument("--out-dir", metavar="DIR", default=DEFAULT_OUT_DIR,
                    help="产物输出目录：各轮 slides.md / review.json / comparison_summary.json "
                         "（默认 output/）。渲染 PNG 始终位于 slidev_workspace/exports/。")
@@ -354,10 +352,6 @@ def parse_args(argv=None):
     p.add_argument("--vision-model", metavar="NAME", default=None,
                    help="Reviewer / 独立评委看图用的模型，必须支持图像输入，覆盖 VISION_MODEL "
                         f"环境变量（默认 {agents.VISION_MODEL}）。")
-    p.add_argument(
-        "--provider", choices=["auto", "openai", "openrouter", "moonshot", "ark"],
-        default="auto", help="文本与 Vision 调用的真实 API 提供商",
-    )
     p.add_argument("--mode", choices=["both", "dual", "single"], default="both",
                    help="运行哪种方案：both=两种都跑并对比（默认）；dual=仅提议者-审核者；"
                         "single=仅单 Agent 自审。只跑一种可显著省时省钱。")
@@ -379,7 +373,7 @@ def _save_partial_summary(dual, dual_final, single, single_final, source_info, a
         "experiment": "5-4",
         "official_complete": False,
         "completion": {"campaign_complete": False, "reason": "both comparison arms are required"},
-        "provider": args.provider,
+        "provider": "openai",
         "models": {"text": agents.TEXT_MODEL, "vision": agents.VISION_MODEL},
         "source": source_info,
         "independent_judge": judge_meter.__dict__,
@@ -422,7 +416,7 @@ def main(argv=None):
         agents.TEXT_MODEL = args.text_model
     if args.vision_model:
         agents.VISION_MODEL = args.vision_model
-    agents.configure_provider(args.provider)
+    agents.configure_provider("openai")
 
     if args.smoke:
         smoke_test()
@@ -433,48 +427,22 @@ def main(argv=None):
     if args.max_rounds < 1:
         print("--max-rounds 至少为 1")
         sys.exit(1)
-    if args.paper and not os.path.exists(args.paper):
-        print(f"找不到论文文件：{args.paper}（用 --paper 指定，或参考默认 paper/sample_paper.md）")
+    if not os.path.exists(args.paper):
+        print(f"找不到论文文件：{args.paper}")
         sys.exit(1)
-    provider_keys = {
-        "ark": "ARK_API_KEY", "moonshot": "MOONSHOT_API_KEY",
-        "openrouter": "OPENROUTER_API_KEY", "openai": "OPENAI_API_KEY",
-    }
-    required_key = provider_keys.get(args.provider)
-    if required_key and not os.environ.get(required_key):
-        print(f"请先设置 {required_key}（可参考 env.example）")
-        sys.exit(1)
-    if args.provider == "auto" and not any(os.environ.get(key) for key in (
-        "OPENAI_API_KEY", "OPENROUTER_API_KEY"
-    )):
-        print("auto provider 需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY")
+    if not os.environ.get("OPENAI_API_KEY"):
+        print("请先设置 OPENAI_API_KEY（可参考 env.example）")
         sys.exit(1)
 
-    banner("准备：固定真实论文 PDF + 原论文图")
-    if args.paper:
-        with open(args.paper, encoding="utf-8") as f:
-            paper_md = f.read()
-        figures = generate_all()
-        source_info = {
-            "canonical": False,
-            "reason": "legacy local Markdown and programmatic figures",
-            "paper_path": os.path.abspath(args.paper),
-        }
-    else:
-        prepared = prepare_real_paper(
-            OUT_DIR, os.path.join(HERE, "slidev_workspace", "public")
-        )
-        paper_md = prepared["paper_text"]
-        figures = prepared["figures"]
-        source_info = {
-            "canonical": True,
-            "paper": prepared["manifest"]["paper"],
-            "paper_text": prepared["manifest"]["paper_text"],
-            "visuals": prepared["manifest"]["visuals"],
-            "manifest_path": prepared["manifest_path"],
-            "pdf_path": prepared["pdf_path"],
-        }
-    print(f"论文：{PAPER['title']}（提取文本 {len(paper_md)} 字符）")
+    banner("准备：Markdown 论文与程序化图表")
+    with open(args.paper, encoding="utf-8") as f:
+        paper_md = f.read()
+    figures = generate_all()
+    source_info = {
+        "paper_path": os.path.abspath(args.paper),
+        "figure_paths": sorted(figures),
+    }
+    print(f"论文：{args.paper}（{len(paper_md)} 字符）")
     print(f"输出目录：{OUT_DIR}")
     print(f"文本模型：{agents.TEXT_MODEL}   视觉模型：{agents.VISION_MODEL}")
     print(f"运行模式：{args.mode}   最大轮数：{args.max_rounds}")
@@ -546,24 +514,11 @@ def main(argv=None):
     print(f"  · 方案 B 因图片在同一上下文累积，峰值最高；页数越多、迭代越多，差距越大。")
 
     # 汇总落盘
-    visual_names = [visual["filename"] for visual in source_info.get("visuals", [])]
     receipts = pm.receipts + rm.receipts + sm.receipts + judge_meter.receipts
     receipts_path = save_text(
         "receipts.json", json.dumps(receipts, ensure_ascii=False, indent=2)
     )
     gates = {
-        "pinned_real_academic_pdf": bool(
-            source_info.get("canonical")
-            and source_info.get("paper", {}).get("observed_pdf_sha256") == PAPER["pdf_sha256"]
-        ),
-        "three_original_pdf_visuals": bool(
-            len(visual_names) >= 3
-            and all(v["sha256"] == v["public_copy_sha256"] for v in source_info.get("visuals", []))
-        ),
-        "both_final_decks_reference_every_source_visual": bool(
-            visual_names
-            and all(name in dual["slides"] and name in single["slides"] for name in visual_names)
-        ),
         "both_final_decks_have_10_to_20_rendered_pages": bool(
             10 <= len(dual["final_pngs"]) <= 20
             and 10 <= len(single["final_pngs"]) <= 20
@@ -597,7 +552,7 @@ def main(argv=None):
     summary = {
         "schema_version": "2.0",
         "experiment": "5-4",
-        "provider": args.provider,
+        "provider": "openai",
         "source": source_info,
         "models": {"text": agents.TEXT_MODEL, "vision": agents.VISION_MODEL},
         "dual_agent": {

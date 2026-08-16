@@ -34,7 +34,7 @@ REQUIRED_SOURCES = {
     "chapter9/phone-agent/demo.py",
     "chapter9/phone-agent/direct_call.py",
     "chapter9/phone-agent/env.example",
-    "chapter9/phone-agent/requirements.txt",
+    "requirements.txt",
     "chapter9/phone-agent/run_acceptance.py",
     "chapter9/phone-agent/speech.py",
     "chapter9/phone-agent/static/app.js",

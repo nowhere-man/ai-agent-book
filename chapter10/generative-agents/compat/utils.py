@@ -10,10 +10,10 @@ from __future__ import annotations
 import os
 
 
-openai_api_key = os.environ["DASHSCOPE_API_KEY"]
+openai_api_key = os.environ["OPENAI_API_KEY"]
 openai_api_base = os.environ.get(
     "GA_OPENAI_API_BASE",
-    "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "https://api.openai.com/v1",
 )
 key_owner = "ai-agent-book Experiment 10-5"
 

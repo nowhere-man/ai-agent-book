@@ -130,7 +130,7 @@ def main() -> int:
         "machine": platform.machine(),
         "chat_model": os.environ.get("GA_CHAT_MODEL", "qwen3.7-flash"),
         "embedding_model": os.environ.get("GA_EMBEDDING_MODEL", "text-embedding-v4"),
-        "credential_environment_variables": ["DASHSCOPE_API_KEY", "ANTHROPIC_API_KEY"],
+        "credential_environment_variables": ["OPENAI_API_KEY", "ANTHROPIC_API_KEY"],
     }
     (destination / "environment.json").write_text(
         json.dumps(environment, indent=2) + "\n"

@@ -21,7 +21,7 @@ from unittest.mock import patch
 # Use an isolated data dir and a dummy API key before importing project modules
 _tmpdir = tempfile.mkdtemp(prefix="user_memory_test_")
 os.environ["CONVERSATION_HISTORY_DIR"] = os.path.join(_tmpdir, "conversations")
-os.environ.setdefault("MOONSHOT_API_KEY", "test-dummy-key")
+os.environ.setdefault("OPENAI_API_KEY", "test-dummy-key")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 

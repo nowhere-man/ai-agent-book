@@ -43,9 +43,7 @@ async def process_file(
         
     # Determine content type
     suffix = path.suffix.lower()
-    if suffix == '.pdf':
-        content_type = "pdf"
-    elif suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+    if suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
         content_type = "image"
     elif suffix in ['.mp3', '.wav', '.m4a', '.flac', '.aac', '.ogg']:
         content_type = "audio"
@@ -142,9 +140,7 @@ async def interactive_chat(agent: MultimodalAgent) -> None:
                         
                     # Determine content type
                     suffix = path.suffix.lower()
-                    if suffix == '.pdf':
-                        content_type = "pdf"
-                    elif suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+                    if suffix in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
                         content_type = "image"
                     elif suffix in ['.mp3', '.wav', '.m4a', '.flac', '.aac', '.ogg']:
                         content_type = "audio"
@@ -245,8 +241,6 @@ async def main():
             "示例：\n"
             "  # 处理图像并提问\n"
             "  python main.py --file test_files/sample_chart.png --query \"图中哪个季度营收最高？\"\n"
-            "  # 处理 PDF 文档（提取为文本模式）\n"
-            "  python main.py --mode extract_to_text --file report.pdf --query \"总结要点\"\n"
             "  # 进入交互式对话\n"
             "  python main.py --interactive"
         ),
@@ -256,8 +250,8 @@ async def main():
     parser.add_argument("--model", default="gemini-3.5-flash",
                        help="使用的模型（默认：gemini-3.5-flash）")
     parser.add_argument("--tools", action="store_true",
-                       help="启用多模态分析工具（analyze_image / analyze_audio / analyze_pdf）")
-    parser.add_argument("--file", help="要处理的单个文件（图像 / PDF 文档 / 音频）")
+                       help="启用多模态分析工具（analyze_image / analyze_audio）")
+    parser.add_argument("--file", help="要处理的单个文件（图像 / 音频）")
     parser.add_argument("--query", help="向该文件提出的问题")
     parser.add_argument("--output", "-o", help="将处理结果同时写入指定文件")
     parser.add_argument("--interactive", action="store_true",

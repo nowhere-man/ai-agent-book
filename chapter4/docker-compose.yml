@@ -42,7 +42,7 @@ services:
     environment:
       - DATA_DIR=/data
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GOOGLE_CSE_ID=${GOOGLE_CSE_ID}
       - ARXIV_API_KEY=${ARXIV_API_KEY}
       - YAHOO_FINANCE_API_KEY=${YAHOO_FINANCE_API_KEY}

@@ -60,7 +60,7 @@ source .venv/bin/activate
 cd chapter7/MultilingualReasoning
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # If your GPU environment requires a CUDA 12.8-specific PyTorch wheel,
 # install the platform-matched wheel in that GPU environment.
@@ -625,7 +625,7 @@ source .venv/bin/activate
 cd chapter7/MultilingualReasoning
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 如果 GPU 环境需要 CUDA 12.8 专用 PyTorch wheel，
 # 请在该 GPU 环境中安装与平台匹配的 wheel。

@@ -13,7 +13,7 @@
 
 ```bash
 cd chapter9/controllable-tts
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 cp env.example .env
 python build_reference_library.py
 ```
@@ -38,7 +38,7 @@ source .venv/bin/activate
 cd chapter9/controllable-tts
 
 # Install this experiment's Fish SDK runtime dependencies.
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 
 # Requires ffmpeg/ffprobe installed on the system
 cp env.example .env                       # Fill in FISH_API_KEY and reference settings

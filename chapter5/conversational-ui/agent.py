@@ -15,7 +15,7 @@
   OPENAI_API_KEY   （必填，本实验读取此项）
   OPENAI_BASE_URL  （可选，切换到兼容 OpenAI 协议的服务端点）
   MODEL            （可选，默认 gpt-5.6-luna）
-  OPENROUTER_API_KEY（可选，无直连 key 时自动改走 OpenRouter 兜底）
+  OPENAI_API_KEY（可选，无直连 key 时自动改走 OpenRouter 兜底）
 """
 
 import os
@@ -39,7 +39,7 @@ EDITABLE_FILES = [
 ]
 
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def map_model_to_openrouter(model: str) -> str:
@@ -64,13 +64,13 @@ def build_client_and_model():
     model = os.getenv("MODEL", "gpt-5.6-luna")
     api_key = os.getenv("OPENAI_API_KEY")
     base_url = os.getenv("OPENAI_BASE_URL")
-    orkey = os.getenv("OPENROUTER_API_KEY")
+    orkey = os.getenv("OPENAI_API_KEY")
     # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
     prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
     if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, map_model_to_openrouter(model)
+        api_key, base_url, model = orkey, OPENAI_BASE_URL, map_model_to_openrouter(model)
     if not api_key:
-        raise SystemExit("未找到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请先在环境变量或 .env 中设置。")
+        raise SystemExit("未找到 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请先在环境变量或 .env 中设置。")
     # timeout / max_retries：让偶发的网络/SSL 抖动自动重试，不至于整轮崩溃
     client_kwargs = {"api_key": api_key, "timeout": 60.0, "max_retries": 3}
     if base_url:

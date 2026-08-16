@@ -1,6 +1,6 @@
 # Experiment 3-11: Contextual Retrieval for User Memory / 实验 3-11：利用上下文感知检索增强用户记忆
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — dual-layer memory: Contextual RAG + Advanced JSON Cards.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — dual-layer memory: Contextual RAG + Advanced JSON Cards.
 > 配套《深入理解 AI Agent》第 3 章——双层记忆：上下文感知 RAG + Advanced JSON Cards。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -23,25 +23,25 @@ canonical gate report.
 
 Applying contextual retrieval to user memory addresses a core pain point of naive conversation chunking and steps toward higher-level memory. This project implements a dual-layer memory system:
 
-1. **Contextual Retrieval (Contextual RAG)**: precise retrieval over conversation history  
-2. **Advanced JSON Cards**: structured storage of core facts  
+1. **Contextual Retrieval (Contextual RAG)**: precise retrieval over conversation history
+2. **Advanced JSON Cards**: structured storage of core facts
 
 ### Latest updates
 
 #### LLM-Based Memory Card Generation
-- **Auto extract**: LLM extracts structured memory cards from conversations  
-- **Full structure**: each card includes backstory, person, relationship, and related fields  
-- **Graceful fallback**: falls back to keyword extraction when the LLM is unavailable  
+- **Auto extract**: LLM extracts structured memory cards from conversations
+- **Full structure**: each card includes backstory, person, relationship, and related fields
+- **Graceful fallback**: falls back to keyword extraction when the LLM is unavailable
 
 #### LLM Judge Integration
-- **Auto evaluation**: LLM Judge scores agent answers automatically  
-- **Dual path**: import evaluation module or call the API directly  
-- **Detailed feedback**: 0–1 score, pass/fail, and reasoning  
+- **Auto evaluation**: LLM Judge scores agent answers automatically
+- **Dual path**: import evaluation module or call the API directly
+- **Detailed feedback**: 0–1 score, pass/fail, and reasoning
 
 #### Enhanced Debugging
-- **Memory card dump**: prints full JSON of all memory cards during evaluation  
-- **Test case sorting**: test cases listed alphabetically by name  
-- **Eval transparency**: clearly shows whether LLM Judge is in use  
+- **Memory card dump**: prints full JSON of all memory cards during evaluation
+- **Test case sorting**: test cases listed alphabetically by name
+- **Eval transparency**: clearly shows whether LLM Judge is in use
 
 ### Core ideas
 
@@ -51,24 +51,24 @@ Traditional chunking drops context. An isolated fragment like “OK, book that o
 
 Before indexing conversation history, the system adds a **context generation** step:
 
-- Each conversation chunk gets an LLM-generated prefix summary with key background  
-- Context includes time, people, intent, and other cues  
-- Greatly improves retrieval accuracy and relevance  
+- Each conversation chunk gets an LLM-generated prefix summary with key background
+- Context includes time, people, intent, and other cues
+- Greatly improves retrieval accuracy and relevance
 
 #### 2. Dual-layer memory
 
 **Advanced JSON Cards (always-on memory)**
 
-- Structured, summarized core facts  
-- Always fixed in the Agent’s context  
-- Metadata such as backstory (source) and relationship (related people)  
-- Example: “User Jessica’s passport expires on 2025-02-18”  
+- Structured, summarized core facts
+- Always fixed in the Agent’s context
+- Metadata such as backstory (source) and relationship (related people)
+- Example: “User Jessica’s passport expires on 2025-02-18”
 
 **Contextual RAG (on-demand retrieval)**
 
-- Precise access to unstructured raw dialogue detail  
-- Quickly finds full context of a specific discussion  
-- Acts as “evidence” for decisions  
+- Precise access to unstructured raw dialogue detail
+- Quickly finds full context of a specific discussion
+- Acts as “evidence” for decisions
 
 #### 3. LLM-based memory extraction
 
@@ -81,7 +81,7 @@ cards = indexer._generate_summary_cards(chunks, conversation_id)
 # Example card:
 {
     "category": "financial",
-    "card_key": "bank_account_primary", 
+    "card_key": "bank_account_primary",
     "backstory": "用户在开设账户时提供了银行信息",
     "date_created": "2024-01-15 10:30:00",
     "person": "John Smith (primary)",
@@ -130,7 +130,7 @@ source .venv/bin/activate
 cd chapter3/contextual-retrieval-for-user-memory
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. Environment variables
@@ -139,11 +139,11 @@ Create a `.env` file:
 
 ```bash
 # LLM Provider Configuration
-MOONSHOT_API_KEY=your_api_key_here
-ARK_API_KEY=your_api_key_here
-SILICONFLOW_API_KEY=your_api_key_here
-DASHSCOPE_API_KEY=your_dashscope_api_key_here
-# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_dashscope_api_key_here
+# OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key_here
 
 # Default Provider
@@ -261,23 +261,23 @@ Reasoning: The agent correctly provided the checking account number...
 
 When the user asks “Anything else to prepare for my January Tokyo trip?”:
 
-1. **Fact review**: Agent inspects Advanced JSON Cards  
-   - Finds “Tokyo trip” (departs Jan 25)  
-   - Finds “passport” (expires Feb 18)  
+1. **Fact review**: Agent inspects Advanced JSON Cards
+   - Finds “Tokyo trip” (departs Jan 25)
+   - Finds “passport” (expires Feb 18)
 
-2. **Link and reason**: compares core facts  
-   - Flags passport expiry near flight date  
+2. **Link and reason**: compares core facts
+   - Flags passport expiry near flight date
 
-3. **Detail check**: starts RAG  
-   - Searches dialogue chunks about passport / Tokyo flights  
-   - Loads full original discussion  
+3. **Detail check**: starts RAG
+   - Searches dialogue chunks about passport / Tokyo flights
+   - Loads full original discussion
 
-4. **Proactive service**: both memory layers  
-   - Advises: “Your passport is about to expire; strongly consider expedited renewal.”  
+4. **Proactive service**: both memory layers
+   - Advises: “Your passport is about to expire; strongly consider expedited renewal.”
 
-5. **Auto eval**: LLM Judge  
-   - Score: 0.95/1.0  
-   - Reason: correctly identified risk and gave appropriate advice  
+5. **Auto eval**: LLM Judge
+   - Score: 0.95/1.0
+   - Reason: correctly identified risk and gave appropriate advice
 
 ### References
 
@@ -298,25 +298,25 @@ MIT License
 
 将上下文感知检索技术应用于用户记忆的构建，是解决传统对话历史分块所面临的核心痛点，并迈向更高层次记忆能力的关键。本项目实现了一个双层记忆系统，结合了：
 
-1. **上下文感知检索（Contextual RAG）**：对话历史的精准检索  
-2. **高级 JSON 卡片（Advanced JSON Cards）**：结构化的核心事实存储  
+1. **上下文感知检索（Contextual RAG）**：对话历史的精准检索
+2. **高级 JSON 卡片（Advanced JSON Cards）**：结构化的核心事实存储
 
 ### 最新更新
 
 #### LLM-Based Memory Card Generation
-- **自动提取**：使用 LLM 从对话中智能提取结构化记忆卡片  
-- **完整结构**：每张卡片包含 backstory、person、relationship 等必要字段  
-- **智能降级**：当 LLM 不可用时自动降级到关键词提取  
+- **自动提取**：使用 LLM 从对话中智能提取结构化记忆卡片
+- **完整结构**：每张卡片包含 backstory、person、relationship 等必要字段
+- **智能降级**：当 LLM 不可用时自动降级到关键词提取
 
-#### LLM Judge Integration  
-- **自动评估**：集成 LLM Judge 对 Agent 回答进行自动评分  
-- **双路径支持**：支持导入模块或直接 API 调用  
-- **详细反馈**：提供 0-1 分数、通过/失败状态和评估理由  
+#### LLM Judge Integration
+- **自动评估**：集成 LLM Judge 对 Agent 回答进行自动评分
+- **双路径支持**：支持导入模块或直接 API 调用
+- **详细反馈**：提供 0-1 分数、通过/失败状态和评估理由
 
 #### Enhanced Debugging
-- **内存卡片可视化**：评估时自动打印所有记忆卡片的完整 JSON  
-- **测试用例排序**：按名称字母顺序显示测试用例  
-- **评估透明度**：清晰显示 LLM Judge 使用状态  
+- **内存卡片可视化**：评估时自动打印所有记忆卡片的完整 JSON
+- **测试用例排序**：按名称字母顺序显示测试用例
+- **评估透明度**：清晰显示 LLM Judge 使用状态
 
 ### 核心创新
 
@@ -326,24 +326,24 @@ MIT License
 
 本系统在索引对话历史之前，增加了关键的“上下文生成”步骤：
 
-- 每个对话块都会调用 LLM 生成包含关键背景信息的前缀摘要  
-- 上下文包括时间、人物和意图等关键线索  
-- 极大提升了检索的准确性和相关性  
+- 每个对话块都会调用 LLM 生成包含关键背景信息的前缀摘要
+- 上下文包括时间、人物和意图等关键线索
+- 极大提升了检索的准确性和相关性
 
 #### 2. 双层记忆结构
 
 **Advanced JSON Cards（常驻记忆）**
 
-- 存储结构化的、总结性的核心事实  
-- 始终固定在 Agent 的上下文中  
-- 包含 backstory（信息来源）和 relationship（关联人员）等元数据  
-- 如：“用户 Jessica 的护照将于2025年2月18日过期”  
+- 存储结构化的、总结性的核心事实
+- 始终固定在 Agent 的上下文中
+- 包含 backstory（信息来源）和 relationship（关联人员）等元数据
+- 如：“用户 Jessica 的护照将于2025年2月18日过期”
 
 **Contextual RAG（按需检索）**
 
-- 提供对非结构化的原始对话细节的精准访问  
-- 快速找到具体讨论的完整上下文  
-- 作为决策的“证据”支持  
+- 提供对非结构化的原始对话细节的精准访问
+- 快速找到具体讨论的完整上下文
+- 作为决策的“证据”支持
 
 #### 3. LLM-Based Memory Extraction
 
@@ -356,7 +356,7 @@ cards = indexer._generate_summary_cards(chunks, conversation_id)
 # 生成的卡片示例：
 {
     "category": "financial",
-    "card_key": "bank_account_primary", 
+    "card_key": "bank_account_primary",
     "backstory": "用户在开设账户时提供了银行信息",
     "date_created": "2024-01-15 10:30:00",
     "person": "John Smith (primary)",
@@ -405,7 +405,7 @@ source .venv/bin/activate
 cd chapter3/contextual-retrieval-for-user-memory
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. 配置环境变量
@@ -414,11 +414,11 @@ cd chapter3/contextual-retrieval-for-user-memory
 
 ```bash
 # LLM Provider Configuration
-MOONSHOT_API_KEY=your_api_key_here
-ARK_API_KEY=your_api_key_here
-SILICONFLOW_API_KEY=your_api_key_here
-DASHSCOPE_API_KEY=your_dashscope_api_key_here
-# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_dashscope_api_key_here
+# OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key_here
 
 # Default Provider
@@ -536,23 +536,23 @@ Reasoning: The agent correctly provided the checking account number...
 
 当用户询问“为我一月的东京之行，还有什么要准备的吗？”时：
 
-1. **事实回顾**：Agent 首先审视 Advanced JSON Cards 中的内容  
-   - 发现“东京之行”信息（1月25日出发）  
-   - 发现“护照信息”（2月18日过期）  
+1. **事实回顾**：Agent 首先审视 Advanced JSON Cards 中的内容
+   - 发现“东京之行”信息（1月25日出发）
+   - 发现“护照信息”（2月18日过期）
 
-2. **关联与推理**：通过对比核心事实  
-   - 识别出机票日期与护照过期日期接近的风险  
+2. **关联与推理**：通过对比核心事实
+   - 识别出机票日期与护照过期日期接近的风险
 
-3. **细节验证**：启动 RAG 检索  
-   - 搜索与“护照”和“东京机票”相关的对话片段  
-   - 获取原始讨论的所有细节  
+3. **细节验证**：启动 RAG 检索
+   - 搜索与“护照”和“东京机票”相关的对话片段
+   - 获取原始讨论的所有细节
 
-4. **主动服务**：结合两种记忆  
-   - 给出关键建议：“您的护照即将过期，强烈建议您立即加急办理续签”  
+4. **主动服务**：结合两种记忆
+   - 给出关键建议：“您的护照即将过期，强烈建议您立即加急办理续签”
 
-5. **自动评估**：LLM Judge 评估答案  
-   - 评分：0.95/1.0  
-   - 理由：正确识别风险并给出适当建议  
+5. **自动评估**：LLM Judge 评估答案
+   - 评分：0.95/1.0
+   - 理由：正确识别风险并给出适当建议
 
 ### 参考资料
 
@@ -573,8 +573,8 @@ MIT License
 
 This experiment supports a **universal OpenRouter fallback** for its chat LLM.
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
+- If the primary provider key (e.g. `OPENAI_API_KEY` / `OPENAI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
+- Else if `OPENAI_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://api.openai.com/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENAI_MODEL` to force a specific OpenRouter model id.
 - Else a clear error lists the accepted keys.
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+Add `OPENAI_API_KEY=...` to your `.env` (see `env.example`) to enable it.

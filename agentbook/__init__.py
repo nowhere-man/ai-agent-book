@@ -1,8 +1,8 @@
 """Shared packaging and plumbing for the ai-agent-book companion experiments.
 
 This package exists so the repo can declare its dependencies once (see the root
-``pyproject.toml``) instead of repeating them across per-project
-``requirements.txt`` files.
+``pyproject.toml`` and the root ``requirements.txt`` instead of repeating
+them across per-project dependency files.
 
 Install what a chapter needs::
 

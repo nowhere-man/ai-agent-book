@@ -367,7 +367,7 @@ def make_client(
     """从环境变量构造 OpenAI 客户端。
 
     优先使用 OPENAI_API_KEY（官方直连，保持默认行为不变）；若未配置且存在
-    OPENROUTER_API_KEY，则自动回退到 OpenRouter（base_url=openrouter.ai，
+    OPENAI_API_KEY，则自动回退到 OpenRouter（base_url=openrouter.ai，
     模型名 gpt-*/o1-* 会被映射为 openai/…）；两者皆无则给出清晰错误。
 
     model / base_url 若显式传入则优先于环境变量，便于命令行覆盖。

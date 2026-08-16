@@ -1,6 +1,6 @@
 # User Memory System / 用户记忆系统
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — long-term user memory with separated conversation vs background processing, multiple memory modes, multi-provider support.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — long-term user memory with separated conversation vs background processing, multiple memory modes, multi-provider support.
 > 配套《深入理解 AI Agent》第 3 章——长期用户记忆：对话与后台记忆处理分离、多种记忆模式、多模型提供商。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -21,14 +21,14 @@
 
 ### Key features
 
-- **Separated architecture**: conversational agent vs background memory processor  
-- **Memory modes**: notes → enhanced notes → JSON cards → advanced JSON cards  
+- **Separated architecture**: conversational agent vs background memory processor
+- **Memory modes**: notes → enhanced notes → JSON cards → advanced JSON cards
 - **Providers**: Alibaba Cloud DashScope/Bailian (Qwen), Kimi/Moonshot, SiliconFlow, Doubao, OpenRouter
-- **React + tools** for structured memory ops  
-- **Streaming** with tool calls  
-- **Evaluation** integration with `user-memory-evaluation`  
-- **Background processing** on conversation intervals  
-- **Persistent** JSON storage + conversation history  
+- **React + tools** for structured memory ops
+- **Streaming** with tool calls
+- **Evaluation** integration with `user-memory-evaluation`
+- **Background processing** on conversation intervals
+- **Persistent** JSON storage + conversation history
 
 ### Installation
 
@@ -50,10 +50,10 @@ source .venv/bin/activate
 cd chapter3/user-memory
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
-# DASHSCOPE_API_KEY / MOONSHOT_API_KEY / SILICONFLOW_API_KEY / DOUBAO_API_KEY / OPENROUTER_API_KEY
+# OPENAI_API_KEY / OPENAI_API_KEY / OPENAI_API_KEY / DOUBAO_API_KEY / OPENAI_API_KEY
 ```
 
 ### Quick start
@@ -81,10 +81,10 @@ User Interface
 
 ### Memory modes
 
-1. **`notes`** — short facts/preferences  
-2. **`enhanced_notes`** — contextual paragraphs  
-3. **`json_cards`** — hierarchical JSON  
-4. **`advanced_json_cards`** — full cards with backstory, person, relationship, timestamps  
+1. **`notes`** — short facts/preferences
+2. **`enhanced_notes`** — contextual paragraphs
+3. **`json_cards`** — hierarchical JSON
+4. **`advanced_json_cards`** — full cards with backstory, person, relationship, timestamps
 
 ### Execution modes
 
@@ -166,7 +166,7 @@ Uses test cases from `user-memory-evaluation` (histories → question → score/
 
 ```bash
 PROVIDER=kimi
-# For DashScope/Bailian, use PROVIDER=dashscope (or qwen/bailian) and set DASHSCOPE_API_KEY.
+# For DashScope/Bailian, use PROVIDER=dashscope (or qwen/bailian) and set OPENAI_API_KEY.
 MODEL_TEMPERATURE=0.3
 MODEL_MAX_TOKENS=4096
 MEMORY_MODE=enhanced_notes
@@ -219,11 +219,11 @@ Background processing is async; tools logged; streaming supported; state persist
 
 ### 关键特性
 
-- **分离架构**：对话 Agent 与后台记忆处理器解耦  
-- **多种记忆模式**：简单笔记 → 增强笔记 → JSON 卡片 → Advanced JSON Cards  
-- **多提供商**：Kimi、SiliconFlow、豆包、OpenRouter  
-- **React + 工具** 结构化记忆操作  
-- **流式输出**、**评测集成**、**按间隔后台更新**、**JSON 持久化**  
+- **分离架构**：对话 Agent 与后台记忆处理器解耦
+- **多种记忆模式**：简单笔记 → 增强笔记 → JSON 卡片 → Advanced JSON Cards
+- **多提供商**：Kimi、SiliconFlow、豆包、OpenRouter
+- **React + 工具** 结构化记忆操作
+- **流式输出**、**评测集成**、**按间隔后台更新**、**JSON 持久化**
 
 ### 安装
 
@@ -243,10 +243,10 @@ source .venv/bin/activate
 cd chapter3/user-memory
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
-# 配置 MOONSHOT_API_KEY / SILICONFLOW_API_KEY / DOUBAO_API_KEY / OPENROUTER_API_KEY
+# 配置 OPENAI_API_KEY / OPENAI_API_KEY / DOUBAO_API_KEY / OPENAI_API_KEY
 ```
 
 ### 快速开始
@@ -268,10 +268,10 @@ python main.py --mode evaluation --memory-mode advanced_json_cards
 
 ### 记忆模式
 
-1. **`notes`** — 短事实  
-2. **`enhanced_notes`** — 带上下文的段落  
-3. **`json_cards`** — 层次化 JSON  
-4. **`advanced_json_cards`** — 含 backstory / person / relationship 等完整卡片  
+1. **`notes`** — 短事实
+2. **`enhanced_notes`** — 带上下文的段落
+3. **`json_cards`** — 层次化 JSON
+4. **`advanced_json_cards`** — 含 backstory / person / relationship 等完整卡片
 
 ### 运行模式
 
@@ -318,4 +318,4 @@ python -c "from memory_manager import NotesMemoryManager; m=NotesMemoryManager('
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-Primary provider keys take precedence; else `OPENROUTER_API_KEY` routes chat LLM via OpenRouter with automatic model id mapping. See `env.example`. Related: [`../user-memory-evaluation/`](../user-memory-evaluation/), [`../mem0/`](../mem0/), [`../memobase/`](../memobase/).
+Primary provider keys take precedence; else `OPENAI_API_KEY` routes chat LLM via OpenRouter with automatic model id mapping. See `env.example`. Related: [`../user-memory-evaluation/`](../user-memory-evaluation/), [`../mem0/`](../mem0/), [`../memobase/`](../memobase/).

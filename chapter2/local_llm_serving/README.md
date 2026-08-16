@@ -47,7 +47,7 @@ source .venv/bin/activate
 cd chapter2/local_llm_serving
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 3. Run
 # Default root ch2 install:
@@ -155,7 +155,6 @@ local_llm_serving/
 1. **get_current_temperature** — Open-Meteo (no API key)
 2. **get_current_time** — timezones
 3. **convert_currency** — simulated rates
-4. **parse_pdf** — URL or local file
 5. **code_interpreter** — execute Python
 
 ### Streaming
@@ -352,7 +351,7 @@ source .venv/bin/activate
 cd chapter2/local_llm_serving
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 默认根目录 ch2 安装：
 python main.py --backend ollama
@@ -459,7 +458,6 @@ local_llm_serving/
 1. **get_current_temperature** — Open-Meteo（无需 API Key）
 2. **get_current_time** — 多时区时间
 3. **convert_currency** — 模拟汇率
-4. **parse_pdf** — URL 或本地 PDF
 5. **code_interpreter** — 执行 Python
 
 ### 流式模式

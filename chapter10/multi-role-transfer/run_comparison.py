@@ -458,13 +458,13 @@ def main(args: argparse.Namespace) -> int:
         return _replay(args)
     if args.trials < 1:
         raise SystemExit("--trials must be >= 1")
-    api_key = args.api_key or os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+    api_key = args.api_key or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise SystemExit("需要 OPENAI_API_KEY（或 OPENROUTER_API_KEY）才能进行 live comparison")
+        raise SystemExit("需要 OPENAI_API_KEY（或 OPENAI_API_KEY）才能进行 live comparison")
     base_url = args.base_url
     model = args.model
-    if not (args.api_key or os.getenv("OPENAI_API_KEY")) and os.getenv("OPENROUTER_API_KEY"):
-        base_url = "https://openrouter.ai/api/v1"
+    if not (args.api_key or os.getenv("OPENAI_API_KEY")) and os.getenv("OPENAI_API_KEY"):
+        base_url = "https://api.openai.com/v1"
         if "/" not in model:
             model = f"openai/{model}" if model.startswith("gpt-") else model
     client = OpenAI(api_key=api_key, base_url=base_url, timeout=args.request_timeout)

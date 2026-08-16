@@ -31,8 +31,8 @@ from experiment_utils import ChatRecorder, jsonable, sha256_file, write_campaign
 from offline_retriever import OfflineRetriever
 
 
-ARK_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3"
-MOONSHOT_ENDPOINT = "https://api.moonshot.cn/v1"
+ARK_ENDPOINT = "https://api.openai.com/v1"
+MOONSHOT_ENDPOINT = "https://api.openai.com/v1"
 ARTICLE_RE = re.compile(r"第[一二三四五六七八九十百千零两0-9]+条(?:之[一二三四五六七八九十0-9]+)?")
 
 
@@ -108,10 +108,10 @@ def judge_prompt(case: Dict[str, Any], arm: str, answer: str, retrieved: List[Di
 
 class Campaign:
     def __init__(self, args: argparse.Namespace):
-        ark_key = os.getenv("ARK_API_KEY")
-        judge_key = os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
+        ark_key = os.getenv("OPENAI_API_KEY")
+        judge_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
         if not ark_key or not judge_key:
-            raise RuntimeError("ARK_API_KEY and MOONSHOT_API_KEY/KIMI_API_KEY are required")
+            raise RuntimeError("OPENAI_API_KEY and OPENAI_API_KEY/OPENAI_API_KEY are required")
         self.args = args
         self.retriever = OfflineRetriever(str(HERE / "laws"))
         self.answer_client = OpenAI(api_key=ark_key, base_url=args.answer_endpoint, timeout=args.timeout, max_retries=3)

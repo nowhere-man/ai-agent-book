@@ -1,6 +1,6 @@
 # Prompt Injection Attack & Defense / 提示注入攻防实验
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-5 ★★: Prompt injection attack and defense**.  
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-5 ★★: Prompt injection attack and defense**.
 > 配套《深入理解 AI Agent》第 2 章 **实验 2-5 ★★：提示注入攻防实验**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
@@ -52,13 +52,13 @@ source .venv/bin/activate
 cd chapter2/prompt-injection
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env    # set LLM_PROVIDER and its key (OpenAI or DashScope/Bailian)
 python demo.py         # default: all 3×4=12 combos, 4 trials each
 ```
 
-> **DashScope/Bailian:** Set `LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `DASHSCOPE_API_KEY`; the default model is `qwen3.7-plus`. `DASHSCOPE_BASE_URL` supports international-region keys. OpenRouter remains available as a fallback.
+> **DashScope/Bailian:** Set `LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `OPENAI_API_KEY`; the default model is `qwen3.7-plus`. `OPENAI_BASE_URL` supports international-region keys. OpenRouter remains available as a fallback.
 
 The program runs selected combos and prints an **attack × defense** success-rate matrix.
 
@@ -190,13 +190,13 @@ source .venv/bin/activate
 cd chapter2/prompt-injection
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env    # 填入 OPENAI_API_KEY（OpenAI 官方接口）
 python demo.py         # 默认跑完全部 3×4=12 个组合，每组合 4 次
 ```
 
-> **通用回退（OpenRouter）**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，程序会自动改走 OpenRouter（`gpt-*` 会映射为 `openai/…`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
+> **通用回退（OpenRouter）**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENAI_API_KEY`，程序会自动改走 OpenRouter（`gpt-*` 会映射为 `openai/…`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
 
 程序会依次跑完被选中的组合，最后打印一张 **攻击 × 防御** 的成功率矩阵。
 
@@ -297,5 +297,5 @@ python demo.py --list                # 离线查看有哪些攻击/防御，不�
 
 ## Notes / 说明
 
-- Success-rate tables are illustrative samples; re-run for your own numbers.  
+- Success-rate tables are illustrative samples; re-run for your own numbers.
 - 成功率表为示例采样结果，请以你自己的完整运行为准。

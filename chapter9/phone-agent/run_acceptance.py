@@ -77,8 +77,8 @@ def chrome_path() -> str:
 
 
 def require_canonical_runtime() -> None:
-    if not os.getenv("ARK_API_KEY"):
-        raise RuntimeError("canonical acceptance requires ARK_API_KEY")
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError("canonical acceptance requires OPENAI_API_KEY")
     whisper_python = os.getenv("WHISPER_PYTHON", sys.executable)
     if not whisper_python or not Path(whisper_python).is_file():
         raise RuntimeError("canonical acceptance requires explicit WHISPER_PYTHON")
@@ -391,7 +391,7 @@ def main() -> int:
         HERE / "demo.py",
         HERE / "direct_call.py",
         HERE / "env.example",
-        HERE / "requirements.txt",
+        ROOT / "requirements.txt",
         HERE / "test_agent.py",
         HERE / "test_speech.py",
         HERE / "test_webrtc_app.py",

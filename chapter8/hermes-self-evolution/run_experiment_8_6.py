@@ -74,8 +74,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if not os.getenv("OPENROUTER_API_KEY"):
-        print("OPENROUTER_API_KEY is required for the live run", file=sys.stderr)
+    if not os.getenv("OPENAI_API_KEY"):
+        print("OPENAI_API_KEY is required for the live run", file=sys.stderr)
         return 2
 
     run_id = args.run_id or datetime.now(timezone.utc).strftime("exp8-6-hermes-%Y%m%dT%H%M%SZ")
@@ -168,7 +168,7 @@ def main() -> int:
         "source_repository": REPO_URL,
         "provider": args.provider,
         "requested_model": args.model,
-        "credential_environment_variable": "OPENROUTER_API_KEY",
+        "credential_environment_variable": "OPENAI_API_KEY",
         "agent_exit_code": agent_run.returncode,
         "git_status": status.splitlines(),
         "transcript_sha256": sha256(raw / "hermes-transcript.txt"),

@@ -109,7 +109,7 @@ def resolve_model(api_key: str, requested: str | None) -> str:
 def resolve_openrouter_model(requested: str | None) -> str:
     if requested:
         return requested
-    payload = _http_json("https://openrouter.ai/api/v1/models", timeout=30)
+    payload = _http_json("https://api.openai.com/v1/models", timeout=30)
     models = payload.get("data") or []
     available = {str(item.get("id", "")): item for item in models if isinstance(item, dict)}
     for model in PREFERRED_OPENROUTER_MODELS:
@@ -291,7 +291,7 @@ def judge_once(
             },
         })
     response = _http_json(
-        "https://openrouter.ai/api/v1/chat/completions",
+        "https://api.openai.com/v1/chat/completions",
         body={
             "model": model,
             "temperature": 0.0,
@@ -385,9 +385,9 @@ def main() -> int:
     parser.add_argument("--output", default=str(HERE / "validation" / "audio_quality_study.json"))
     args = parser.parse_args()
     load_dotenv(HERE / ".env")
-    gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
-    openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
-    dashscope_key = (os.getenv("DASHSCOPE_API_KEY") or "").strip()
+    gemini_key = (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY") or "").strip()
+    openrouter_key = (os.getenv("OPENAI_API_KEY") or "").strip()
+    dashscope_key = (os.getenv("OPENAI_API_KEY") or "").strip()
     mistral_key = (os.getenv("MISTRAL_API_KEY") or "").strip()
     for path in OUTPUTS.values():
         if not path.is_file() or path.stat().st_size <= 1000:

@@ -1,2 +1,0 @@
--e ../android_world
-openai>=1.30.0,<3

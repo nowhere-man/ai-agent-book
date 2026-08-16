@@ -25,7 +25,7 @@ MODEL = os.environ.get("MODEL", "qwen3:4b")
 MAX_TURNS = 6
 
 # --- 通用 OpenRouter 兜底 ---
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _map_to_openrouter_model(model: str) -> str:
@@ -141,31 +141,31 @@ CODIFIED_CANCEL_TOOL = {
 def _make_client(model: str | None = None, provider: str = "ollama"):
     """构造客户端并解析模型名，含通用 OpenRouter 兜底。返回 (client, resolved_model)。
 
-    - 有 OPENAI_API_KEY：直连；但当 model 是 gpt-5.x 且同时设置了 OPENROUTER_API_KEY
+    - 有 OPENAI_API_KEY：直连；但当 model 是 gpt-5.x 且同时设置了 OPENAI_API_KEY
       时优先走 OpenRouter（直连 gpt-5.6 需组织实名认证）。
-    - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：改走 OpenRouter（模型名自动映射）。
+    - 无 OPENAI_API_KEY 但有 OPENAI_API_KEY：改走 OpenRouter（模型名自动映射）。
     """
     model = model or MODEL
     if provider == "ollama":
         api_key = "ollama"
-        base_url = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434/v1")
+        base_url = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:11434/v1")
     elif provider == "openrouter":
-        api_key = os.environ.get("OPENROUTER_API_KEY")
-        base_url = OPENROUTER_BASE_URL
+        api_key = os.environ.get("OPENAI_API_KEY")
+        base_url = OPENAI_BASE_URL
         model = _map_to_openrouter_model(model)
     elif provider == "openai":
         api_key = os.environ.get("OPENAI_API_KEY")
         base_url = os.environ.get("OPENAI_BASE_URL")
     elif provider == "moonshot":
-        api_key = os.environ.get("MOONSHOT_API_KEY")
-        base_url = "https://api.moonshot.cn/v1"
+        api_key = os.environ.get("OPENAI_API_KEY")
+        base_url = "https://api.openai.com/v1"
     elif provider == "ark":
-        api_key = os.environ.get("ARK_API_KEY")
-        base_url = "https://ark.cn-beijing.volces.com/api/v3"
+        api_key = os.environ.get("OPENAI_API_KEY")
+        base_url = "https://api.openai.com/v1"
     else:
         raise ValueError(f"unsupported provider: {provider}")
     if not api_key:
-        raise RuntimeError("未设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请参考 env.example 配置。")
+        raise RuntimeError("未设置 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请参考 env.example 配置。")
     kw = {"api_key": api_key}
     if base_url:
         kw["base_url"] = base_url

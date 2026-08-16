@@ -45,7 +45,7 @@ class ConnectionHandler {
     this.isRecording = false;
     this.recordingStartTime = null;
     this.recordingPath = path.join(__dirname, 'recordings');
-    
+
     // Create recordings directory if it doesn't exist
     if (!fs.existsSync(this.recordingPath)) {
       fs.mkdirSync(this.recordingPath, { recursive: true });
@@ -61,16 +61,16 @@ class ConnectionHandler {
     // Initialize VAD and STT services
     this.vad = new VoiceActivityDetector();
     this.sttService = new SpeechToTextService();
-    
+
     // Initialize LLM provider
     this.initializeLLMProvider();
-    
+
     // VAD processing state
     this.isProcessingSTT = false;
     this.pendingAudioBuffer = Buffer.alloc(0);
 
     this.setupWebSocketHandlers();
-    
+
     // Start periodic cleanup of temp files
     this.cleanupInterval = setInterval(() => {
       this.sttService.cleanupTempFiles();
@@ -115,7 +115,7 @@ class ConnectionHandler {
     try {
       // Try to parse as JSON first
       const jsonMessage = JSON.parse(message);
-      
+
       // Handle ping message by sending back pong with same timestamp
       if (jsonMessage.type === 'ping') {
         this.ws.send(JSON.stringify({
@@ -149,7 +149,7 @@ class ConnectionHandler {
         if (!this.isRecording) {
           this.startRecording();
         }
-        
+
         // Store the audio chunk
         this.audioChunks.push(message);
 
@@ -226,7 +226,7 @@ class ConnectionHandler {
     try {
       // Process audio through VAD (now async)
       const vadResults = await this.vad.processAudioChunk(audioChunk);
-      
+
       for (const result of vadResults) {
         if (result.type === 'speech_start') {
           // Barge-in: tell the client to stop playing the current answer.
@@ -257,7 +257,7 @@ class ConnectionHandler {
 
     try {
       this.isProcessingSTT = true;
-      
+
       // Check if audio has sufficient content
       if (!this.sttService.hasSufficientAudio(audioData)) {
         console.log('Insufficient audio content for STT');
@@ -265,7 +265,7 @@ class ConnectionHandler {
       }
 
       console.log(`Processing speech segment: ${duration}ms, ${audioData.length} bytes`);
-      
+
       // Send processing start notification
       this.ws.send(JSON.stringify({
         type: 'stt_start',
@@ -275,13 +275,13 @@ class ConnectionHandler {
 
       // Generate message ID for this speech segment
       this.currentMessageId = this.generateMessageId();
-      
+
       // Transcribe audio
       const result = await this.sttService.transcribeAudio(audioData);
-      
+
       if (result.success && result.text.trim()) {
         const transcript = result.text.trim();
-        
+
         // Send transcript result
         this.ws.send(JSON.stringify({
           type: 'transcript',
@@ -292,10 +292,10 @@ class ConnectionHandler {
           duration: result.duration,
           confidence: result.confidence
         }));
-        
-        this.logEvent('transcript', { 
-          text: transcript, 
-          isFinal: true, 
+
+        this.logEvent('transcript', {
+          text: transcript,
+          isFinal: true,
           messageId: this.currentMessageId,
           language: result.language,
           sttDuration: result.duration
@@ -304,10 +304,10 @@ class ConnectionHandler {
         // Only process if this transcript is different from the last one we processed
         if (transcript !== this.lastProcessedTranscript) {
           this.lastProcessedTranscript = transcript;
-          
+
           // Update message history
           const lastMessage = this.messageHistory[this.messageHistory.length - 1];
-          const isLastMessageUser = lastMessage && 
+          const isLastMessageUser = lastMessage &&
             (lastMessage.role === 'user' || lastMessage.role === 'transcript');
 
           if (isLastMessageUser) {
@@ -318,10 +318,10 @@ class ConnectionHandler {
             ];
           } else {
             // Append new message
-            this.messageHistory.push({ 
-              role: 'user', 
+            this.messageHistory.push({
+              role: 'user',
               content: transcript,
-              messageId: this.currentMessageId 
+              messageId: this.currentMessageId
             });
           }
 
@@ -336,7 +336,7 @@ class ConnectionHandler {
           timestamp: Date.now()
         }));
       }
-      
+
     } catch (error) {
       console.error('Error processing speech segment:', error);
       this.ws.send(JSON.stringify({
@@ -353,7 +353,7 @@ class ConnectionHandler {
     this.llmOrTTSIsWorking = true;
     try {
       this.currentLLMRequest = axios.CancelToken.source();
-      
+
       this.ws.send(JSON.stringify({ type: 'llm_start' }));
       this.logEvent('llm_start');
 
@@ -361,7 +361,7 @@ class ConnectionHandler {
       let hasReceivedFirstSentence = false;
       let currentSentence = '';
       let isFirstSentence = true;
-      
+
       // Keep only the last 20 messages for context
       const recentHistory = this.messageHistory.slice(-20);
       let messages = [
@@ -439,7 +439,7 @@ class ConnectionHandler {
 
               if (!hasReceivedFirstToken) {
                 hasReceivedFirstToken = true;
-                this.ws.send(JSON.stringify({ 
+                this.ws.send(JSON.stringify({
                   type: 'llm_first_token',
                   messageId: this.currentMessageId
                 }));
@@ -458,15 +458,15 @@ class ConnectionHandler {
                 currentSentence = '';
                 isFirstSentence = false;
 
-                this.ws.send(JSON.stringify({ 
-                  type: 'llm_sentence', 
+                this.ws.send(JSON.stringify({
+                  type: 'llm_sentence',
                   text: completedSentence,
                   messageId: this.currentMessageId
                 }));
 
                 if (!hasReceivedFirstSentence) {
                   hasReceivedFirstSentence = true;
-                  this.ws.send(JSON.stringify({ 
+                  this.ws.send(JSON.stringify({
                     type: 'llm_first_sentence',
                     messageId: this.currentMessageId
                   }));
@@ -506,14 +506,14 @@ class ConnectionHandler {
             // Every token already did `accumulatedContent += content` as it
             // arrived, so adding the trailing fragment again duplicates it in
             // the message the user sees and in the history replayed to the LLM.
-            
+
             // Update message history with final content
             const lastMessage = this.messageHistory[this.messageHistory.length - 1];
             lastMessage.content = accumulatedContent;
             this.syncChatHistory();
           }
 
-          this.ws.send(JSON.stringify({ 
+          this.ws.send(JSON.stringify({
             type: 'ai_response_complete',
             messageId: this.currentMessageId
           }));
@@ -606,7 +606,7 @@ class ConnectionHandler {
 
       // Add text to the queue
       this.ttsQueue.push(text);
-      
+
       // Try to process the queue
       await this.processTTSQueue();
     } catch (error) {
@@ -621,17 +621,17 @@ class ConnectionHandler {
   // Helper method to calculate audio duration from WAV buffer
   calculateAudioDuration(audioBuffer) {
     if (audioBuffer.length < 44) return 0;
-    
+
     const sampleRate = audioBuffer.readUInt32LE(24);
     const numChannels = audioBuffer.readUInt16LE(22);
     const bitsPerSample = audioBuffer.readUInt16LE(34);
     const dataSize = audioBuffer.length - 44; // Subtract WAV header size
-    
+
     // Calculate duration in milliseconds
     const duration = Math.floor(
       (dataSize * 8 * 1000) / (sampleRate * numChannels * bitsPerSample)
     );
-    
+
     return duration;
   }
 
@@ -701,7 +701,7 @@ class ConnectionHandler {
         'chi': 'zh',
         'und': 'en'
       };
-      
+
       return langMap[detectedLang] || 'en';
     } catch (error) {
       console.error('Language detection error:', error);
@@ -719,22 +719,22 @@ class ConnectionHandler {
     const now = Date.now();
 
     // Calculate remaining audio duration
-    const remainingDuration = this.lastAudioEndTime 
-      ? Math.max(0, this.lastAudioEndTime - now) 
+    const remainingDuration = this.lastAudioEndTime
+      ? Math.max(0, this.lastAudioEndTime - now)
       : 0;
 
     // Only process next TTS if remaining audio is less than 5 seconds
     if (remainingDuration <= 5000) {
       const text = this.ttsQueue[0];
       const ttsStartTime = Date.now();
-      
+
       try {
         this.ws.send(JSON.stringify({ type: 'tts_start' }));
         this.logEvent('tts_start');
-        
+
         const detectedLang = await this.detectLanguage(text);
         this.logEvent('language_detection', { text, detectedLang });
-        
+
         const processedText = preprocessSentence(text, detectedLang);
         // Skip TTS if processed text is empty
         if (!processedText.trim()) {
@@ -762,7 +762,7 @@ class ConnectionHandler {
             "gain": 0
           },
           headers: {
-            "Authorization": `Bearer ${config.SILICONFLOW_API_KEY}`,
+            "Authorization": `Bearer ${config.OPENAI_API_KEY}`,
             "Content-Type": "application/json"
           },
           responseType: 'stream',
@@ -776,7 +776,7 @@ class ConnectionHandler {
         response.data.on('data', async chunk => {
           if (!headerSent) {
             headerBuffer = Buffer.concat([headerBuffer, chunk]);
-            
+
             if (headerBuffer.length >= 44) {
               const sampleRate = headerBuffer.readUInt32LE(24);
               const numChannels = headerBuffer.readUInt16LE(22);
@@ -798,7 +798,7 @@ class ConnectionHandler {
               const bytesPerSecond = samplesPerSecond * bytesPerSample;
               const chunkSize = Math.floor(bytesPerSecond * 0.05); // 50ms worth of audio data
 
-              this.ws.send(JSON.stringify({ 
+              this.ws.send(JSON.stringify({
                 type: 'audio_start',
                 format: {
                   sampleRate,
@@ -814,9 +814,9 @@ class ConnectionHandler {
               // Start sending audio data immediately (skip the header and data chunk header)
               if (headerBuffer.length > 44) {
                 let remainingData = headerBuffer.slice(44);
-                
+
                 // Skip data chunk header (8 bytes) if present
-                if (remainingData.length >= 8 && 
+                if (remainingData.length >= 8 &&
                     remainingData.slice(0, 4).toString() === 'data') {
                   remainingData = remainingData.slice(8);
                 }
@@ -950,9 +950,9 @@ class ConnectionHandler {
             }
 
             const synthesisTime = Date.now() - ttsStartTime;
-            this.ws.send(JSON.stringify({ 
+            this.ws.send(JSON.stringify({
               type: 'tts_complete',
-              synthesisTime 
+              synthesisTime
             }));
             this.ws.send(JSON.stringify({ type: 'audio_end' }));
             this.logEvent('tts_complete', { synthesisTime });
@@ -961,11 +961,11 @@ class ConnectionHandler {
             const audioDuration = Math.floor((totalDataSize * 8 * 1000) / (16000 * 1 * 16));
             this.expectedPlaybackEndTime = (this.expectedPlaybackEndTime || Date.now()) + audioDuration;
             this.lastAudioEndTime = Date.now() + audioDuration;
-            
+
             // Remove the processed text from queue
             this.ttsQueue.shift();
             this.isTTSProcessing = false;
-            
+
             // Process next item in queue if any
             if (this.ttsQueue.length > 0) {
               setTimeout(() => this.processTTSQueue(), 100);
@@ -973,7 +973,7 @@ class ConnectionHandler {
           } catch (error) {
             console.error('Error processing audio:', error);
             this.logEvent('error', { message: 'Audio processing error', error: error.toString() });
-            
+
             // Clean up state
             this.ttsQueue.shift();
             this.isTTSProcessing = false;
@@ -1006,18 +1006,18 @@ class ConnectionHandler {
   syncChatHistory() {
     const currentHistory = this.messageHistory;
     const lastHistory = this.lastSyncedHistory;
-    
+
     // Find the index where histories start to differ
     let diffStartIndex = 0;
-    while (diffStartIndex < lastHistory.length && 
-           diffStartIndex < currentHistory.length && 
+    while (diffStartIndex < lastHistory.length &&
+           diffStartIndex < currentHistory.length &&
            JSON.stringify(lastHistory[diffStartIndex]) === JSON.stringify(currentHistory[diffStartIndex])) {
       diffStartIndex++;
     }
 
     // Get the new or modified messages
     const updatedMessages = currentHistory.slice(diffStartIndex);
-    
+
     // Send delta update
     this.ws.send(JSON.stringify({
       type: 'chat_history_delta',

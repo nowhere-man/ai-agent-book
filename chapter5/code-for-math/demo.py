@@ -35,7 +35,7 @@ from sandbox import run_python
 # 配置：兼容多种可用的 OpenAI 协议 key（含通用 OpenRouter 兜底）
 # ---------------------------------------------------------------------------
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def map_model_to_openrouter(model: str) -> str:
@@ -60,24 +60,24 @@ def map_model_to_openrouter(model: str) -> str:
 def resolve_llm(api_key, base_url, model):
     """通用 OpenRouter 兜底 + gpt-5.x 优先路由，返回 (api_key, base_url, model)。
 
-    - gpt-5.x / gpt-5.6* 且设置了 OPENROUTER_API_KEY 时优先走 OpenRouter
+    - gpt-5.x / gpt-5.6* 且设置了 OPENAI_API_KEY 时优先走 OpenRouter
       （直连 OpenAI 调用 gpt-5.6 需要组织实名认证）。
     - 否则有直连 key 就保持直连不变。
-    - 否则有 OPENROUTER_API_KEY 就整体改走 OpenRouter。
+    - 否则有 OPENAI_API_KEY 就整体改走 OpenRouter。
     - 都没有则原样返回，由调用方给出缺 key 的报错。
     """
-    orkey = os.getenv("OPENROUTER_API_KEY")
+    orkey = os.getenv("OPENAI_API_KEY")
     m = (model or "").lower()
     prefer_or = bool(orkey) and m.startswith("gpt-5")
     if prefer_or or (not api_key and orkey):
-        return orkey, OPENROUTER_BASE_URL, map_model_to_openrouter(model)
+        return orkey, OPENAI_BASE_URL, map_model_to_openrouter(model)
     return api_key, base_url, model
 
 
 def build_client_and_model(model_override=None, provider="auto"):
     """根据环境变量构造 OpenAI 客户端与默认模型名。
 
-    优先级：OPENAI_API_KEY > MOONSHOT_API_KEY > ARK_API_KEY，均缺失时走 OPENROUTER_API_KEY。
+    优先级：OPENAI_API_KEY > OPENAI_API_KEY > OPENAI_API_KEY，均缺失时走 OPENAI_API_KEY。
     这些服务都兼容 OpenAI 的 chat.completions + function calling 接口。
     命令行 --model 优先级最高，会覆盖环境变量推断出的默认模型。
     """
@@ -91,15 +91,15 @@ def build_client_and_model(model_override=None, provider="auto"):
             requested_model or "gpt-5.6-luna",
         ),
         "openrouter": (
-            os.getenv("OPENROUTER_API_KEY"), OPENROUTER_BASE_URL,
+            os.getenv("OPENAI_API_KEY"), OPENAI_BASE_URL,
             map_model_to_openrouter(requested_model or "gpt-5.6-luna"),
         ),
         "moonshot": (
-            os.getenv("MOONSHOT_API_KEY"), "https://api.moonshot.cn/v1",
+            os.getenv("OPENAI_API_KEY"), "https://api.openai.com/v1",
             requested_model or "kimi-k3",
         ),
         "ark": (
-            os.getenv("ARK_API_KEY"), "https://ark.cn-beijing.volces.com/api/v3",
+            os.getenv("OPENAI_API_KEY"), "https://api.openai.com/v1",
             requested_model or "doubao-seed-1-6-250615",
         ),
     }
@@ -115,7 +115,7 @@ def build_client_and_model(model_override=None, provider="auto"):
 
     if not api_key:
         raise SystemExit(
-            "未找到 API key，请设置 OPENAI_API_KEY（或 MOONSHOT_API_KEY / ARK_API_KEY / OPENROUTER_API_KEY）。\n"
+            "未找到 API key，请设置 OPENAI_API_KEY（或 OPENAI_API_KEY / OPENAI_API_KEY / OPENAI_API_KEY）。\n"
             "若只想验证沙箱与题库而不调用大模型，可运行：python demo.py --selfcheck"
         )
 

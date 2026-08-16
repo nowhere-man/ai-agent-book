@@ -68,7 +68,7 @@ source .venv/bin/activate
 cd chapter10/staged-system-prompt
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Configuration (choose one)
 export OPENAI_API_KEY=your-openai-api-key           # Option A: direct export
@@ -98,8 +98,8 @@ Configurable environment variables (see `env.example`): `OPENAI_API_KEY`, `OPENA
 `OPENAI_MODEL` (default `gpt-5.6-luna`, currently the affordable flagship), `OPENAI_TEMPERATURE` (default 0.3).
 Can also switch to Kimi / Doubao compatible with the OpenAI protocol.
 
-**Universal fallback**: Prefers using `OPENAI_API_KEY` to connect directly to OpenAI; if this variable is not set but `OPENROUTER_API_KEY` is, it automatically switches to OpenRouter and maps the model name to its namespace
-(`gpt-5.6-luna` → `openai/gpt-5.6-luna`). Note: The `gpt-5.6` series requires organization verification for direct OpenAI connection. Simply setting `OPENROUTER_API_KEY` (without `OPENAI_API_KEY`) forces the use of OpenRouter, which is more convenient.
+**Universal fallback**: Prefers using `OPENAI_API_KEY` to connect directly to OpenAI; if this variable is not set but `OPENAI_API_KEY` is, it automatically switches to OpenRouter and maps the model name to its namespace
+(`gpt-5.6-luna` → `openai/gpt-5.6-luna`). Note: The `gpt-5.6` series requires organization verification for direct OpenAI connection. Simply setting `OPENAI_API_KEY` (without `OPENAI_API_KEY`) forces the use of OpenRouter, which is more convenient.
 
 ## Offline Validation
 
@@ -134,7 +134,7 @@ The following is an excerpt from a real run (`python demo.py`, `gpt-5.6-luna`, r
 safety valve to end — a common outcome in real runs, see "Limitations" below):
 
 ```text
-Model: openai/gpt-5.6-luna  | base_url: https://openrouter.ai/api/v1
+Model: openai/gpt-5.6-luna  | base_url: https://api.openai.com/v1
 
 ======================================================================
 Entering phase: requirements  |  Role: Requirements Analyst  |  Available tools: ['ask_clarifying_question', 'save_requirement', 'complete_requirements_analysis']
@@ -279,7 +279,7 @@ source .venv/bin/activate
 cd chapter10/staged-system-prompt
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 配置（二选一）
 export OPENAI_API_KEY=your-openai-api-key           # 方式 A：直接 export
@@ -310,9 +310,9 @@ python demo.py --help
 也可切到兼容 OpenAI 协议的 Kimi / Doubao。
 
 **通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
-`OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
+`OPENAI_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
 （`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
-只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
+只填 `OPENAI_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
 
 ## 离线验证
 
@@ -347,7 +347,7 @@ python demo.py --list-stages
 安全阀结束，也是真实运行中常见的一种结局，详见下方「局限」）：
 
 ```
-模型：openai/gpt-5.6-luna  | base_url：https://openrouter.ai/api/v1
+模型：openai/gpt-5.6-luna  | base_url：https://api.openai.com/v1
 
 ======================================================================
 进入阶段：requirements  |  角色：需求分析师  |  可用工具：['ask_clarifying_question', 'save_requirement', 'complete_requirements_analysis']

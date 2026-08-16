@@ -26,7 +26,7 @@ The default transport is a private local WebRTC call (`--phone-transport webrtc`
 
 ```bash
 cd chapter10/autonomous-phone-registration
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 playwright install chromium
 cp env.example .env
 

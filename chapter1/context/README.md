@@ -1,6 +1,6 @@
 # Context-Aware AI Agent with Ablation Studies / 上下文感知 Agent 与消融实验
 
-> Multi-provider context-aware agent with systematic ablation of context components (history, reasoning, tool calls, tool results).  
+> Multi-provider context-aware agent with systematic ablation of context components (history, reasoning, tool calls, tool results).
 > 配套《深入理解 AI Agent》第 1 章 **实验 1-1 ★★：上下文的关键作用**。
 
 ← [Chapter 1 index / 返回第 1 章目录](../README.md) · 📖 [Read the chapter / 读本章正文](../../book/chapter1.md)（[EN](../../book-en/chapter1.md)）
@@ -51,7 +51,7 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 - **Model**: `qwen3.7-plus` (customizable with `--model`)
 - **API**: Direct OpenAI-compatible DashScope endpoint; no SiliconFlow account required
 - **Provider names**: `dashscope` (canonical), with `qwen` and `bailian` aliases
-- **Region note**: API keys are region-bound. Mainland keys use the default endpoint; international keys must set `DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`
+- **Region note**: API keys are region-bound. Mainland keys use the default endpoint; international keys must set `OPENAI_BASE_URL=https://api.openai.com/v1`
 
 #### Kimi (Moonshot AI)
 
@@ -79,7 +79,6 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 
 #### Available Tools
 
-- **`parse_pdf(url)`** — Download and extract text from PDF documents
 - **`convert_currency(amount, from, to)`** — Real-time currency conversion
 - **`calculate(expression)`** — Simple mathematical expression evaluation
 - **`code_interpreter(code)`** — Execute Python code for complex calculations, totals, and data processing
@@ -127,37 +126,37 @@ source .venv/bin/activate
 cd chapter1/context
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Copy and configure environment
 cp env.example .env
-# Edit .env and add one provider key (for example DASHSCOPE_API_KEY or ARK_API_KEY)
+# Edit .env and add one provider key (for example OPENAI_API_KEY or OPENAI_API_KEY)
 ```
 
 #### 2. Configure Provider
 
 ```bash
 # For Doubao (ByteDance) - Default
-export ARK_API_KEY=your_key_here  
+export OPENAI_API_KEY=your_key_here
 python main.py  # Uses Doubao by default
 
 # For SiliconFlow (Qwen)
-export SILICONFLOW_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider siliconflow
 
 # For Qwen directly through Alibaba Cloud Model Studio / Bailian
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider dashscope
 # --provider qwen and --provider bailian are equivalent aliases.
 # For an international-region key, also set:
-export DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+export OPENAI_BASE_URL=https://api.openai.com/v1
 
 # For Kimi (Moonshot)
-export MOONSHOT_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider kimi
 
 # For DeepSeek
-export DEEPSEEK_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider deepseek
 # Optional stronger model:
 python main.py --provider deepseek --model deepseek-v4-pro
@@ -166,12 +165,12 @@ python main.py --provider deepseek --model deepseek-v4-pro
 python main.py --model doubao-seed-1-6-thinking-250715
 
 # Universal OpenRouter fallback: if the provider key above is missing/invalid
-# but OPENROUTER_API_KEY is set, requests are routed through OpenRouter and the
+# but OPENAI_API_KEY is set, requests are routed through OpenRouter and the
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
-# anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
+# anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENAI_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=your-openrouter-api-key
-python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
+export OPENAI_API_KEY=your-openrouter-api-key
+python main.py                       # falls back to OpenRouter when OPENAI_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```
 
@@ -179,11 +178,11 @@ python main.py --provider openrouter # or use OpenRouter directly
 
 ```bash
 # Run the ablation study directly on Alibaba Cloud Qwen
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider dashscope --mode ablation
 
 # Quick test of Kimi K3 model
-export MOONSHOT_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python tests/manual/check_kimi.py
 
 # Use Kimi in main script
@@ -193,7 +192,7 @@ python main.py --provider kimi --mode interactive
 python main.py --provider kimi --mode ablation
 
 # Quick test of DeepSeek V4
-export DEEPSEEK_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python tests/manual/check_deepseek.py
 # or: python tests/manual/check_deepseek_quick.py
 
@@ -281,7 +280,7 @@ python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
 The same evidence runner can use a Bailian key directly:
 
 ```bash
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-iterations 5
 ```
 
@@ -542,7 +541,7 @@ context/
 - **模型**：`qwen3.7-plus`（可通过 `--model` 自定义）
 - **API**：直连 DashScope 的 OpenAI 兼容接口，无需 SiliconFlow 账号
 - **提供商名称**：规范名称为 `dashscope`，也可使用别名 `qwen` 或 `bailian`
-- **区域说明**：API Key 与区域绑定。中国内地 Key 默认直连内地端点；国际站 Key 必须设置 `DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`
+- **区域说明**：API Key 与区域绑定。中国内地 Key 默认直连内地端点；国际站 Key 必须设置 `OPENAI_BASE_URL=https://api.openai.com/v1`
 
 #### Kimi（月之暗面）
 
@@ -570,7 +569,6 @@ context/
 
 #### 可用工具
 
-- **`parse_pdf(url)`** — 下载并抽取 PDF 文本
 - **`convert_currency(amount, from, to)`** — 货币换算
 - **`calculate(expression)`** — 简单数学表达式求值
 - **`code_interpreter(code)`** — 执行 Python，用于复杂计算、汇总与数据处理
@@ -618,37 +616,37 @@ source .venv/bin/activate
 cd chapter1/context
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 复制并配置环境变量
 cp env.example .env
-# 编辑 .env 并填入一个提供商的 API Key（例如 DASHSCOPE_API_KEY 或 ARK_API_KEY）
+# 编辑 .env 并填入一个提供商的 API Key（例如 OPENAI_API_KEY 或 OPENAI_API_KEY）
 ```
 
 #### 2. 配置提供商
 
 ```bash
 # For Doubao (ByteDance) - Default
-export ARK_API_KEY=your_key_here  
+export OPENAI_API_KEY=your_key_here
 python main.py  # Uses Doubao by default
 
 # For SiliconFlow (Qwen)
-export SILICONFLOW_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider siliconflow
 
 # 通过阿里云百炼直连 Qwen
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider dashscope
 # --provider qwen 与 --provider bailian 是等价别名。
 # 如果使用国际站 Key，还需设置：
-export DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+export OPENAI_BASE_URL=https://api.openai.com/v1
 
 # For Kimi (Moonshot)
-export MOONSHOT_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider kimi
 
 # For DeepSeek
-export DEEPSEEK_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider deepseek
 # Optional stronger model:
 python main.py --provider deepseek --model deepseek-v4-pro
@@ -657,12 +655,12 @@ python main.py --provider deepseek --model deepseek-v4-pro
 python main.py --model doubao-seed-1-6-thinking-250715
 
 # Universal OpenRouter fallback: if the provider key above is missing/invalid
-# but OPENROUTER_API_KEY is set, requests are routed through OpenRouter and the
+# but OPENAI_API_KEY is set, requests are routed through OpenRouter and the
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
-# anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
+# anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENAI_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=your-openrouter-api-key
-python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
+export OPENAI_API_KEY=your-openrouter-api-key
+python main.py                       # falls back to OpenRouter when OPENAI_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```
 
@@ -670,11 +668,11 @@ python main.py --provider openrouter # or use OpenRouter directly
 
 ```bash
 # 通过阿里云百炼 Qwen 直接运行消融实验
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python main.py --provider dashscope --mode ablation
 
 # Quick test of Kimi K3 model
-export MOONSHOT_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python tests/manual/check_kimi.py
 
 # Use Kimi in main script
@@ -684,7 +682,7 @@ python main.py --provider kimi --mode interactive
 python main.py --provider kimi --mode ablation
 
 # Quick test of DeepSeek V4
-export DEEPSEEK_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python tests/manual/check_deepseek.py
 # or: python tests/manual/check_deepseek_quick.py
 
@@ -771,7 +769,7 @@ python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
 同一证据运行器也支持直接使用百炼 Key：
 
 ```bash
-export DASHSCOPE_API_KEY=your_key_here
+export OPENAI_API_KEY=your_key_here
 python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-iterations 5
 ```
 
@@ -786,10 +784,10 @@ python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-ite
 
 需要以下能力的复杂财务分析任务：
 
-1. PDF 文档解析  
-2. 多次货币换算  
-3. 数学计算  
-4. 结果汇总  
+1. PDF 文档解析
+2. 多次货币换算
+3. 数学计算
+4. 结果汇总
 
 #### 预期行为
 
@@ -960,24 +958,24 @@ context/
 
 ### 研究用途
 
-- **AI 安全研究**：理解失败模式  
-- **系统设计**：识别关键组件  
-- **优化**：寻找最小可用配置  
-- **教学**：讲解 Agent 架构原理  
+- **AI 安全研究**：理解失败模式
+- **系统设计**：识别关键组件
+- **优化**：寻找最小可用配置
+- **教学**：讲解 Agent 架构原理
 
 ### 局限
 
-- 货币汇率为固定值（生产环境应使用实时 API）  
-- 复杂版式 PDF 解析可能失败  
-- 模型 token 上限可能影响超大文档  
+- 货币汇率为固定值（生产环境应使用实时 API）
+- 复杂版式 PDF 解析可能失败
+- 模型 token 上限可能影响超大文档
 
 ---
 
 ## Notes / 说明
 
-- Educational project for context ablation; for production, add proper error handling, rate limiting, and security.  
-  本项目为教学向消融实验；生产使用请补齐错误处理、限流与安全措施。  
-- OpenRouter is a universal fallback when the direct provider key is missing.  
-  未配置直连提供商 Key 时，可走 `OPENROUTER_API_KEY` 通用兜底。  
-- License: MIT. Contributions welcome (extra tools, scenarios, ablation strategies, performance).  
-  许可证：MIT。欢迎贡献（更多工具、场景、消融策略、性能优化）。  
+- Educational project for context ablation; for production, add proper error handling, rate limiting, and security.
+  本项目为教学向消融实验；生产使用请补齐错误处理、限流与安全措施。
+- OpenRouter is a universal fallback when the direct provider key is missing.
+  未配置直连提供商 Key 时，可走 `OPENAI_API_KEY` 通用兜底。
+- License: MIT. Contributions welcome (extra tools, scenarios, ablation strategies, performance).
+  许可证：MIT。欢迎贡献（更多工具、场景、消融策略、性能优化）。

@@ -7,7 +7,7 @@ acceptance policy (see experiment_protocol.json):
 - ``--runtime claude`` (default): Claude Code, for readers with Anthropic
   credentials.
 - ``--runtime kimi``: Kimi Code CLI (or an equivalent runtime), authenticated
-  with KIMI_API_KEY / MOONSHOT_API_KEY.
+  with OPENAI_API_KEY / OPENAI_API_KEY.
 """
 
 from __future__ import annotations

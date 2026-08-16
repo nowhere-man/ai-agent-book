@@ -85,7 +85,7 @@ class CampaignControlTests(unittest.TestCase):
         )
 
     def test_kimi_api_key_is_in_receipt_redaction_inputs(self) -> None:
-        self.assertIn("KIMI_API_KEY", SENSITIVE_ENV_NAMES)
+        self.assertIn("OPENAI_API_KEY", SENSITIVE_ENV_NAMES)
 
     def test_retained_human_decision_redacts_free_form_notes(self) -> None:
         secret = "kimi-secret-value"

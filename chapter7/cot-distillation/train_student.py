@@ -200,7 +200,7 @@ def main() -> None:
     try:
         import torch
     except ImportError as exc:
-        raise SystemExit("PyTorch is missing. Install requirements.txt before training.") from exc
+        raise SystemExit("PyTorch is missing. Install ../../requirements.txt before training.") from exc
     if not torch.cuda.is_available():
         raise SystemExit(
             "Experiment 7-9 student SFT requires a CUDA host; this runner has no synthetic/CPU success fallback."

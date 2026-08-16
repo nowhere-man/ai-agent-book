@@ -72,17 +72,17 @@ def _backends():
     from .agent import _to_openrouter_model
     options = {"timeout": float(os.getenv("WEREWOLF_LLM_TIMEOUT", "45")), "max_retries": 1}
     out = []
-    if os.getenv("ARK_API_KEY"):
-        out.append((OpenAI(api_key=os.environ["ARK_API_KEY"], base_url="https://ark.cn-beijing.volces.com/api/v3", **options), os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"), "ark"))
-    if os.getenv("MOONSHOT_API_KEY"):
-        out.append((OpenAI(api_key=os.environ["MOONSHOT_API_KEY"], base_url="https://api.moonshot.cn/v1", **options), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "moonshot"))
+    if os.getenv("OPENAI_API_KEY"):
+        out.append((OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url="https://api.openai.com/v1", **options), os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"), "ark"))
+    if os.getenv("OPENAI_API_KEY"):
+        out.append((OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url="https://api.openai.com/v1", **options), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "moonshot"))
     if os.getenv("OPENAI_API_KEY"):
         out.append((OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=os.getenv("OPENAI_BASE_URL") or None, **options), os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), "openai"))
-    if os.getenv("OPENROUTER_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         model = _to_openrouter_model(os.getenv("OPENAI_MODEL", "gpt-5.6-luna"))
         out.append((OpenAI(
-            api_key=os.environ["OPENROUTER_API_KEY"],
-            base_url="https://openrouter.ai/api/v1",
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url="https://api.openai.com/v1",
             **options,
         ), model, "openrouter"))
     return out

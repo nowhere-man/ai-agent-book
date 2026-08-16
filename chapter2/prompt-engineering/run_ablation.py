@@ -32,7 +32,7 @@ from tau_bench.envs.user import UserStrategy
 # Import custom modules for ablation
 from ablation_utils import (
     apply_tone_modification,
-    load_randomized_wiki, 
+    load_randomized_wiki,
     remove_tool_descriptions,
     ToneStyle
 )
@@ -72,7 +72,7 @@ def parse_args():
         "--model",
         type=str,
         default="gpt-5.6-luna",
-        help="The model to use for the agent (default: gpt-5.6-luna; routed via OpenRouter when OPENROUTER_API_KEY is set, else OpenAI direct)",
+        help="The model to use for the agent (default: gpt-5.6-luna; routed via OpenRouter when OPENAI_API_KEY is set, else OpenAI direct)",
     )
     parser.add_argument(
         "--model-provider",
@@ -85,7 +85,7 @@ def parse_args():
         "--user-model",
         type=str,
         default="gpt-5.6-luna",
-        help="The model to use for the user simulator (default: gpt-5.6-luna; routed via OpenRouter when OPENROUTER_API_KEY is set, else OpenAI direct)",
+        help="The model to use for the user simulator (default: gpt-5.6-luna; routed via OpenRouter when OPENAI_API_KEY is set, else OpenAI direct)",
     )
     parser.add_argument(
         "--user-model-provider",
@@ -132,13 +132,13 @@ def parse_args():
         help="冻结实验协议；--all 会复制并哈希到结果目录",
     )
     parser.add_argument(
-        "--user-strategy", 
-        type=str, 
-        default="llm", 
+        "--user-strategy",
+        type=str,
+        default="llm",
         choices=[item.value for item in UserStrategy]
     )
     parser.add_argument("--few-shot-displays-path", type=str)
-    
+
     # New ablation study arguments
     parser.add_argument(
         "--tone-style",
@@ -198,13 +198,13 @@ def parse_args():
     )
 
     args = parser.parse_args()
-    
+
     # Set verbose flag (defaults to True unless --no-verbose is used)
     args.verbose = not args.no_verbose
-    
+
     # Set default provider based on model if not specified.
     # A model id containing "/" (e.g. "openai/gpt-5") is an OpenRouter-style id and
-    # routes through openrouter (requires a valid OPENROUTER_API_KEY); a bare id
+    # routes through openrouter (requires a valid OPENAI_API_KEY); a bare id
     # (e.g. "gpt-4o-mini") routes through OpenAI direct (requires OPENAI_API_KEY).
     if args.model_provider is None:
         args.model_provider = "openrouter" if "/" in args.model else "openai"
@@ -214,14 +214,14 @@ def parse_args():
         args.user_model_provider = "openrouter" if "/" in args.user_model else "openai"
 
     # Universal fallback: if the resolved provider is OpenAI-direct but
-    # OPENAI_API_KEY is missing while OPENROUTER_API_KEY is present, route the
+    # OPENAI_API_KEY is missing while OPENAI_API_KEY is present, route the
     # bare gpt-* / o1-* id through OpenRouter (prefix "openai/"). Preserves the
     # default (OpenAI-direct) behavior whenever OPENAI_API_KEY is set.
     # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct API, so
-    # when an OPENROUTER_API_KEY is present we route these ids (and any bare
+    # when an OPENAI_API_KEY is present we route these ids (and any bare
     # gpt-*/o1-* when OPENAI_API_KEY is missing) through OpenRouter (prefix
     # "openai/"). Direct-OpenAI behavior is preserved otherwise.
-    if os.environ.get("OPENROUTER_API_KEY"):
+    if os.environ.get("OPENAI_API_KEY"):
         no_openai = not os.environ.get("OPENAI_API_KEY")
         if args.model_provider == "openai" and (no_openai or args.model.lower().startswith("gpt-5")):
             args.model_provider = "openrouter"
@@ -237,7 +237,7 @@ def parse_args():
 
 def run_with_ablation(args):
     """Run tau-bench with ablation modifications"""
-    
+
     # Import the original run module
     from tau_bench.run import run, agent_factory, display_metrics
     from tau_bench.envs import get_env
@@ -245,7 +245,7 @@ def run_with_ablation(args):
     from concurrent.futures import ThreadPoolExecutor
     from typing import List
     from tau_bench.types import EnvRunResult
-    
+
     # Create configuration
     config = RunConfig(
         model_provider=args.model_provider,
@@ -267,9 +267,9 @@ def run_with_ablation(args):
         user_strategy=args.user_strategy,
         few_shot_displays_path=args.few_shot_displays_path,
     )
-    
+
     random.seed(config.seed)
-    
+
     # Create descriptive log filename
     ablation_suffix = []
     if args.tone_style != "default":
@@ -280,12 +280,12 @@ def run_with_ablation(args):
         ablation_suffix.append("no_tool_desc")
     if args.ablation_name:
         ablation_suffix.append(args.ablation_name)
-    
+
     ablation_str = "_".join(ablation_suffix) if ablation_suffix else "baseline"
-    
+
     time_str = datetime.now().strftime("%m%d%H%M%S")
     ckpt_path = f"{config.log_dir}/{config.agent_strategy}-{config.model.split('/')[-1]}-{ablation_str}_{time_str}.json"
-    
+
     if not os.path.exists(config.log_dir):
         os.makedirs(config.log_dir)
 
@@ -363,14 +363,14 @@ def run_with_ablation(args):
                     [[row.task_id, row.trial] for row in imported_results]
                 ),
             }
-    
+
     print(f"🔬 Running Ablation Study: {ablation_str}")
     print(f"  - Tone Style: {args.tone_style}")
     print(f"  - Randomize Wiki: {args.randomize_wiki}")
     print(f"  - Remove Tool Descriptions: {args.remove_tool_descriptions}")
     print(f"  - Checkpoint: {ckpt_path}")
     print()
-    
+
     # Load environment
     env = get_env(
         config.env,
@@ -380,30 +380,30 @@ def run_with_ablation(args):
         task_split=config.task_split,
         user_seed=config.seed,
     )
-    
+
     # Apply ablation modifications
     modified_wiki = env.wiki
     modified_tools_info = env.tools_info
-    
+
     # 1. Apply wiki randomization if requested
     if args.randomize_wiki:
         print("📝 Using pre-randomized wiki rules...")
         modified_wiki = load_randomized_wiki(config.env)
-    
+
     # 2. Apply tone modification if requested
     if args.tone_style != "default":
         print(f"🎭 Applying {args.tone_style} tone style to system prompt...")
         tone_style = ToneStyle[args.tone_style.upper()]
         modified_wiki = apply_tone_modification(modified_wiki, tone_style)
-    
+
     # 3. Remove tool descriptions if requested
     if args.remove_tool_descriptions:
         print("🔧 Removing tool descriptions...")
         modified_tools_info = remove_tool_descriptions(modified_tools_info)
-    
+
     # Create agent with modifications
     from ablation_agent import AblationAgent
-    
+
     agent = AblationAgent(
         tools_info=modified_tools_info,
         wiki=modified_wiki,
@@ -413,19 +413,19 @@ def run_with_ablation(args):
         verbose=args.verbose,
         seed=config.seed,
     )
-    
+
     # Run tasks
     end_index = (
         len(env.tasks) if config.end_index == -1 else min(config.end_index, len(env.tasks))
     )
     results: List[EnvRunResult] = list(imported_results)
     lock = multiprocessing.Lock()
-    
+
     if config.task_ids and len(config.task_ids) > 0:
         print(f"Running tasks {config.task_ids}")
     else:
         print(f"Running tasks {config.start_index} to {end_index}")
-    
+
     for i in range(config.num_trials):
         accepted_keys = {(row.task_id, row.trial) for row in imported_results}
         if config.task_ids and len(config.task_ids) > 0:
@@ -437,7 +437,7 @@ def run_with_ablation(args):
             ]
         if config.shuffle:
             random.shuffle(idxs)
-        
+
         def _run(idx: int) -> EnvRunResult:
             isolated_env = get_env(
                 config.env,
@@ -448,18 +448,18 @@ def run_with_ablation(args):
                 task_index=idx,
                 user_seed=config.seed + i * 100000 + idx * 1000,
             )
-            
+
             # Apply same modifications to isolated env
             if args.randomize_wiki:
                 isolated_env.wiki = load_randomized_wiki(config.env)
             if args.tone_style != "default":
                 isolated_env.wiki = apply_tone_modification(
-                    isolated_env.wiki, 
+                    isolated_env.wiki,
                     ToneStyle[args.tone_style.upper()]
                 )
             if args.remove_tool_descriptions:
                 isolated_env.tools_info = remove_tool_descriptions(isolated_env.tools_info)
-            
+
             print(f"Running task {idx}")
             try:
                 res = agent.solve(
@@ -490,7 +490,7 @@ def run_with_ablation(args):
                     traj=[],
                     trial=i,
                 )
-            
+
             print(
                 "✅" if result.reward == 1 else "❌",
                 f"task_id={idx}",
@@ -501,7 +501,7 @@ def run_with_ablation(args):
                 },
             )
             print("-----")
-            
+
             with lock:
                 data = [row.model_dump() for row in imported_results]
                 if os.path.exists(ckpt_path):
@@ -510,13 +510,13 @@ def run_with_ablation(args):
                 with open(ckpt_path, "w") as f:
                     json.dump(data + [result.model_dump()], f, indent=2)
             return result
-        
+
         with ThreadPoolExecutor(max_workers=config.max_concurrency) as executor:
             res = list(executor.map(_run, idxs))
             results.extend(res)
-    
+
     display_metrics(results)
-    
+
     # Save final results with ablation metadata
     final_results = {
         "experiment_id": "2-4",
@@ -530,11 +530,11 @@ def run_with_ablation(args):
         "resume_receipt": resume_receipt,
         "results": [result.model_dump() for result in results]
     }
-    
+
     with open(ckpt_path, "w") as f:
         json.dump(final_results, f, indent=2)
         print(f"\n📄 Results saved to {ckpt_path}\n")
-    
+
     args._last_checkpoint_path = ckpt_path
     return results
 
@@ -700,7 +700,7 @@ def run_full_suite(args):
 
     configured_secrets = [
         os.environ.get(name)
-        for name in ("OPENAI_API_KEY", "OPENROUTER_API_KEY")
+        for name in ("OPENAI_API_KEY", "OPENAI_API_KEY")
         if os.environ.get(name)
     ]
     credential_findings = []

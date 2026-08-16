@@ -17,7 +17,7 @@
 
 ```bash
 cd chapter6/user-memory-policy-eval
-export OPENROUTER_API_KEY=...
+export OPENAI_API_KEY=...
 
 # 默认使用 openai/gpt-5.6-sol，运行 11 个 prefix 用例 × 3 种表示
 python runner.py --output results/policy_prefix_live.json

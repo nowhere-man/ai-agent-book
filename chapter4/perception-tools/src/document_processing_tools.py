@@ -1,5 +1,5 @@
 """
-Document processing tools for PDF, DOCX, PPTX, CSV, TXT.
+Document processing tools for DOCX, PPTX, CSV, TXT.
 Based on AWorld MCP server implementation.
 """
 import json
@@ -11,7 +11,6 @@ from typing import Union, Dict, Any
 import pandas as pd
 from docx import Document
 from pptx import Presentation
-import PyPDF2
 from dotenv import load_dotenv
 from mcp.types import TextContent
 
@@ -19,84 +18,6 @@ from base import ActionResponse, validate_file_path
 
 
 load_dotenv()
-
-
-async def extract_pdf_text(
-    file_path: str,
-    page_range: str | None = None
-) -> Union[str, TextContent]:
-    """
-    Extract text from PDF file.
-    
-    Args:
-        file_path: Path to PDF file
-        page_range: Optional page range (e.g., "1-5" or "1,3,5")
-        
-    Returns:
-        TextContent with extracted text
-    """
-    try:
-        path = validate_file_path(file_path)
-        
-        logging.info(f"📄 Extracting PDF: {path}")
-        
-        with open(path, 'rb') as file:
-            reader = PyPDF2.PdfReader(file)
-            total_pages = len(reader.pages)
-            
-            # Parse page range
-            if page_range:
-                pages_to_extract = parse_page_range(page_range, total_pages)
-            else:
-                pages_to_extract = range(total_pages)
-            
-            # Extract text
-            text_parts = []
-            for page_num in pages_to_extract:
-                if page_num < total_pages:
-                    page = reader.pages[page_num]
-                    text = page.extract_text()
-                    text_parts.append(f"--- Page {page_num + 1} ---\n{text}\n")
-            
-            full_text = "\n".join(text_parts)
-            
-            result = {
-                "file_name": path.name,
-                "file_type": "pdf",
-                "total_pages": total_pages,
-                "pages_extracted": len(pages_to_extract),
-                "text": full_text[:50000],  # Limit to 50k chars
-                "text_length": len(full_text),
-                "truncated": len(full_text) > 50000
-            }
-            
-            logging.info(f"✅ Extracted {len(pages_to_extract)} pages from PDF")
-            
-            action_response = ActionResponse(
-                success=True,
-                message=result,
-                metadata={"file_path": str(path), "pages": total_pages}
-            )
-            
-            return TextContent(
-                type="text",
-                text=json.dumps(action_response.model_dump())
-            )
-            
-    except Exception as e:
-        error_msg = f"PDF extraction failed: {str(e)}"
-        logging.error(f"PDF error: {traceback.format_exc()}")
-        
-        action_response = ActionResponse(
-            success=False,
-            message=error_msg,
-            metadata={"error_type": "pdf_error"}
-        )
-        
-        return TextContent(
-            type="text",
-            text=json.dumps(action_response.model_dump())
-        )
 
 
 async def extract_docx_content(
@@ -306,39 +227,3 @@ async def extract_csv_content(
             type="text",
             text=json.dumps(action_response.model_dump())
         )
-
-
-def parse_page_range(page_range: str, total_pages: int) -> list[int]:
-    """
-    Parse page range string into list of page numbers.
-    
-    Args:
-        page_range: String like "1-5" or "1,3,5" or "1-3,7,9-11"
-        total_pages: Total number of pages
-        
-    Returns:
-        List of page numbers (0-indexed)
-    """
-    pages = []
-    
-    for part in page_range.split(","):
-        part = part.strip()
-        if not part:
-            # Trailing/duplicate commas (e.g. "1,3," or "1,,3") are common in
-            # LLM tool args; skip empty segments instead of int("").
-            continue
-        if "-" in part:
-            bounds = part.split("-")
-            if len(bounds) != 2 or not bounds[0] or not bounds[1]:
-                raise ValueError(f"Invalid page range segment: {part!r}")
-            start, end = int(bounds[0]), int(bounds[1])
-            # Clamp both ends: the caller's guard is `page_num < total_pages`,
-            # which a negative index passes, and reader.pages[-1] is the LAST
-            # page -- so an unclamped start silently returns the wrong page.
-            pages.extend(range(max(0, start - 1), min(end, total_pages)))
-        else:
-            page_num = int(part) - 1
-            if 0 <= page_num < total_pages:
-                pages.append(page_num)
-    
-    return sorted(set(pages))

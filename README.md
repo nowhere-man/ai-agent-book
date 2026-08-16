@@ -1,6 +1,12 @@
 # 学习建议
 
-← [返回主目录](../../README.md)
+## 安装依赖
+
+从仓库根目录安装统一依赖：
+
+```bash
+python -m pip install -r requirements.txt
+```
 
 ## 核心理念：Agent = 模型 + 上下文 + 工具
 
@@ -11,6 +17,23 @@
 | 🧠 **模型（Model）** | 大脑 | 提供理解、推理和决策能力 |
 | 💾 **上下文（Context）** | 操作系统 | 系统指令、对话历史、推理过程、工具交互记录等 |
 | 🤲 **工具（Tools）** | 双手 | 感知环境、执行操作、与外部世界交互 |
+
+## 章节
+
+- [引言](book/introduction.md)
+- [第 1 章：Agent 基础知识](book/chapter1.md)
+- [第 2 章：上下文工程](book/chapter2.md)
+- [第 3 章：用户记忆和知识库](book/chapter3.md)
+- [第 4 章：工具](book/chapter4.md)
+- [第 5 章：Coding Agent 与代码生成](book/chapter5.md)
+- [第 6 章：Agent 的评估](book/chapter6.md)
+- [第 7 章：模型后训练](book/chapter7.md)
+- [第 8 章：Agent 的持续进化](book/chapter8.md)
+- [第 9 章：多模态与实时交互](book/chapter9.md)
+- [第 10 章：多 Agent 协作](book/chapter10.md)
+- [后记](book/afterword.md)
+
+答案见[参考答案](book/reference-answers.md)。
 
 ## 学习路径
 
@@ -53,7 +76,7 @@
 | # | 建议 | 说明 |
 | :--: | --- | --- |
 | 1 | 🛠️ **动手实践** | 每个项目都设计为可独立运行，建议亲自运行并修改代码 |
-| 2 | 📚 **结合书籍** | 配合 [`book/`](../../book/) 中相应章节阅读，理解理论与实践的结合 |
+| 2 | 📚 **结合书籍** | 配合 [`book/`](./book/) 中相应章节阅读，理解理论与实践的结合 |
 | 3 | 🔬 **实验对比** | 多个项目包含消融研究和对比实验，通过对比加深理解 |
 | 4 | 🪜 **渐进学习** | 从简单项目开始，逐步深入复杂系统 |
 | 5 | 🔌 **关注协议** | 第 4 章 MCP 服务器项目展示了标准化工具协议，这是构建可扩展 Agent 的关键 |

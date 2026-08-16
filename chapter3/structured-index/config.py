@@ -14,8 +14,8 @@ load_dotenv()
 
 def _openrouter_model_id(model) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins."""
-    override = os.getenv("OPENROUTER_MODEL")
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins."""
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -36,16 +36,16 @@ def _openrouter_model_id(model) -> str:
 
 def _resolve_llm(api_key: str, *models):
     """Return (api_key, base_url, *mapped_models). When the OpenAI key is
-    absent but OPENROUTER_API_KEY is present, route the chat LLM (used for
+    absent but OPENAI_API_KEY is present, route the chat LLM (used for
     RAPTOR summarization / GraphRAG entity extraction) through OpenRouter.
     Embeddings here are local SentenceTransformers, so they are unaffected."""
-    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    openrouter_key = os.getenv("OPENAI_API_KEY")
     # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct API;
     # when an OpenRouter key is present, prefer routing these ids through it.
     prefer_openrouter = bool(openrouter_key) and any(
         str(m or "").lower().startswith("gpt-5") for m in models)
     if (not api_key or prefer_openrouter) and openrouter_key:
-        base_url = "https://openrouter.ai/api/v1"
+        base_url = "https://api.openai.com/v1"
         return (openrouter_key, base_url,
                 *[_openrouter_model_id(m) for m in models])
     return (api_key, None, *models)
@@ -98,8 +98,8 @@ def get_raptor_config() -> RaptorConfig:
     provider = os.getenv("LLM_PROVIDER", "openai").lower()
     provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
     openai_key = os.getenv("OPENAI_API_KEY", "")
-    dashscope_key = os.getenv("DASHSCOPE_API_KEY", "")
-    ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
+    dashscope_key = os.getenv("OPENAI_API_KEY", "")
+    ark_key = os.getenv("OPENAI_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
     direct_key = dashscope_key if provider == "dashscope" else (openai_key or ark_key)
     default_model = (
         os.getenv("RAPTOR_MODEL", "qwen3.7-plus")
@@ -114,9 +114,9 @@ def get_raptor_config() -> RaptorConfig:
         os.getenv("RAPTOR_MODEL", default_model),
     )
     if base_url is None and provider == "dashscope":
-        base_url = os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
     elif base_url is None and ark_key and not openai_key:
-        base_url = "https://ark.cn-beijing.volces.com/api/v3"
+        base_url = "https://api.openai.com/v1"
     return RaptorConfig(
         openai_api_key=api_key,
         model_name=model_name,
@@ -136,8 +136,8 @@ def get_graphrag_config() -> GraphRAGConfig:
     provider = os.getenv("LLM_PROVIDER", "openai").lower()
     provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
     openai_key = os.getenv("OPENAI_API_KEY", "")
-    dashscope_key = os.getenv("DASHSCOPE_API_KEY", "")
-    ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
+    dashscope_key = os.getenv("OPENAI_API_KEY", "")
+    ark_key = os.getenv("OPENAI_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
     direct_key = dashscope_key if provider == "dashscope" else (openai_key or ark_key)
     default_model = (
         os.getenv("GRAPHRAG_MODEL", "qwen3.7-plus")
@@ -153,9 +153,9 @@ def get_graphrag_config() -> GraphRAGConfig:
         os.getenv("GRAPHRAG_SUMMARY_MODEL", default_model),
     )
     if base_url is None and provider == "dashscope":
-        base_url = os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
     elif base_url is None and ark_key and not openai_key:
-        base_url = "https://ark.cn-beijing.volces.com/api/v3"
+        base_url = "https://api.openai.com/v1"
     return GraphRAGConfig(
         llm_api_key=api_key,
         llm_model=llm_model,

@@ -30,7 +30,7 @@ Agent run fails the command.
 
 ```bash
 cd chapter5/agent-creator
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 cp env.example .env
 python demo.py --output runs/release-agent
 ```

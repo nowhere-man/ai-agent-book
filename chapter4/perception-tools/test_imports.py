@@ -65,7 +65,7 @@ try:
 except ImportError as e:
     print(f"\n❌ Import error: {e}")
     print("\nℹ️  You may need to install dependencies:")
-    print("   pip install -r requirements.txt")
+    print("   pip install -r ../../requirements.txt")
     sys.exit(1)
     
 except Exception as e:

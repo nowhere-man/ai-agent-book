@@ -27,7 +27,7 @@ def _response(content="Reasoning\n  **ACTION**: take rusty sword  "):
 
 
 def test_explicit_action_variants_are_recorded_without_fallback(monkeypatch):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "test-only")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-only")
     agent = LLMAgent(model="kimi-k3")
     agent.client = SimpleNamespace(
         chat=SimpleNamespace(
@@ -45,7 +45,7 @@ def test_explicit_action_variants_are_recorded_without_fallback(monkeypatch):
 
 
 def test_api_failure_is_retained_and_cannot_look_like_model_behavior(monkeypatch):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "test-only")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-only")
     agent = LLMAgent(model="kimi-k3")
 
     def fail(**_):
@@ -64,7 +64,7 @@ def test_api_failure_is_retained_and_cannot_look_like_model_behavior(monkeypatch
 
 
 def test_saved_evidence_excludes_credentials(monkeypatch, tmp_path):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "secret-that-must-not-be-written")
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-that-must-not-be-written")
     agent = LLMAgent(model="kimi-k3")
     agent.client = SimpleNamespace(
         chat=SimpleNamespace(

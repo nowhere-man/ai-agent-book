@@ -20,7 +20,7 @@ from ffmpeg_utils import extract_frame, probe_duration
 TEXT_MODEL = os.getenv("TEXT_MODEL", "gpt-5.6-luna")
 VISION_MODEL = os.getenv("VISION_MODEL", "gpt-5.6-luna")  # 必须支持图像输入
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 _client = None
 
@@ -54,19 +54,19 @@ def client() -> OpenAI:
     """构造（并缓存）OpenAI 客户端，含通用 OpenRouter 兜底。
 
     - 有 OPENAI_API_KEY：直连；但默认模型 gpt-5.x（直连需组织实名认证）且设置了
-      OPENROUTER_API_KEY 时优先走 OpenRouter。
-    - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：改走 OpenRouter（模型名自动映射）。
+      OPENAI_API_KEY 时优先走 OpenRouter。
+    - 无 OPENAI_API_KEY 但有 OPENAI_API_KEY：改走 OpenRouter（模型名自动映射）。
     """
     global _client, TEXT_MODEL, VISION_MODEL
     if _client is None:
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL")
-        orkey = os.getenv("OPENROUTER_API_KEY")
+        orkey = os.getenv("OPENAI_API_KEY")
         prefer_or = bool(orkey) and (
             (TEXT_MODEL or "").lower().startswith("gpt-5") or (VISION_MODEL or "").lower().startswith("gpt-5")
         )
         if prefer_or or (not api_key and orkey):
-            api_key, base_url = orkey, OPENROUTER_BASE_URL
+            api_key, base_url = orkey, OPENAI_BASE_URL
             TEXT_MODEL = map_model_to_openrouter(TEXT_MODEL)
             VISION_MODEL = map_model_to_openrouter(VISION_MODEL)
         kw = {}

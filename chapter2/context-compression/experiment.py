@@ -37,7 +37,7 @@ ALL_STRATEGIES = list(STRATEGY_CHOICES.values())
 
 class ExperimentRunner:
     """Runs experiments comparing different compression strategies"""
-    
+
     def __init__(self, api_key: str, results_file: Optional[str] = None,
                  enable_streaming: bool = False):
         """
@@ -68,18 +68,18 @@ class ExperimentRunner:
     def run_single_strategy(self, strategy: CompressionStrategy, verbose: bool = False) -> Dict[str, Any]:
         """
         Run experiment with a single compression strategy
-        
+
         Args:
             strategy: Compression strategy to test
             verbose: Enable verbose output
-            
+
         Returns:
             Experiment results
         """
         print(f"\n{Fore.CYAN}{'='*70}")
         print(f"{Fore.CYAN}Testing Strategy: {Fore.YELLOW}{strategy.value}")
         print(f"{Fore.CYAN}{'='*70}{Style.RESET_ALL}")
-        
+
         # Create agent with the strategy
         agent = ResearchAgent(
             api_key=self.api_key,
@@ -87,19 +87,19 @@ class ExperimentRunner:
             verbose=verbose,
             enable_streaming=self.enable_streaming  # Off by default for cleaner experiment output
         )
-        
+
         start_time = time.time()
-        
+
         try:
             # Execute the research task
             result = agent.execute_research(max_iterations=Config.MAX_ITERATIONS)
-            
+
             end_time = time.time()
             execution_time = end_time - start_time
-            
+
             # Analyze results
             trajectory = result.get('trajectory')
-            
+
             # Calculate metrics
             metrics = {
                 'strategy': strategy.value,
@@ -112,12 +112,12 @@ class ExperimentRunner:
                 'error': result.get('error'),
                 'final_answer_length': len(result.get('final_answer', '')) if result.get('final_answer') else 0
             }
-            
+
             # Calculate compression ratios
             if trajectory and trajectory.tool_calls:
                 total_original = 0
                 total_compressed = 0
-                
+
                 for call in trajectory.tool_calls:
                     if call.compressed_result:
                         total_original += call.compressed_result.original_length
@@ -127,7 +127,7 @@ class ExperimentRunner:
                         content = json.dumps(call.result)
                         total_original += len(content)
                         total_compressed += len(content)
-                
+
                 if total_original > 0:
                     metrics['compression_ratio'] = round(total_compressed / total_original, 3)
                     metrics['total_original_size'] = total_original
@@ -136,22 +136,22 @@ class ExperimentRunner:
                     metrics['compression_ratio'] = 1.0
                     metrics['total_original_size'] = 0
                     metrics['total_compressed_size'] = 0
-            
+
             # Print summary
             self._print_summary(metrics)
-            
+
             # Store full result
             full_result = {
                 'metrics': metrics,
                 'final_answer': result.get('final_answer'),
                 'timestamp': datetime.now().isoformat()
             }
-            
+
             return full_result
-            
+
         except Exception as e:
             print(f"{Fore.RED}Error during experiment: {str(e)}{Style.RESET_ALL}")
-            
+
             return {
                 'metrics': {
                     'strategy': strategy.value,
@@ -161,7 +161,7 @@ class ExperimentRunner:
                 },
                 'timestamp': datetime.now().isoformat()
             }
-    
+
     def _print_summary(self, metrics: Dict[str, Any]):
         """Print a summary of the metrics"""
         print(f"\n{Fore.GREEN}📊 Results Summary:{Style.RESET_ALL}")
@@ -175,20 +175,20 @@ class ExperimentRunner:
             print(f"  Compression Ratio: {metrics['compression_ratio']:.1%}")
             print(f"  Original Size: {metrics['total_original_size']:,} chars")
             print(f"  Compressed Size: {metrics['total_compressed_size']:,} chars")
-        
+
         if metrics.get('context_overflows', 0) > 0:
             print(f"  {Fore.YELLOW}Context Overflows: {metrics['context_overflows']}{Style.RESET_ALL}")
-        
+
         if metrics.get('error'):
             print(f"  {Fore.RED}Error: {metrics['error'][:100]}...{Style.RESET_ALL}")
-    
+
     def _format_bool(self, value: bool) -> str:
         """Format boolean value with color"""
         if value:
             return f"{Fore.GREEN}✓ Yes{Style.RESET_ALL}"
         else:
             return f"{Fore.RED}✗ No{Style.RESET_ALL}"
-    
+
     def run_all_strategies(self, strategies: Optional[List[CompressionStrategy]] = None) -> None:
         """Run experiments for the given compression strategies (default: all six)"""
         if strategies is None:
@@ -199,34 +199,34 @@ class ExperimentRunner:
         print(f"{Fore.MAGENTA}{'='*70}{Style.RESET_ALL}")
         print(f"\nTesting {len(strategies)} compression strategies...")
         print(f"Task: Research current affiliations of OpenAI co-founders")
-        
+
         # Run each strategy
         for strategy in tqdm(strategies, desc="Running experiments"):
             result = self.run_single_strategy(strategy)
             self.results.append(result)
-            
+
             # Save intermediate results
             self._save_results()
-            
+
             # Small delay between experiments
             time.sleep(2)
-        
+
         # Print final comparison
         self._print_comparison()
-    
+
     def _save_results(self):
         """Save results to JSON file"""
         with open(self.results_file, 'w') as f:
             json.dump(self.results, f, indent=2, default=str)
-        
+
         print(f"\n💾 Results saved to: {self.results_file}")
-    
+
     def _print_comparison(self):
         """Print comparison table of all strategies"""
         print(f"\n{Fore.MAGENTA}{'='*70}")
         print(f"{Fore.MAGENTA}FINAL COMPARISON")
         print(f"{Fore.MAGENTA}{'='*70}{Style.RESET_ALL}")
-        
+
         # Create comparison table
         print(f"\n{'Strategy':<38} {'Success':<9} {'Time':<9} {'Tokens':<11} {'Compress':<10} {'Overflows':<10}")
         print("-" * 90)
@@ -245,27 +245,27 @@ class ExperimentRunner:
             print(f"{color}{strategy:<38} {success:<9} {time_str:<9} {tokens:<11} {compress:<10} {overflows:<10}{Style.RESET_ALL}")
 
         print("\n" + "="*90)
-        
+
         # Analysis summary
         self._print_analysis()
-    
+
     def _print_analysis(self):
         """Print analysis of the results"""
         print(f"\n{Fore.CYAN}📈 Analysis:{Style.RESET_ALL}")
-        
+
         successful = [r for r in self.results if r['metrics']['success']]
         failed = [r for r in self.results if not r['metrics']['success']]
-        
+
         print(f"\n  Successful Strategies: {len(successful)}/{len(self.results)}")
-        
+
         if successful:
             # Find best performing
             fastest = min(successful, key=lambda x: x['metrics']['execution_time'])
             most_efficient = min(successful, key=lambda x: x['metrics'].get('total_compressed_size', float('inf')))
-            
+
             print(f"  Fastest: {fastest['metrics']['strategy']} ({fastest['metrics']['execution_time']:.1f}s)")
             print(f"  Most Efficient: {most_efficient['metrics']['strategy']} ({most_efficient['metrics'].get('total_compressed_size', 0):,} chars)")
-        
+
         if failed:
             print(f"\n  Failed Strategies:")
             for r in failed:
@@ -273,7 +273,7 @@ class ExperimentRunner:
                 # iteration cap (rather than raising), so coalesce before slicing.
                 err = r['metrics'].get('error') or 'No final answer within max iterations'
                 print(f"    - {r['metrics']['strategy']}: {err[:50]}...")
-        
+
         # Key findings
         print(f"\n{Fore.CYAN}🔍 Key Findings:{Style.RESET_ALL}")
         print("  1. No Compression: Expected to fail with context overflow ✓")
@@ -353,7 +353,7 @@ def main():
     if not Config.validate():
         print(f"\n{Fore.RED}Configuration validation failed!{Style.RESET_ALL}")
         print("\nPlease set up your .env file with:")
-        print("  MOONSHOT_API_KEY=your_api_key_here")
+        print("  OPENAI_API_KEY=your_api_key_here")
         print("  SERPER_API_KEY=your_api_key_here (optional)")
         sys.exit(1)
 
@@ -362,7 +362,7 @@ def main():
 
     # Create runner
     runner = ExperimentRunner(
-        Config.MOONSHOT_API_KEY,
+        Config.OPENAI_API_KEY,
         results_file=args.output,
         enable_streaming=args.streaming,
     )

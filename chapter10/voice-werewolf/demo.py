@@ -441,7 +441,7 @@ def main():
     args = build_parser().parse_args()
 
     # 在线模式（LLM 决策 / 语音合成）才需要 API Key；离线模式不需要。
-    # LLM 决策支持 OPENAI_API_KEY 或（回退）OPENROUTER_API_KEY；语音合成（--voice，
+    # LLM 决策支持 OPENAI_API_KEY 或（回退）OPENAI_API_KEY；语音合成（--voice，
     # OpenAI tts-1）目前只支持 OPENAI_API_KEY，OpenRouter 无 TTS 端点。
     if sum(bool(value) for value in (args.offline, args.ai_only, args.simulate_user)) > 1:
         print("错误：--offline、--ai-only、--simulate-user 互斥")
@@ -450,16 +450,16 @@ def main():
     if live_human and not args.confirm_human_consent:
         print("拒绝采集音频：真人验收路径必须显式传入 --confirm-human-consent")
         sys.exit(2)
-    has_llm_key = any(os.environ.get(k) for k in ("ARK_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"))
+    has_llm_key = any(os.environ.get(k) for k in ("OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY"))
     if args.simulate_user:
         speech_provider_available = (
             bool(os.environ.get("OPENAI_API_KEY"))
             if args.simulator_speech_provider == "openai"
-            else bool(os.environ.get("OPENROUTER_API_KEY"))
+            else bool(os.environ.get("OPENAI_API_KEY"))
             if args.simulator_speech_provider == "openrouter-system"
-            else bool(os.environ.get("GEMINI_API_KEY"))
+            else bool(os.environ.get("OPENAI_API_KEY"))
             if args.simulator_speech_provider == "gemini-system"
-            else bool(os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY") or os.environ.get("GEMINI_API_KEY"))
+            else bool(os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY"))
         )
         if not speech_provider_available:
             print("错误：用户模拟器语音回环需要 OpenAI、OpenRouter 或 Gemini API Key。")
@@ -469,7 +469,7 @@ def main():
               "请先 export OPENAI_API_KEY=your-openai-api-key（见 env.example），或去掉 --voice 跑纯文本模式。")
         sys.exit(1)
     if not args.offline and not has_llm_key:
-        print("错误：LLM 决策需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY。"
+        print("错误：LLM 决策需要 OPENAI_API_KEY 或 OPENAI_API_KEY。"
               "请先 export（见 env.example），或改用离线模式：python demo.py --offline")
         sys.exit(1)
 

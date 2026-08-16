@@ -83,9 +83,9 @@ def wait_url(url: str, timeout: float = 45.0) -> dict[str, Any] | str:
 
 def resolve_backend(provider: str, model: str | None) -> tuple[OpenAI, str, str]:
     choices = {
-        "ark": (os.getenv("ARK_API_KEY"), "https://ark.cn-beijing.volces.com/api/v3", model or "doubao-seed-1-6-flash-250615"),
-        "moonshot": (os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY"), "https://api.moonshot.cn/v1", model or "kimi-k3"),
-        "openrouter": (os.getenv("OPENROUTER_API_KEY"), "https://openrouter.ai/api/v1", model or "openai/gpt-5.6-luna"),
+        "ark": (os.getenv("OPENAI_API_KEY"), "https://api.openai.com/v1", model or "doubao-seed-1-6-flash-250615"),
+        "moonshot": (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"), "https://api.openai.com/v1", model or "kimi-k3"),
+        "openrouter": (os.getenv("OPENAI_API_KEY"), "https://api.openai.com/v1", model or "openai/gpt-5.6-luna"),
         "openai": (os.getenv("OPENAI_API_KEY"), os.getenv("OPENAI_BASE_URL"), model or "gpt-5.6-luna"),
     }
     key, base_url, resolved = choices[provider]

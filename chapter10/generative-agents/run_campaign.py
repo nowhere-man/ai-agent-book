@@ -88,10 +88,10 @@ def install_provider(receipt_path: Path) -> None:
     from provider_adapter import install
 
     install(
-        api_key=os.environ["DASHSCOPE_API_KEY"],
+        api_key=os.environ["OPENAI_API_KEY"],
         api_base=os.environ.get(
             "GA_OPENAI_API_BASE",
-            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+            "https://api.openai.com/v1",
         ),
         chat_model=os.environ.get("GA_CHAT_MODEL", "qwen3.7-flash"),
         embedding_model=os.environ.get(

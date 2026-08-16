@@ -79,7 +79,7 @@ source .venv/bin/activate
 cd chapter1/web-search-agent
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. Configure API Key
@@ -87,20 +87,20 @@ cd chapter1/web-search-agent
 Get a key from the [Moonshot AI platform](https://platform.moonshot.ai/), then set:
 
 ```bash
-export MOONSHOT_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 ```
 
 Or create a `.env` file:
 
 ```env
-MOONSHOT_API_KEY=your-api-key-here
+OPENAI_API_KEY=your-api-key-here
 ```
 
-**Note**: For backward compatibility, `KIMI_API_KEY` is also accepted.
+**Note**: For backward compatibility, `OPENAI_API_KEY` is also accepted.
 
-**Universal OpenRouter fallback**: if neither `MOONSHOT_API_KEY` nor
-`KIMI_API_KEY` is set but `OPENROUTER_API_KEY` is, requests go through
-OpenRouter using `OPENROUTER_MODEL` (default `openai/gpt-5.6-luna`). Moonshot
+**Universal OpenRouter fallback**: if neither `OPENAI_API_KEY` nor
+`OPENAI_API_KEY` is set but `OPENAI_API_KEY` is, requests go through
+OpenRouter using `OPENAI_MODEL` (default `openai/gpt-5.6-luna`). Moonshot
 Formula declarations and Fibers are not exposed through OpenRouter, so fallback
 mode answers from model knowledge without live Formula search. It is useful for
 interface diagnostics only and cannot satisfy Experiment 1-2 acceptance.
@@ -119,7 +119,7 @@ python main.py --help
 | `--provider` | Backend: `kimi` (Moonshot Formula `web_search`, needs API key) / `offline-demo` (offline sample trace) | `kimi` |
 | `--model` | Model name | `kimi-k3` |
 | `--max-steps` | Max ReAct iterations | `5` |
-| `--base-url` | API base URL | `https://api.moonshot.cn/v1` |
+| `--base-url` | API base URL | `https://api.openai.com/v1` |
 | `--api-key` | Kimi API key (else from env) | env |
 | `--output`, `-o` | Save question, ReAct trace, and answer as JSON | none |
 | `--quiet` | Do not stream ReAct trace live | stream on |
@@ -236,9 +236,9 @@ Includes:
 
 | Item | Description | Default |
 |------|-------------|---------|
-| `MOONSHOT_API_KEY` | Moonshot AI API key | required |
-| `KIMI_API_KEY` | Legacy key env name (compat) | optional |
-| `KIMI_BASE_URL` | API base URL | `https://api.moonshot.cn/v1` |
+| `OPENAI_API_KEY` | Moonshot AI API key | required |
+| `OPENAI_API_KEY` | Legacy key env name (compat) | optional |
+| `OPENAI_BASE_URL` | API base URL | `https://api.openai.com/v1` |
 | `DEFAULT_MODEL` | Default model | `kimi-k3` |
 | `MAX_SEARCH_ITERATIONS` | Max search iterations (in Config) | 5 |
 | `SEARCH_TIMEOUT` | Search timeout (seconds) | 30 |
@@ -361,7 +361,7 @@ source .venv/bin/activate
 cd chapter1/web-search-agent
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. 配置 API Key
@@ -369,18 +369,18 @@ cd chapter1/web-search-agent
 从 [Moonshot AI 平台](https://platform.moonshot.ai/) 获取 API Key，然后设置环境变量：
 
 ```bash
-export MOONSHOT_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 ```
 
 或创建 `.env` 文件：
 
 ```env
-MOONSHOT_API_KEY=your-api-key-here
+OPENAI_API_KEY=your-api-key-here
 ```
 
-**注意**: 为了向后兼容，系统也支持使用 `KIMI_API_KEY` 环境变量。
+**注意**: 为了向后兼容，系统也支持使用 `OPENAI_API_KEY` 环境变量。
 
-**通用兜底（OpenRouter）**: 若未设置 `MOONSHOT_API_KEY`/`KIMI_API_KEY` 但设置了 `OPENROUTER_API_KEY`，请求会自动改走 OpenRouter，使用 `OPENROUTER_MODEL`（默认 `openai/gpt-5.6-luna`）。**重要限制**：Kimi 内置的 `$web_search` 工具是 Moonshot 专有能力，在 OpenRouter 上不可用——因此兜底模式下模型仅凭自身知识作答，**没有实时联网搜索**。如需真正的联网搜索，请使用 Moonshot 主 key。
+**通用兜底（OpenRouter）**: 若未设置 `OPENAI_API_KEY`/`OPENAI_API_KEY` 但设置了 `OPENAI_API_KEY`，请求会自动改走 OpenRouter，使用 `OPENAI_MODEL`（默认 `openai/gpt-5.6-luna`）。**重要限制**：Kimi 内置的 `$web_search` 工具是 Moonshot 专有能力，在 OpenRouter 上不可用——因此兜底模式下模型仅凭自身知识作答，**没有实时联网搜索**。如需真正的联网搜索，请使用 Moonshot 主 key。
 
 #### 3. 运行 Agent
 
@@ -396,7 +396,7 @@ python main.py --help
 | `--provider` | 搜索后端：`kimi`（调用内置 `$web_search`，需 API Key）/ `offline-demo`（离线示例轨迹） | `kimi` |
 | `--model` | 模型名称 | `kimi-k3` |
 | `--max-steps` | 最大 ReAct 迭代次数 | `5` |
-| `--base-url` | API 基础 URL | `https://api.moonshot.cn/v1` |
+| `--base-url` | API 基础 URL | `https://api.openai.com/v1` |
 | `--api-key` | Kimi API Key（默认读环境变量） | 环境变量 |
 | `--output`, `-o` | 将问题、ReAct 轨迹与答案保存为 JSON | 无 |
 | `--quiet` | 不实时打印 ReAct 轨迹 | 打印 |
@@ -513,9 +513,9 @@ python examples.py
 
 | 配置项 | 说明 | 默认值 |
 |--------|------|--------|
-| `MOONSHOT_API_KEY` | Moonshot AI API 密钥 | 必填 |
-| `KIMI_API_KEY` | 旧版 API 密钥变量名（向后兼容） | 可选 |
-| `KIMI_BASE_URL` | API 基础 URL | `https://api.moonshot.cn/v1` |
+| `OPENAI_API_KEY` | Moonshot AI API 密钥 | 必填 |
+| `OPENAI_API_KEY` | 旧版 API 密钥变量名（向后兼容） | 可选 |
+| `OPENAI_BASE_URL` | API 基础 URL | `https://api.openai.com/v1` |
 | `DEFAULT_MODEL` | 默认模型 | `kimi-k3` |
 | `MAX_SEARCH_ITERATIONS` | 最大搜索迭代次数（Config 中设置） | 5 |
 | `SEARCH_TIMEOUT` | 搜索超时时间（秒） | 30 |
@@ -573,10 +573,10 @@ python examples.py
 
 ## Notes / 说明
 
-- License: MIT.  
-  许可证：MIT。  
-- Author / 作者: AI Agent 实战训练营；version / 版本: 1.0.0.  
-- Prefer `--provider offline-demo` first if you only want to see the ReAct shape without spending API quota.  
-  若只想先看 ReAct 形态、不消耗配额，优先运行 `--provider offline-demo`。  
-- Live search requires a Moonshot key; OpenRouter fallback has no `$web_search`.  
-  真正联网搜索必须使用 Moonshot Key；OpenRouter 兜底没有 `$web_search`。  
+- License: MIT.
+  许可证：MIT。
+- Author / 作者: AI Agent 实战训练营；version / 版本: 1.0.0.
+- Prefer `--provider offline-demo` first if you only want to see the ReAct shape without spending API quota.
+  若只想先看 ReAct 形态、不消耗配额，优先运行 `--provider offline-demo`。
+- Live search requires a Moonshot key; OpenRouter fallback has no `$web_search`.
+  真正联网搜索必须使用 Moonshot Key；OpenRouter 兜底没有 `$web_search`。

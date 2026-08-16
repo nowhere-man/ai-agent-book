@@ -21,7 +21,7 @@ def _client_and_model():
     """Build an OpenAI-compatible client + model, with OpenRouter fallback.
 
     Uses OPENAI_API_KEY directly when present; otherwise routes through
-    OPENROUTER_API_KEY. Raises RuntimeError (listing accepted keys) when neither
+    OPENAI_API_KEY. Raises RuntimeError (listing accepted keys) when neither
     is configured, so callers can surface a clear error.
     """
     api_key, base_url, model = resolve_llm()
@@ -36,12 +36,12 @@ async def generate_python_code(
 ) -> Dict[str, Any]:
     """
     Generate Python code based on task description.
-    
+
     Args:
         task_description: Description of what the code should do
         requirements: Optional additional requirements
         temperature: LLM temperature for creativity
-        
+
     Returns:
         Dictionary with generated code
     """
@@ -50,7 +50,7 @@ async def generate_python_code(
             client, model = _client_and_model()
         except RuntimeError as e:
             return {"success": False, "error": str(e)}
-        
+
         prompt = f"""Generate Python code for the following task:
 
 Task: {task_description}
@@ -58,7 +58,7 @@ Task: {task_description}
 {f'Requirements: {requirements}' if requirements else ''}
 
 Provide clean, well-documented Python code that solves the task."""
-        
+
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -68,9 +68,9 @@ Provide clean, well-documented Python code that solves the task."""
             temperature=temperature,
             max_tokens=2000
         )
-        
+
         code = response.choices[0].message.content
-        
+
         return {
             "success": True,
             "task": task_description,
@@ -78,7 +78,7 @@ Provide clean, well-documented Python code that solves the task."""
             "model": model,
             "tokens_used": response.usage.total_tokens if response.usage else 0
         }
-        
+
     except Exception as e:
         return {"success": False, "error": f"Code generation failed: {str(e)}"}
 
@@ -90,12 +90,12 @@ async def complex_problem_reasoning(
 ) -> Dict[str, Any]:
     """
     Perform complex problem reasoning with step-by-step thinking.
-    
+
     Args:
         problem: Problem statement
         context: Optional context information
         reasoning_steps: Number of reasoning steps
-        
+
     Returns:
         Dictionary with reasoning process and conclusion
     """
@@ -104,7 +104,7 @@ async def complex_problem_reasoning(
             client, model = _client_and_model()
         except RuntimeError as e:
             return {"success": False, "error": str(e)}
-        
+
         prompt = f"""Analyze the following problem with step-by-step reasoning:
 
 Problem: {problem}
@@ -112,7 +112,7 @@ Problem: {problem}
 {f'Context: {context}' if context else ''}
 
 Think through this problem step by step. Provide {reasoning_steps} clear reasoning steps, then give your conclusion."""
-        
+
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -122,9 +122,9 @@ Think through this problem step by step. Provide {reasoning_steps} clear reasoni
             temperature=0.7,
             max_tokens=1500
         )
-        
+
         reasoning = response.choices[0].message.content
-        
+
         return {
             "success": True,
             "problem": problem,
@@ -132,7 +132,7 @@ Think through this problem step by step. Provide {reasoning_steps} clear reasoni
             "model": model,
             "tokens_used": response.usage.total_tokens if response.usage else 0
         }
-        
+
     except Exception as e:
         return {"success": False, "error": f"Reasoning failed: {str(e)}"}
 
@@ -144,12 +144,12 @@ async def guard_reasoning_process(
 ) -> Dict[str, Any]:
     """
     Guard and validate a proposed action or reasoning.
-    
+
     Args:
         proposed_action: The action being proposed
         context: Context information for evaluation
         safety_rules: Optional list of safety rules to check
-        
+
     Returns:
         Dictionary with safety evaluation
     """
@@ -158,7 +158,7 @@ async def guard_reasoning_process(
             client, model = _client_and_model()
         except RuntimeError as e:
             return {"success": False, "error": str(e)}
-        
+
         rules_text = "\n".join(f"- {rule}" for rule in (safety_rules or []))
         safety_rules_block = f"Safety Rules to Check:\n{rules_text}" if safety_rules else ""
 
@@ -180,7 +180,7 @@ Provide:
 - reasoning: Your evaluation reasoning
 - concerns: Any safety concerns (empty if none)
 - suggestions: Alternative approaches if not approved"""
-        
+
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -190,7 +190,7 @@ Provide:
             temperature=0.3,
             max_tokens=800
         )
-        
+
         evaluation = response.choices[0].message.content
 
         # Try to extract structured response. Approval must be explicit and
@@ -205,7 +205,7 @@ Provide:
             and "not safe" not in low
             and "unsafe" not in low
         )
-        
+
         return {
             "success": True,
             "proposed_action": proposed_action,
@@ -213,6 +213,6 @@ Provide:
             "evaluation": evaluation,
             "model": model
         }
-        
+
     except Exception as e:
         return {"success": False, "error": f"Guarding failed: {str(e)}"}

@@ -14,7 +14,7 @@
         "binary": "kimi",
         "binary_fallback": "~/.kimi-code/bin/kimi",
         "model_alias": "kimi-code/k3",
-        "auth_environment_variables": ["KIMI_API_KEY", "MOONSHOT_API_KEY"],
+        "auth_environment_variables": ["OPENAI_API_KEY", "OPENAI_API_KEY"],
         "skills_flag": "--skills-dir",
         "stream_format": "stream-json"
       }

@@ -25,7 +25,7 @@
 ### 2. Complete Tool Coverage (All 17 Tools from tools.json)
 
 ✅ **File Operations:**
-- Read (with image/PDF/notebook support)
+- Read (with image/notebook support)
 - Write (with auto lint checking)
 - Edit (search and replace)
 - MultiEdit (multiple edits in one operation)

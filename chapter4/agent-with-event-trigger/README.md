@@ -1,6 +1,6 @@
 # Event-Triggered AI Agent with MCP Tools / 事件驱动 AI Agent（MCP 工具）
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-5 ★★★**. FastAPI event-driven Agent with async MCP tool loading from collaboration / execution / perception servers.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-5 ★★★**. FastAPI event-driven Agent with async MCP tool loading from collaboration / execution / perception servers.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-5 ★★★**。FastAPI 事件驱动 Agent，异步加载协作/执行/感知 MCP 工具。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -83,18 +83,18 @@ Sample offline output (excerpt):
 Drop `--mock` to use a real LLM (built-in tools only by default, no MCP); set the provider API key:
 
 ```bash
-export KIMI_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 python event_loop_demo.py --trigger timer --provider kimi
 
 # Alibaba Cloud Model Studio / Bailian (Qwen)
-export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
+export OPENAI_API_KEY='your-dashscope-api-key-here'
 python event_loop_demo.py --trigger timer --provider dashscope
 # `qwen` and `bailian` are accepted aliases; international keys may use
-# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+# OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
-> **Universal OpenRouter fallback**: if the chosen provider’s key is missing (default `kimi`) but `OPENROUTER_API_KEY` is set, `event_loop_demo.py` / `server.py` / `quickstart.py` switch to `openrouter` (set model with `LLM_MODEL=openai/gpt-5.6-luna`). Example:  
-> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> **Universal OpenRouter fallback**: if the chosen provider’s key is missing (default `kimi`) but `OPENAI_API_KEY` is set, `event_loop_demo.py` / `server.py` / `quickstart.py` switch to `openrouter` (set model with `LLM_MODEL=openai/gpt-5.6-luna`). Example:
+> `OPENAI_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 Full flags: `python event_loop_demo.py --help`.
 
@@ -153,13 +153,13 @@ source .venv/bin/activate
 cd chapter4/agent-with-event-trigger
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Set up environment
 cp env.example .env
 # Edit .env and add your API key
-export KIMI_API_KEY='your-api-key-here'
-export DASHSCOPE_API_KEY='your-dashscope-api-key-here'  # for dashscope/qwen/bailian
+export OPENAI_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-dashscope-api-key-here'  # for dashscope/qwen/bailian
 ```
 
 #### Tests and Manual Demo
@@ -180,7 +180,7 @@ python -m pytest tests
 The standalone live demo was moved to `tests/manual/demo.py`; it still requires a provider API key and is not collected by pytest:
 
 ```bash
-KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
+OPENAI_API_KEY='your-api-key-here' python tests/manual/demo.py
 ```
 
 #### Start the Server
@@ -356,7 +356,7 @@ Uses:
 
 ```bash
 # Required
-export KIMI_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
 
 # Optional
 export LLM_PROVIDER="kimi"              # dashscope/qwen/bailian, kimi, siliconflow, doubao, openrouter
@@ -436,7 +436,7 @@ Response shows:
 
 MCP tools use underscore prefixes:
 - `collaboration_*` - Collaboration tools
-- `execution_*` - Execution tools  
+- `execution_*` - Execution tools
 - `perception_*` - Perception tools
 
 Built-in tools (no prefix):
@@ -458,7 +458,7 @@ class EventType(Enum):
     GITHUB_PR_UPDATE = "github_pr_update" # PR notifications
     TIMER_TRIGGER = "timer_trigger"       # Scheduled tasks (one-shot / recurring)
     FILE_CHANGE = "file_change"           # File watch trigger (created / modified)
-    
+
     # System reminder events
     USER_TIMEOUT = "user_timeout"         # No user activity
     PROCESS_TIMEOUT = "process_timeout"   # Long-running process
@@ -551,7 +551,7 @@ curl -X POST http://localhost:8000/mcp/reload
 uv sync --locked --python 3.12 --extra ch4
 
 # Single-project compatibility path:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Verify FastAPI installed
 python -c "import fastapi; print(fastapi.__version__)"
@@ -670,17 +670,17 @@ python event_loop_demo.py --mock --trigger file --watch-dir watched_dir
 需要设置对应 provider 的 API Key：
 
 ```bash
-export KIMI_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 python event_loop_demo.py --trigger timer --provider kimi
 
-export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
+export OPENAI_API_KEY='your-dashscope-api-key-here'
 python event_loop_demo.py --trigger timer --provider dashscope
 ```
 
 > **OpenRouter 通用兜底**：若所选 provider（默认 `kimi`）的 Key 缺失，但设置了
-> `OPENROUTER_API_KEY`，`event_loop_demo.py` / `server.py` / `quickstart.py` 会自动
+> `OPENAI_API_KEY`，`event_loop_demo.py` / `server.py` / `quickstart.py` 会自动
 > 改用 `openrouter` provider 继续运行（可用 `LLM_MODEL=openai/gpt-5.6-luna` 指定模型）。例如：
-> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> `OPENAI_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 完整参数见 `python event_loop_demo.py --help`。
 
@@ -704,12 +704,12 @@ source .venv/bin/activate
 cd chapter4/agent-with-event-trigger
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Set up environment
 cp env.example .env
 # Edit .env and add your API key
-export KIMI_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 ```
 
 #### 测试与手动演示
@@ -730,7 +730,7 @@ python -m pytest tests
 独立的联网演示已移动到 `tests/manual/demo.py`；它仍需要模型提供商 API Key，且不会被 pytest 默认收集：
 
 ```bash
-KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
+OPENAI_API_KEY='your-api-key-here' python tests/manual/demo.py
 ```
 
 #### 启动服务器
@@ -906,7 +906,7 @@ curl -X POST http://localhost:8000/event \
 
 ```bash
 # Required
-export KIMI_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
 
 # Optional
 export LLM_PROVIDER="kimi"              # dashscope/qwen/bailian, kimi, siliconflow, doubao, openrouter
@@ -989,7 +989,7 @@ class EventType(Enum):
     GITHUB_PR_UPDATE = "github_pr_update" # PR notifications
     TIMER_TRIGGER = "timer_trigger"       # Scheduled tasks (one-shot / recurring)
     FILE_CHANGE = "file_change"           # File watch trigger (created / modified)
-    
+
     # System reminder events
     USER_TIMEOUT = "user_timeout"         # No user activity
     PROCESS_TIMEOUT = "process_timeout"   # Long-running process
@@ -1082,7 +1082,7 @@ curl -X POST http://localhost:8000/mcp/reload
 uv sync --locked --python 3.12 --extra ch4
 
 # 单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Verify FastAPI installed
 python -c "import fastapi; print(fastapi.__version__)"
@@ -1122,7 +1122,7 @@ MIT License - 详见 LICENSE 文件
 
 ## Notes / 说明
 
-- Start with `python event_loop_demo.py --mock` (no API key).  
-- 建议先跑 `python event_loop_demo.py --mock`（无需 API Key）。  
-- MCP servers expected: [collaboration-tools](../collaboration-tools/), [execution-tools](../execution-tools/), [perception-tools](../perception-tools/).  
+- Start with `python event_loop_demo.py --mock` (no API key).
+- 建议先跑 `python event_loop_demo.py --mock`（无需 API Key）。
+- MCP servers expected: [collaboration-tools](../collaboration-tools/), [execution-tools](../execution-tools/), [perception-tools](../perception-tools/).
 - MCP 服务器见同章三个工具项目。

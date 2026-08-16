@@ -45,14 +45,14 @@ def parse_json(text: str) -> dict[str, Any]:
 
 
 def evaluate(report_path: Path, output: Path, model: str) -> dict[str, Any]:
-    if not os.getenv("OPENROUTER_API_KEY"):
-        raise RuntimeError("OPENROUTER_API_KEY is required")
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError("OPENAI_API_KEY is required")
     raw = report_path.read_bytes()
     report = json.loads(raw)
     events = report.get("voice_events") or []
     client = OpenAI(
-        api_key=os.environ["OPENROUTER_API_KEY"],
-        base_url="https://openrouter.ai/api/v1",
+        api_key=os.environ["OPENAI_API_KEY"],
+        base_url="https://api.openai.com/v1",
         timeout=120,
         max_retries=2,
     )

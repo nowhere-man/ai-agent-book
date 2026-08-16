@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from os import environ as process_environ
 from urllib.parse import urlparse
 
-DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
+DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "qwen/qwen3-vl-32b-instruct"
 
 
@@ -43,7 +43,7 @@ def _nonempty(values: Mapping[str, str], name: str) -> str | None:
 def resolve_endpoint(values: Mapping[str, str] | None = None) -> ModelEndpoint:
     """Resolve an open-model endpoint without coupling it to one API vendor.
 
-    ``OPEN_MODEL_*`` is the portable interface. ``OPENROUTER_API_KEY`` is
+    ``OPEN_MODEL_*`` is the portable interface. ``OPENAI_API_KEY`` is
     accepted as a convenience because the documented reference route uses it.
     A local vLLM/SGLang server can set ``OPEN_MODEL_API_KEY=local``.
     """
@@ -52,12 +52,12 @@ def resolve_endpoint(values: Mapping[str, str] | None = None) -> ModelEndpoint:
     api_key = _nonempty(source, "OPEN_MODEL_API_KEY")
     api_key_env = "OPEN_MODEL_API_KEY"
     if api_key is None:
-        api_key = _nonempty(source, "OPENROUTER_API_KEY")
-        api_key_env = "OPENROUTER_API_KEY"
+        api_key = _nonempty(source, "OPENAI_API_KEY")
+        api_key_env = "OPENAI_API_KEY"
     if api_key is None:
         raise ConfigError(
             "Set OPEN_MODEL_API_KEY for an OpenAI-compatible endpoint, or "
-            "OPENROUTER_API_KEY for the documented Qwen3-VL route."
+            "OPENAI_API_KEY for the documented Qwen3-VL route."
         )
 
     base_url = _nonempty(source, "OPEN_MODEL_BASE_URL") or DEFAULT_BASE_URL

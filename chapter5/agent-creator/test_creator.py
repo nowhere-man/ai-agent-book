@@ -231,13 +231,13 @@ def test_resolved_backend_aliases_real_endpoint_for_generated_agents():
         client=object(),
         model="kimi-k3",
         api_key="test-key-not-a-secret",
-        base_url="https://api.moonshot.cn/v1",
+        base_url="https://api.openai.com/v1",
     )
     env = backend.generated_agent_env()
     assert env["OPENAI_API_KEY"] == "test-key-not-a-secret"
-    assert env["OPENAI_BASE_URL"] == "https://api.moonshot.cn/v1"
+    assert env["OPENAI_BASE_URL"] == "https://api.openai.com/v1"
     assert env["OPENAI_MODEL"] == "kimi-k3"
-    assert env["OPENROUTER_API_KEY"] == ""
+    assert env["OPENAI_API_KEY"] == ""
 
 
 def test_structural_gate_requires_common_live_cli(tmp_path: Path):

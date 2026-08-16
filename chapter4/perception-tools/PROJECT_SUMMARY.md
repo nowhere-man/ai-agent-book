@@ -154,7 +154,6 @@ cd src && python main.py
 - `requests`: HTTP client
 
 ### Document Processing
-- `PyPDF2`: PDF parsing
 - `python-docx`: Word documents
 - `python-pptx`: PowerPoint presentations
 - `Pillow`: Image processing
@@ -175,7 +174,7 @@ cd src && python main.py
 ## Configuration Requirements
 
 ### Required for Full Functionality
-- `GOOGLE_API_KEY`: For web search
+- `OPENAI_API_KEY`: For web search
 - `GOOGLE_CSE_ID`: For web search
 - `OPENWEATHER_API_KEY`: For weather data
 

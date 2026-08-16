@@ -6,12 +6,12 @@
 它们都兼容 OpenAI 的 Chat Completions + 工具调用接口。
 
     export LLM_PROVIDER=openai   # 默认
-    export LLM_PROVIDER=moonshot # 用 MOONSHOT_API_KEY
-    export LLM_PROVIDER=ark      # 用 ARK_API_KEY，并需设置 ARK_MODEL
+    export LLM_PROVIDER=moonshot # 用 OPENAI_API_KEY
+    export LLM_PROVIDER=ark      # 用 OPENAI_API_KEY，并需设置 ARK_MODEL
 
 统一的 OpenRouter 兜底（fallback）：
-    若所选 provider 自己的 Key 缺失，但设置了 OPENROUTER_API_KEY，则自动改走
-    OpenRouter（https://openrouter.ai/api/v1），并把模型名映射到 OpenRouter 命名：
+    若所选 provider 自己的 Key 缺失，但设置了 OPENAI_API_KEY，则自动改走
+    OpenRouter（https://api.openai.com/v1），并把模型名映射到 OpenRouter 命名：
         gpt-*     -> openai/gpt-*
         claude-*  -> anthropic/claude-opus-4.8
         含 "/"    -> 原样透传
@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 # 各提供商的默认配置：base_url / 环境变量名 / 默认模型
 _PROVIDERS = {
@@ -36,19 +36,19 @@ _PROVIDERS = {
         "default_model": "gpt-5.6-luna",
     },
     "moonshot": {
-        "base_url": "https://api.moonshot.cn/v1",
-        "key_env": "MOONSHOT_API_KEY",
+        "base_url": "https://api.openai.com/v1",
+        "key_env": "OPENAI_API_KEY",
         "default_model": "kimi-k3",
     },
     "ark": {
-        "base_url": "https://ark.cn-beijing.volces.com/api/v3",
-        "key_env": "ARK_API_KEY",
+        "base_url": "https://api.openai.com/v1",
+        "key_env": "OPENAI_API_KEY",
         # ARK 需要用推理接入点(endpoint id) 作为 model，请通过 ARK_MODEL 指定
         "default_model": os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
     },
     "openrouter": {
-        "base_url": OPENROUTER_BASE_URL,
-        "key_env": "OPENROUTER_API_KEY",
+        "base_url": OPENAI_BASE_URL,
+        "key_env": "OPENAI_API_KEY",
         "default_model": "openai/gpt-4o-mini",
     },
 }
@@ -94,10 +94,10 @@ def _is_reasoning_model(model: str) -> bool:
 
 def _use_openrouter(cfg: dict) -> bool:
     """走 OpenRouter 的两种情形：
-    1) provider 自己的 Key 缺失、但有 OPENROUTER_API_KEY（统一兜底）；
-    2) 目标是 gpt-5.x 且有 OPENROUTER_API_KEY —— 直连 gpt-5.x 需组织实名、
+    1) provider 自己的 Key 缺失、但有 OPENAI_API_KEY（统一兜底）；
+    2) 目标是 gpt-5.x 且有 OPENAI_API_KEY —— 直连 gpt-5.x 需组织实名、
        且 /chat/completions 工具调用受限，故即便有 OPENAI_API_KEY 也优先 OpenRouter。"""
-    if not os.getenv("OPENROUTER_API_KEY"):
+    if not os.getenv("OPENAI_API_KEY"):
         return False
     if not os.getenv(cfg["key_env"]):
         return True
@@ -123,11 +123,11 @@ def get_client() -> OpenAI:
         raise ValueError(f"未知的 LLM_PROVIDER: {provider}")
     cfg = _PROVIDERS[provider]
     if _use_openrouter(cfg):
-        return OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=OPENROUTER_BASE_URL)
+        return OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=OPENAI_BASE_URL)
     api_key = os.getenv(cfg["key_env"])
     if not api_key:
         raise RuntimeError(
-            f"环境变量 {cfg['key_env']} 未设置，也未设置 OPENROUTER_API_KEY。"
+            f"环境变量 {cfg['key_env']} 未设置，也未设置 OPENAI_API_KEY。"
             f"请参考 env.example 配置其一（OpenRouter 可作为统一兜底）后重试。"
         )
     kwargs = {"api_key": api_key}
@@ -163,8 +163,8 @@ def get_backend_metadata() -> dict[str, Any]:
     provider = get_provider()
     cfg = _PROVIDERS[provider]
     if _use_openrouter(cfg):
-        base_url = OPENROUTER_BASE_URL
-        key_env = "OPENROUTER_API_KEY"
+        base_url = OPENAI_BASE_URL
+        key_env = "OPENAI_API_KEY"
         routed_provider = "openrouter"
     else:
         base_url = cfg["base_url"] or "https://api.openai.com/v1"

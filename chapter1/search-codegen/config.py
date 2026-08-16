@@ -25,14 +25,14 @@ def _optional_int_env(name: str) -> Optional[int]:
 class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-    OPENROUTER_BASE_URL = os.getenv(
-        "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL = os.getenv(
+        "OPENAI_BASE_URL", "https://api.openai.com/v1"
     )
-    DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY", "")
-    DASHSCOPE_BASE_URL = os.getenv(
-        "DASHSCOPE_BASE_URL",
-        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL = os.getenv(
+        "OPENAI_BASE_URL",
+        "https://api.openai.com/v1",
     )
     DASHSCOPE_MODEL = os.getenv("DASHSCOPE_MODEL", "qwen3.7-plus")
     BACKEND = os.getenv("BACKEND", "openai")
@@ -59,9 +59,9 @@ class Config:
         if backend == "openrouter":
             model = model or cls.MODEL_NAME
             routed = model if model.startswith("openai/") else f"openai/{model}"
-            return cls.OPENROUTER_API_KEY, cls.OPENROUTER_BASE_URL, routed
+            return cls.OPENAI_API_KEY, cls.OPENAI_BASE_URL, routed
         if backend == "dashscope":
-            return cls.DASHSCOPE_API_KEY, cls.DASHSCOPE_BASE_URL, model or cls.DASHSCOPE_MODEL
+            return cls.OPENAI_API_KEY, cls.OPENAI_BASE_URL, model or cls.DASHSCOPE_MODEL
         raise ValueError("backend must be openai, openrouter, or dashscope")
 
     @classmethod

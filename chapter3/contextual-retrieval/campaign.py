@@ -26,7 +26,7 @@ from experiment_utils import ChatRecorder, sha256_file, write_campaign_evidence
 from compare_retrieval import tokenize
 
 
-ARK_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3"
+ARK_ENDPOINT = "https://api.openai.com/v1"
 
 
 class TransformerEncoder:
@@ -84,7 +84,7 @@ def source_documents(chunks: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 
 def prefix_one(args: argparse.Namespace, chunk: Dict[str, Any], source: Dict[str, Any]):
-    client = OpenAI(api_key=os.environ["ARK_API_KEY"], base_url=args.endpoint, timeout=args.timeout, max_retries=3)
+    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=args.endpoint, timeout=args.timeout, max_retries=3)
     recorder = ChatRecorder(client, "ark", args.endpoint)
     response = recorder.create(
         purpose=f"3-10 live contextual prefix {chunk['chunk_id']}",
@@ -172,8 +172,8 @@ def main() -> int:
     parser.add_argument("--input-price-per-million-usd", type=float, default=0.11)
     parser.add_argument("--output-price-per-million-usd", type=float, default=1.10)
     args = parser.parse_args()
-    if not os.getenv("ARK_API_KEY"):
-        raise RuntimeError("ARK_API_KEY is required")
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError("OPENAI_API_KEY is required")
 
     corpus_path = HERE / "document_store.json"
     eval_path = HERE / "evaluation" / "retrieval_eval.json"

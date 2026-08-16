@@ -44,7 +44,7 @@ This will start the retrieval pipeline service on `http://localhost:4242`
 This project no longer requires FAISS or BM25 directly:
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 ```
 
 Required packages:
@@ -60,7 +60,7 @@ Create a `.env` file with your API keys:
 
 ```env
 # LLM Provider (at least one required)
-KIMI_API_KEY=your_kimi_api_key
+OPENAI_API_KEY=your_kimi_api_key
 OPENAI_API_KEY=your_openai_api_key  # Optional, for other providers
 
 # Configuration

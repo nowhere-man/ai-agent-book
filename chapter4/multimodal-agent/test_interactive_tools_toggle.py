@@ -25,7 +25,7 @@ def test_tools_on_configures_complete_tool_state():
     assert isinstance(agent.tools, MultimodalTools)
     assert {
         definition["function"]["name"] for definition in agent.tool_definitions
-    } == {"analyze_image", "analyze_audio", "analyze_pdf"}
+    } == {"analyze_image", "analyze_audio"}
 
 
 def test_tools_off_disables_tool_execution():

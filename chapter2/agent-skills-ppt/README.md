@@ -1,6 +1,6 @@
 # Agent Skills PPT Demo / 使用 Agent Skills 从论文生成演示文稿
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-6 ★★: Generate a presentation from a paper using Agent Skills**.  
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-6 ★★: Generate a presentation from a paper using Agent Skills**.
 > 配套《深入理解 AI Agent》第 2 章 **实验 2-6 ★★：使用 Agent Skills 从论文生成演示文稿**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
@@ -23,7 +23,7 @@ The runner pins the official repository to revision
 *Attention Is All You Need* PDF (arXiv:1706.03762, SHA-256
 `bdfaa68d...82df697`).
 
-Run with Kimi Code CLI (`KIMI_API_KEY` / `MOONSHOT_API_KEY`, model
+Run with Kimi Code CLI (`OPENAI_API_KEY` / `OPENAI_API_KEY`, model
 `kimi-code/k3`):
 
 ```bash
@@ -118,7 +118,7 @@ The original book experiment ran on **Claude Code + Anthropic’s official PPTX 
 
 The mechanism maps one-to-one; the built-in Skill loader is replaced by explicit read/execute tools so progressive disclosure still works without Anthropic access.
 
-> **OpenRouter fallback:** Primary path is OpenAI (default model `gpt-5.6-luna`). If `OPENAI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, requests go through OpenRouter (`gpt-*` → `openai/…`). With `OPENAI_API_KEY` set, behavior is unchanged.
+> **OpenRouter fallback:** Primary path is OpenAI (default model `gpt-5.6-luna`). If `OPENAI_API_KEY` is unset but `OPENAI_API_KEY` is set, requests go through OpenRouter (`gpt-*` → `openai/…`). With `OPENAI_API_KEY` set, behavior is unchanged.
 
 ### Three-layer progressive disclosure
 
@@ -155,7 +155,7 @@ source .venv/bin/activate
 cd chapter2/agent-skills-ppt
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # or export directly
 export OPENAI_API_KEY=your-openai-api-key   # default model gpt-5.6-luna; override with OPENAI_MODEL
@@ -271,7 +271,7 @@ Replace `papers/sample_paper.md` or pass `python demo.py --paper your_paper.md`.
 
 机制一一对应，只是把「Claude 内置的 Skill 加载器」换成了几个显式的读取/执行工具，从而在没有 Anthropic 访问权限时，依然能真实演示渐进式披露的三层加载过程。
 
-> 说明：本项目主用 OpenAI（默认模型 gpt-5.6-luna）。**通用回退**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，会自动改走 OpenRouter（`gpt-*` 映射为 `openai/…`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
+> 说明：本项目主用 OpenAI（默认模型 gpt-5.6-luna）。**通用回退**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENAI_API_KEY`，会自动改走 OpenRouter（`gpt-*` 映射为 `openai/…`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
 
 ### 渐进式披露的三层结构
 
@@ -308,7 +308,7 @@ source .venv/bin/activate
 cd chapter2/agent-skills-ppt
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env        # 或直接 export
 export OPENAI_API_KEY=your-openai-api-key   # 默认模型 gpt-5.6-luna，可用 OPENAI_MODEL 覆盖
@@ -406,5 +406,5 @@ python skills/pptx/scripts/generate_pptx.py papers/sample_outline.json output/de
 
 ## Notes / 说明
 
-- Commands, paths, env vars, and model names are identical in both language sections.  
+- Commands, paths, env vars, and model names are identical in both language sections.
 - 命令、路径、环境变量与模型名在中英文两节中保持一致。

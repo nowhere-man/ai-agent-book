@@ -26,24 +26,24 @@ def _reasoning_safe_temperature(model, requested=1.0):
 
 def main():
     """Run a simple demo of the event-triggered agent"""
-    
+
     print("\n" + "="*80)
     print("🧪 EVENT-TRIGGERED AGENT DEMO")
     print("="*80)
     print()
-    
+
     # Get provider and API key (including DashScope/Bailian aliases and fallback)
     provider = os.getenv("LLM_PROVIDER", "kimi").lower()
     provider, api_key = resolve_provider_and_key(provider)
-    
+
     if not api_key:
         print(f"❌ Error: Please set API key for provider '{provider}'")
-        print("   export DASHSCOPE_API_KEY='your-api-key-here'  # for dashscope/qwen/bailian")
+        print("   export OPENAI_API_KEY='your-api-key-here'  # for dashscope/qwen/bailian")
         return
-    
+
     # Get optional model override
     model = os.getenv("LLM_MODEL")
-    
+
     # Create agent with full system hints (matching conversational_agent.py config)
     config = SystemHintConfig(
         enable_timestamps=True,
@@ -56,7 +56,7 @@ def main():
         temperature=_reasoning_safe_temperature(model, 0.7),  # Matching conversational_agent.py
         max_tokens=4096   # Matching conversational_agent.py
     )
-    
+
     agent = EventTriggeredAgent(
         api_key=api_key,
         provider=provider,
@@ -64,57 +64,57 @@ def main():
         config=config,
         verbose=True
     )
-    
+
     print("✅ Agent initialized\n")
-    
+
     # Demo 1: Web message
     print("\n" + "-"*80)
     print("📋 Demo 1: Web Interface Message")
     print("-"*80)
-    
+
     event1 = Event(
         event_type=EventType.WEB_MESSAGE,
         content="Create a simple Python script that prints 'Hello, Event-Triggered Agent!' and save it as demo_hello.py",
         metadata={"user_id": "demo_user"}
     )
-    
+
     result1 = agent.handle_event(event1, max_iterations=10)
     print(f"\n✅ Event handled. Success: {result1['success']}")
     print(f"   Iterations: {result1['iterations']}")
     print(f"   Tool calls: {len(result1['tool_calls'])}")
-    
+
     # Demo 2: IM message
     print("\n" + "-"*80)
     print("📋 Demo 2: Instant Message")
     print("-"*80)
-    
+
     event2 = Event(
         event_type=EventType.IM_MESSAGE,
         content="Can you run the script you just created?",
         metadata={"sender": "Alice", "platform": "Slack"}
     )
-    
+
     result2 = agent.handle_event(event2, max_iterations=10)
     print(f"\n✅ Event handled. Success: {result2['success']}")
     print(f"   Iterations: {result2['iterations']}")
     print(f"   Tool calls: {len(result2['tool_calls'])}")
-    
+
     # Demo 3: System alert
     print("\n" + "-"*80)
     print("📋 Demo 3: System Alert")
     print("-"*80)
-    
+
     event3 = Event(
         event_type=EventType.SYSTEM_ALERT,
         content="Please check the current directory and list all Python files.",
         metadata={"alert_type": "routine_check"}
     )
-    
+
     result3 = agent.handle_event(event3, max_iterations=10)
     print(f"\n✅ Event handled. Success: {result3['success']}")
     print(f"   Iterations: {result3['iterations']}")
     print(f"   Tool calls: {len(result3['tool_calls'])}")
-    
+
     # Summary
     print("\n" + "="*80)
     print("📊 DEMO SUMMARY")

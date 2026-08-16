@@ -52,7 +52,6 @@ dependencies:
       - distro==1.9.0
       - dotenv==0.9.9
       - durationpy==0.10
-      - EbookLib==0.18
       - einops==0.8.1
       - et_xmlfile==2.0.0
       - executing==2.2.0
@@ -110,7 +109,6 @@ dependencies:
       - lxml==5.4.0
       - mammoth==1.9.1
       - markdown
-      # - marker-pdf
       - markdown-it-py==3.0.0
       - markdown2==2.5.3
       - markdownify==1.1.0
@@ -136,7 +134,6 @@ dependencies:
       - pandas==2.3.0
       - parso==0.8.4
       - patchright==1.52.5
-      - pdftext==0.6.3
       - pexpect==4.9.0
       - pillow==10.4.0
       - platformdirs==4.3.8
@@ -162,7 +159,6 @@ dependencies:
       - pydyf==0.11.0
       - pyee==13.0.0
       - Pygments==2.19.2
-      - pypdfium2==4.30.0
       - pyperclip==1.9.0
       - pyphen==0.17.2
       - PySocks==1.7.1
@@ -231,7 +227,6 @@ dependencies:
       - virtualenv==20.31.2
       - waybackpy==3.0.6
       - wcwidth==0.2.13
-      - weasyprint==63.1
       - webencodings==0.5.1
       - websocket-client==1.8.0
       - websockets==15.0.1

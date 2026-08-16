@@ -34,7 +34,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parent
 TASKS_ROOT = ROOT / "tasks"
 DEFAULT_MODELS = ["openai/gpt-5.6-sol", "anthropic/claude-sonnet-5"]
-BASE_URL = "https://openrouter.ai/api/v1"
+BASE_URL = "https://api.openai.com/v1"
 EDIT_TOOLS = {"replace_text", "write_file"}
 IGNORED_PARTS = {".git", "__pycache__", ".pytest_cache"}
 
@@ -624,7 +624,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--policy", choices=["neutral", "explore-first"], default="neutral")
     parser.add_argument("--max-turns", type=int, default=20)
     parser.add_argument("--base-url", default=BASE_URL)
-    parser.add_argument("--api-key-env", default="OPENROUTER_API_KEY")
+    parser.add_argument("--api-key-env", default="OPENAI_API_KEY")
     parser.add_argument(
         "--output",
         type=Path,

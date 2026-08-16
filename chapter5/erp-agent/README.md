@@ -1,6 +1,6 @@
 # Experiment 5-10: NL ERP Agent (NL → SQL, Artifact Mode) / 实验 5-10：自然语言交互的 ERP Agent（NL → SQL，artifact 模式）
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — Chinese NL → SQL executed by DB; LLM only produces the SQL **artifact**, never moves rows itself.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — Chinese NL → SQL executed by DB; LLM only produces the SQL **artifact**, never moves rows itself.
 > 《深入理解 AI Agent》第 5 章：中文自然语言转 SQL 由 DB 执行；LLM 只生成 SQL 制品，不搬运数据。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -22,16 +22,16 @@ Data from `seed.py` with fixed seed 42, relative to “today”—**fully reprod
 
 ### 10 auto-answered questions
 
-1. Average tenure per employee  
-2. Active headcount per department  
-3. Department with highest average level  
-4. New hires this year / last year per department  
-5. Dept A average salary from March two years ago through May last year  
-6. Last year, which of depts A/B had higher average salary  
-7. Average salary per level this year  
-8. Average latest-month salary for tenure bands &lt;1y / 1–2y / 2–3y  
-9. Top 10 largest raises last year → this year  
-10. Any unpaid months while employed  
+1. Average tenure per employee
+2. Active headcount per department
+3. Department with highest average level
+4. New hires this year / last year per department
+5. Dept A average salary from March two years ago through May last year
+6. Last year, which of depts A/B had higher average salary
+7. Average salary per level this year
+8. Average latest-month salary for tenure bands &lt;1y / 1–2y / 2–3y
+9. Top 10 largest raises last year → this year
+10. Any unpaid months while employed
 
 Dept A = 研发部 (R&D), B = 销售部 (Sales) (fixed in the prompt).
 
@@ -53,13 +53,13 @@ source .venv/bin/activate
 cd chapter5/erp-agent
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env      # OPENAI_API_KEY
 python demo.py           # same as python demo.py run
 ```
 
-**OpenRouter fallback**: if `OPENAI_API_KEY` unset, set `OPENROUTER_API_KEY` (`gpt-*` → `openai/*`, else `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x (org verification on direct OpenAI), so with `OPENROUTER_API_KEY` OpenRouter is preferred.
+**OpenRouter fallback**: if `OPENAI_API_KEY` unset, set `OPENAI_API_KEY` (`gpt-*` → `openai/*`, else `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x (org verification on direct OpenAI), so with `OPENAI_API_KEY` OpenRouter is preferred.
 
 `demo.py` has 4 subcommands (no subcommand = `run`):
 
@@ -95,7 +95,7 @@ Recent real runs: offline `gold` **10/10**; online `run` (`gpt-5.6-luna`) stable
 | `reference.py` | Independent Python answers for 10 questions |
 | `gold.py` | Hand-written gold SQL (SQLite dialect) for offline `gold` |
 | `questions.py` | 10 NL questions + column/business-hint prompts for the Agent |
-| `agent.py` | NL→SQL Agent (OpenAI SDK; `OPENAI_API_KEY` or `OPENROUTER_API_KEY`; default `gpt-5.6-luna`) |
+| `agent.py` | NL→SQL Agent (OpenAI SDK; `OPENAI_API_KEY` or `OPENAI_API_KEY`; default `gpt-5.6-luna`) |
 | `schema_postgres.sql` | Book’s PostgreSQL DDL (for real Postgres migration) |
 
 ### About the database
@@ -155,15 +155,15 @@ source .venv/bin/activate
 cd chapter5/erp-agent
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env      # 填入 OPENAI_API_KEY
 python demo.py           # 等价于 python demo.py run
 ```
 
-**通用 OpenRouter 兜底**：未配置 `OPENAI_API_KEY` 时，设置 `OPENROUTER_API_KEY` 即自动
+**通用 OpenRouter 兜底**：未配置 `OPENAI_API_KEY` 时，设置 `OPENAI_API_KEY` 即自动
 改走 OpenRouter（`gpt-*` → `openai/*`，其它 → `openai/gpt-5.6-luna`）。默认模型
-`gpt-5.6-luna` 属 gpt-5.x，直连 OpenAI 需组织实名认证，故设置了 `OPENROUTER_API_KEY`
+`gpt-5.6-luna` 属 gpt-5.x，直连 OpenAI 需组织实名认证，故设置了 `OPENAI_API_KEY`
 时会优先走 OpenRouter。
 
 `demo.py` 提供 4 个子命令（不带子命令时等价于 `run`）：
@@ -205,7 +205,7 @@ python demo.py ask "研发部现在有多少在职员工？"
 | `reference.py` | 10 题的独立 Python 参考实现（校验基准） |
 | `gold.py` | 10 题人工编写的「标准 SQL」（SQLite 方言），供 `gold` 离线自检 |
 | `questions.py` | 10 个自然语言问题 + 给 Agent 的「返回列/业务口径」提示 |
-| `agent.py` | NL→SQL Agent（OpenAI SDK，读 `OPENAI_API_KEY` 或 `OPENROUTER_API_KEY` 兜底，默认 `gpt-5.6-luna`） |
+| `agent.py` | NL→SQL Agent（OpenAI SDK，读 `OPENAI_API_KEY` 或 `OPENAI_API_KEY` 兜底，默认 `gpt-5.6-luna`） |
 | `schema_postgres.sql` | 书中 PostgreSQL 版建表 DDL（迁移到真实 Postgres 时参考） |
 
 ### 关于数据库

@@ -20,8 +20,8 @@ def _reasoning_safe_temperature(model, requested=1.0):
 
 def _openrouter_model_id(model) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins."""
-    override = os.getenv("OPENROUTER_MODEL")
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins."""
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -46,27 +46,27 @@ def _openrouter_model_id(model) -> str:
 class KimiConfig:
     """Configuration for Kimi K3 model."""
 
-    api_key: str = field(default_factory=lambda: os.getenv("KIMI_API_KEY", ""))
+    api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     model_name: str = field(default_factory=lambda: os.getenv("MODEL_NAME", "kimi-k3"))
     max_tokens: int = field(default_factory=lambda: int(os.getenv("MAX_TOKENS", "128000")))
     temperature: float = field(default_factory=lambda: float(os.getenv("TEMPERATURE", "0.7")))
-    api_base: str = field(default_factory=lambda: os.getenv("KIMI_API_BASE", "https://api.moonshot.cn/v1"))
+    api_base: str = field(default_factory=lambda: os.getenv("KIMI_API_BASE", "https://api.openai.com/v1"))
 
     def __post_init__(self):
-        """Universal OpenRouter fallback for the chat LLM: when KIMI_API_KEY is
-        absent but OPENROUTER_API_KEY is present, route the chat model (used by
+        """Universal OpenRouter fallback for the chat LLM: when OPENAI_API_KEY is
+        absent but OPENAI_API_KEY is present, route the chat model (used by
         KimiK3Client and threaded into mem0's own LLM config) through OpenRouter.
         NB: mem0's embedder still uses OpenAI embeddings (OpenRouter has no
         embeddings endpoint), so OPENAI_API_KEY remains needed for memory add."""
-        if not self.api_key and os.getenv("OPENROUTER_API_KEY"):
-            self.api_key = os.getenv("OPENROUTER_API_KEY")
-            self.api_base = "https://openrouter.ai/api/v1"
+        if not self.api_key and os.getenv("OPENAI_API_KEY"):
+            self.api_key = os.getenv("OPENAI_API_KEY")
+            self.api_base = "https://api.openai.com/v1"
             self.model_name = _openrouter_model_id(self.model_name)
 
     def validate(self) -> bool:
         """Validate Kimi configuration."""
         if not self.api_key:
-            raise ValueError("KIMI_API_KEY is required (or set OPENROUTER_API_KEY for the fallback)")
+            raise ValueError("OPENAI_API_KEY is required (or set OPENAI_API_KEY for the fallback)")
         if self.max_tokens <= 0 or self.max_tokens > 128000:
             raise ValueError("MAX_TOKENS must be between 1 and 128000")
         if self.temperature < 0 or self.temperature > 2:
@@ -77,13 +77,13 @@ class KimiConfig:
 @dataclass
 class Mem0Config:
     """Configuration for Mem0 memory system."""
-    
+
     api_key: Optional[str] = field(default_factory=lambda: os.getenv("MEM0_API_KEY"))
     backend: str = field(default_factory=lambda: os.getenv("MEMORY_BACKEND", "local"))
     collection_name: str = field(default_factory=lambda: os.getenv("MEMORY_COLLECTION", "locomo_benchmark"))
     embedding_model: str = field(default_factory=lambda: os.getenv("MEMORY_EMBEDDING_MODEL", "text-embedding-3-small"))
     vector_store_config: Dict[str, Any] = field(default_factory=dict)
-    
+
     def __post_init__(self):
         """Initialize vector store configuration based on backend."""
         if self.backend == "local":
@@ -111,7 +111,7 @@ class Mem0Config:
             }
         else:
             raise ValueError(f"Invalid backend: {self.backend}. Must be 'local' or 'cloud'")
-    
+
     def validate(self) -> bool:
         """Validate Mem0 configuration."""
         if self.backend not in ["local", "cloud"]:
@@ -124,7 +124,7 @@ class Mem0Config:
 @dataclass
 class LOCOMOConfig:
     """Configuration for LOCOMO benchmark."""
-    
+
     data_path: Path = field(default_factory=lambda: Path(os.getenv("BENCHMARK_DATA_PATH", "./data/locomo")))
     max_sessions: int = field(default_factory=lambda: int(os.getenv("MAX_SESSIONS", "100")))
     max_agents: int = field(default_factory=lambda: int(os.getenv("MAX_AGENTS", "10")))
@@ -136,11 +136,11 @@ class LOCOMOConfig:
         "context_utilization",
         "response_relevance"
     ])
-    
+
     def __post_init__(self):
         """Ensure data path exists."""
         self.data_path.mkdir(parents=True, exist_ok=True)
-    
+
     def validate(self) -> bool:
         """Validate LOCOMO configuration."""
         if self.max_sessions <= 0:
@@ -155,10 +155,10 @@ class LOCOMOConfig:
 @dataclass
 class LoggingConfig:
     """Configuration for logging."""
-    
+
     level: str = field(default_factory=lambda: os.getenv("LOG_LEVEL", "INFO"))
     file_path: Optional[Path] = field(default_factory=lambda: Path(os.getenv("LOG_FILE", "./logs/mem0_agent.log")) if os.getenv("LOG_FILE") else None)
-    
+
     def __post_init__(self):
         """Ensure log directory exists."""
         if self.file_path:
@@ -168,24 +168,24 @@ class LoggingConfig:
 @dataclass
 class Config:
     """Main configuration class."""
-    
+
     kimi: KimiConfig = field(default_factory=KimiConfig)
     mem0: Mem0Config = field(default_factory=Mem0Config)
     locomo: LOCOMOConfig = field(default_factory=LOCOMOConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
-    
+
     def validate(self) -> bool:
         """Validate all configurations."""
         self.kimi.validate()
         self.mem0.validate()
         self.locomo.validate()
         return True
-    
+
     @classmethod
     def from_env(cls) -> "Config":
         """Create configuration from environment variables."""
         return cls()
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary."""
         return {

@@ -1,6 +1,6 @@
 # Contextual Retrieval System / 上下文感知检索系统
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-10**: Anthropic-style contextual prefixes before indexing; offline BM25 recall@k compare.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-10**: Anthropic-style contextual prefixes before indexing; offline BM25 recall@k compare.
 > 配套《深入理解 AI Agent》第 3 章 **实验 3-10**：索引前为分块生成上下文前缀；离线 BM25 recall@k 对比。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -59,15 +59,15 @@ Real run (22 Constitution / Prosecutor Law chunks, 15 queries, jieba):
 
 Conclusion (matches the book): context prefixes lift top-1 recall (60% → 86.7%; failure rate 1−recall@1 down 67%). Gain is strongest at recall@1; `--query` shows how the prefix re-ranks the correct section first.
 
-> `--method embedding` / `--method hybrid` need embedding APIs (not offline); the script falls back to BM25 offline results. Full dense + rerank lives in `contextual_tools.py`.  
+> `--method embedding` / `--method hybrid` need embedding APIs (not offline); the script falls back to BM25 offline results. Full dense + rerank lives in `contextual_tools.py`.
 > Same logic is also in `ContextualChunker.compare_retrieval_methods()`.
 
 ### Educational features
 
-1. Watch LLM context generation per chunk  
-2. Dual indexing (BM25 + embeddings) benefits from context  
-3. Compare with `use_contextual=False`  
-4. Metrics and token/cost awareness  
+1. Watch LLM context generation per chunk
+2. Dual indexing (BM25 + embeddings) benefits from context
+3. Compare with `use_contextual=False`
+4. Metrics and token/cost awareness
 
 ### Architecture
 
@@ -96,10 +96,10 @@ source .venv/bin/activate
 cd chapter3/contextual-retrieval
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
-# MOONSHOT_API_KEY / ARK_API_KEY / OPENAI_API_KEY / etc.
+# OPENAI_API_KEY / OPENAI_API_KEY / OPENAI_API_KEY / etc.
 
 # Separate terminal for full e2e with pipeline:
 cd ../retrieval-pipeline
@@ -121,9 +121,9 @@ python main.py --query "宪法第一条是什么" --mode compare
 
 ### Context generation process
 
-1. Provide full document (or surrounding context) to the LLM  
-2. Show the specific chunk  
-3. Ask for 2–3 sentence situating context  
+1. Provide full document (or surrounding context) to the LLM
+2. Show the specific chunk
+3. Ask for 2–3 sentence situating context
 
 Template sketch:
 
@@ -142,7 +142,7 @@ Please give a short, succinct context to situate this chunk within the overall d
 
 ### References / license
 
-- [Anthropic Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)  
+- [Anthropic Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)
 - Educational project for learning purposes. Acknowledgments: Anthropic engineering research.
 
 ---
@@ -155,7 +155,7 @@ Anthropic 上下文感知检索的教学实现：在嵌入/建索引前为每个
 
 ### 核心洞察
 
-**问题：** 传统 RAG 分块后丢失语境。「公司收入增长 3%」不知是哪家公司、哪个时期。  
+**问题：** 传统 RAG 分块后丢失语境。「公司收入增长 3%」不知是哪家公司、哪个时期。
 **方案：** 为每块生成简短解释性上下文并前置，使 BM25 与向量都能保留身份信号。
 
 ### 核心实验：离线量化召回提升（实验 3-10）
@@ -214,7 +214,7 @@ source .venv/bin/activate
 cd chapter3/contextual-retrieval
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 
@@ -248,4 +248,4 @@ python main.py --query "宪法第一条是什么" --mode compare
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-Chat LLM falls back to OpenRouter when primary keys are missing and `OPENROUTER_API_KEY` is set. See `env.example`. Related: [`../contextual-retrieval-for-user-memory/`](../contextual-retrieval-for-user-memory/) (Exp. 3-11).
+Chat LLM falls back to OpenRouter when primary keys are missing and `OPENAI_API_KEY` is set. See `env.example`. Related: [`../contextual-retrieval-for-user-memory/`](../contextual-retrieval-for-user-memory/) (Exp. 3-11).

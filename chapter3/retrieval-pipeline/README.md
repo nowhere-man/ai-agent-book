@@ -76,7 +76,7 @@ source .venv/bin/activate
 cd chapter3/retrieval-pipeline
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 # First run downloads: BGE-M3 ~2.3GB, BGE-Reranker-v2-M3 ~1.1GB
 ```
 
@@ -252,7 +252,7 @@ source .venv/bin/activate
 cd chapter3/retrieval-pipeline
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### 启动服务

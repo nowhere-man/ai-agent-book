@@ -15,15 +15,15 @@ def _backends():
     from openai import AsyncOpenAI
 
     out = []
-    if os.getenv("ARK_API_KEY"):
-        out.append((AsyncOpenAI(api_key=os.environ["ARK_API_KEY"], base_url="https://ark.cn-beijing.volces.com/api/v3"), os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"), "ark"))
-    if os.getenv("MOONSHOT_API_KEY"):
-        out.append((AsyncOpenAI(api_key=os.environ["MOONSHOT_API_KEY"], base_url="https://api.moonshot.cn/v1"), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "moonshot"))
+    if os.getenv("OPENAI_API_KEY"):
+        out.append((AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url="https://api.openai.com/v1"), os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"), "ark"))
+    if os.getenv("OPENAI_API_KEY"):
+        out.append((AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url="https://api.openai.com/v1"), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "moonshot"))
     if os.getenv("OPENAI_API_KEY"):
         out.append((AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=os.getenv("OPENAI_BASE_URL") or None), os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), "openai"))
-    if os.getenv("OPENROUTER_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         raw = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-        out.append((AsyncOpenAI(api_key=os.environ["OPENROUTER_API_KEY"], base_url="https://openrouter.ai/api/v1"), raw if "/" in raw else f"openai/{raw}", "openrouter"))
+        out.append((AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url="https://api.openai.com/v1"), raw if "/" in raw else f"openai/{raw}", "openrouter"))
     if not out:
         raise RuntimeError("真实网页内容抽取需要 ARK/MOONSHOT/OPENAI/OPENROUTER 任一 API Key")
     return out

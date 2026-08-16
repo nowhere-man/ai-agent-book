@@ -99,18 +99,18 @@ source .venv/bin/activate
 cd chapter2/system-hint
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # Edit .env with your provider key (Kimi or DashScope/Bailian)
-export KIMI_API_KEY='your-api-key-here'
+export OPENAI_API_KEY='your-api-key-here'
 
 # Alibaba Cloud Model Studio / Bailian (Qwen):
 # export LLM_PROVIDER=dashscope
-# export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
+# export OPENAI_API_KEY='your-dashscope-api-key-here'
 ```
 
-> **OpenRouter fallback:** If `KIMI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With `KIMI_API_KEY` set, behavior is unchanged.
+> **OpenRouter fallback:** If `OPENAI_API_KEY` is unset but `OPENAI_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With `OPENAI_API_KEY` set, behavior is unchanged.
 
 #### Basic usage
 
@@ -264,7 +264,7 @@ python test_basic.py
 
 ### Troubleshooting
 
-1. **API key not set:** `export KIMI_API_KEY='your-api-key-here'`
+1. **API key not set:** `export OPENAI_API_KEY='your-api-key-here'`
 2. **Tool loops:** enable `enable_tool_counter=True`
 3. **Lost context:** enable timestamps + system state
 4. **Task management:** enable TODO list
@@ -349,14 +349,14 @@ source .venv/bin/activate
 cd chapter2/system-hint
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
-# 编辑 .env，填入 KIMI_API_KEY
-export KIMI_API_KEY='your-api-key-here'
+# 编辑 .env，填入 OPENAI_API_KEY
+export OPENAI_API_KEY='your-api-key-here'
 ```
 
-> **通用回退（OpenRouter）**：未设置 `KIMI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，实验会自动改走 OpenRouter（`kimi-*` 会映射为 `moonshotai/kimi-k2`）。设置了 `KIMI_API_KEY` 时行为完全不变。
+> **通用回退（OpenRouter）**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENAI_API_KEY`，实验会自动改走 OpenRouter（`kimi-*` 会映射为 `moonshotai/kimi-k2`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
 
 #### 基本用法
 
@@ -478,7 +478,7 @@ python test_basic.py
 
 ### 故障排除
 
-1. **未设置 API Key：** `export KIMI_API_KEY='your-api-key-here'`
+1. **未设置 API Key：** `export OPENAI_API_KEY='your-api-key-here'`
 2. **工具调用循环：** 启用 `enable_tool_counter=True`
 3. **上下文丢失：** 启用时间戳与系统状态
 4. **任务管理混乱：** 启用 TODO 列表
@@ -495,5 +495,5 @@ python test_basic.py
 
 ## Notes / 说明
 
-- “System hint” and “Agent status bar” refer to the same mechanism in this lab.  
+- “System hint” and “Agent status bar” refer to the same mechanism in this lab.
 - 本实验中「System hint」与「Agent 状态栏」指同一机制。

@@ -13,13 +13,13 @@ from agent import ContextAwareAgent, ContextMode
 
 def test_providers():
     """Test different provider configurations"""
-    
+
     print("\n" + "="*60)
     print("🧪 PROVIDER CONFIGURATION TEST")
     print("="*60)
 
     # Test Alibaba Cloud Model Studio / Bailian
-    dashscope_key = os.getenv("DASHSCOPE_API_KEY")
+    dashscope_key = os.getenv("OPENAI_API_KEY")
     if dashscope_key:
         print("\n✅ Alibaba Cloud Model Studio API key found")
         try:
@@ -32,10 +32,10 @@ def test_providers():
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
     else:
-        print("\n⚠️ Alibaba Cloud Model Studio API key not found (DASHSCOPE_API_KEY)")
-    
+        print("\n⚠️ Alibaba Cloud Model Studio API key not found (OPENAI_API_KEY)")
+
     # Test SiliconFlow
-    sf_key = os.getenv("SILICONFLOW_API_KEY")
+    sf_key = os.getenv("OPENAI_API_KEY")
     if sf_key:
         print("\n✅ SiliconFlow API key found")
         try:
@@ -46,10 +46,10 @@ def test_providers():
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
     else:
-        print("\n⚠️ SiliconFlow API key not found (SILICONFLOW_API_KEY)")
-    
+        print("\n⚠️ SiliconFlow API key not found (OPENAI_API_KEY)")
+
     # Test Doubao
-    ark_key = os.getenv("ARK_API_KEY")
+    ark_key = os.getenv("OPENAI_API_KEY")
     if ark_key:
         print("\n✅ Doubao/ARK API key found")
         try:
@@ -60,10 +60,10 @@ def test_providers():
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
     else:
-        print("\n⚠️ Doubao/ARK API key not found (ARK_API_KEY)")
+        print("\n⚠️ Doubao/ARK API key not found (OPENAI_API_KEY)")
 
     # Test DeepSeek
-    deepseek_key = os.getenv("DEEPSEEK_API_KEY")
+    deepseek_key = os.getenv("OPENAI_API_KEY")
     if deepseek_key:
         print("\n✅ DeepSeek API key found")
         try:
@@ -74,23 +74,23 @@ def test_providers():
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
     else:
-        print("\n⚠️ DeepSeek API key not found (DEEPSEEK_API_KEY)")
-    
+        print("\n⚠️ DeepSeek API key not found (OPENAI_API_KEY)")
+
     # Test custom model
     if sf_key:
         print("\n🔧 Testing custom model specification:")
         try:
-            agent = ContextAwareAgent(sf_key, ContextMode.FULL, 
-                                    provider="siliconflow", 
+            agent = ContextAwareAgent(sf_key, ContextMode.FULL,
+                                    provider="siliconflow",
                                     model="Qwen/QwQ-32B")
             print(f"   Provider: {agent.provider}")
             print(f"   Custom Model: {agent.model}")
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
-    
+
     print("\n" + "="*60)
     print("Test complete!")
-    
+
     # Show usage examples
     print("\n📖 Usage Examples:")
     print("-"*40)
@@ -99,12 +99,12 @@ def test_providers():
         print("\n# Using Qwen directly through Alibaba Cloud Model Studio:")
         print("python main.py --provider dashscope")
         print("python main.py --provider dashscope --model qwen3.7-plus")
-    
+
     if sf_key:
         print("\n# Using SiliconFlow:")
         print("python main.py --provider siliconflow")
         print("python main.py --provider siliconflow --model Qwen/QwQ-32B")
-    
+
     if ark_key:
         print("\n# Using Doubao:")
         print("python main.py --provider doubao")
@@ -114,14 +114,14 @@ def test_providers():
         print("\n# Using DeepSeek:")
         print("python main.py --provider deepseek")
         print("python main.py --provider deepseek --model deepseek-v4-pro")
-    
+
     if not dashscope_key and not sf_key and not ark_key and not deepseek_key:
         print("\n⚠️ No API keys found. Please set one of:")
-        print("   export DASHSCOPE_API_KEY=your_key")
-        print("   export SILICONFLOW_API_KEY=your_key")
-        print("   export ARK_API_KEY=your_key")
-        print("   export DEEPSEEK_API_KEY=your_key")
-    
+        print("   export OPENAI_API_KEY=your_key")
+        print("   export OPENAI_API_KEY=your_key")
+        print("   export OPENAI_API_KEY=your_key")
+        print("   export OPENAI_API_KEY=your_key")
+
     print("\n" + "="*60)
 
 

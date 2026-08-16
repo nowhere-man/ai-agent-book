@@ -1,6 +1,6 @@
 # Experiment 5-1: Code Tools for Math / 实验 5-1：用代码生成工具提升数学解题能力
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — same model, same problem set: pure CoT vs code-assisted solving in a Python sandbox (sympy/numpy/scipy).  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — same model, same problem set: pure CoT vs code-assisted solving in a Python sandbox (sympy/numpy/scipy).
 > 《深入理解 AI Agent》第 5 章配套实验（★★）：同模型同题集对比「纯思维链」与「代码辅助」，后者在沙箱执行 sympy/numpy/scipy。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -71,7 +71,7 @@ source .venv/bin/activate
 cd chapter5/code-for-math
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 python demo.py --selfcheck        # run each problem's reference solution in the sandbox; score vs truth
 ```
@@ -93,7 +93,7 @@ It runs the reference solutions from `problems.json` in the subprocess sandbox, 
 
 ```bash
 cp env.example .env   # or export OPENAI_API_KEY=...
-export OPENAI_API_KEY=your-openai-api-key      # also supports MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # also supports OPENAI_API_KEY / OPENAI_API_KEY
 
 python demo.py                    # full comparison (code vs cot)
 python demo.py --verbose          # also print generated code and sandbox results
@@ -117,9 +117,9 @@ Full flags: `python demo.py --help`. Common switches:
 | `--output PATH` | Write per-problem results to JSON |
 | `--verbose` | Print generated code and sandbox results |
 
-Env vars: `OPENAI_API_KEY` (or `MOONSHOT_API_KEY` / `ARK_API_KEY`), `OPENAI_BASE_URL` (compatible endpoint), `MODEL` (default `gpt-5.6-luna`).
+Env vars: `OPENAI_API_KEY` (or `OPENAI_API_KEY` / `OPENAI_API_KEY`), `OPENAI_BASE_URL` (compatible endpoint), `MODEL` (default `gpt-5.6-luna`).
 
-**OpenRouter fallback**: if no direct key is set but `OPENROUTER_API_KEY` is, traffic goes through OpenRouter (model mapping: `gpt-*` → `openai/*`, others → `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x and needs org verification on direct OpenAI, so with `OPENROUTER_API_KEY` set, OpenRouter is preferred (`openai/gpt-5.6-luna`).
+**OpenRouter fallback**: if no direct key is set but `OPENAI_API_KEY` is, traffic goes through OpenRouter (model mapping: `gpt-*` → `openai/*`, others → `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x and needs org verification on direct OpenAI, so with `OPENAI_API_KEY` set, OpenRouter is preferred (`openai/gpt-5.6-luna`).
 
 ### Sample results / takeaway
 
@@ -150,7 +150,7 @@ Real run of `gpt-5.6-luna` (11 problems; reasoning model default `temperature=1`
 
 ### Adapt / extend
 
-- **Model / provider**: set `MODEL` (e.g. `MODEL=gpt-5.6-luna`, `MODEL=claude-opus-4.8`); set `MOONSHOT_API_KEY` (Kimi) or `ARK_API_KEY` (Doubao), or point `OPENAI_BASE_URL` at any OpenAI-compatible endpoint.
+- **Model / provider**: set `MODEL` (e.g. `MODEL=gpt-5.6-luna`, `MODEL=claude-opus-4.8`); set `OPENAI_API_KEY` (Kimi) or `OPENAI_API_KEY` (Doubao), or point `OPENAI_BASE_URL` at any OpenAI-compatible endpoint.
 - **Problem bank**: edit `problems.json` with `question` / `answer` (integer) / `topic` and a `solution` that prints the answer. After adding items, run `python demo.py --selfcheck` so reference solutions produce ground truth in the sandbox.
 - **Sandbox libraries**: extend `PREAMBLE` in `sandbox.py` and update `requirements.txt`.
 
@@ -225,7 +225,7 @@ source .venv/bin/activate
 cd chapter5/code-for-math
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按真值判分
 ```
@@ -249,7 +249,7 @@ python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按�
 
 ```bash
 cp env.example .env   # 或直接 export OPENAI_API_KEY=...
-export OPENAI_API_KEY=your-openai-api-key      # 也支持 MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # 也支持 OPENAI_API_KEY / OPENAI_API_KEY
 
 python demo.py                    # 跑完整对照实验（code 与 cot 两种模式）
 python demo.py --verbose          # 额外打印模型生成的代码与执行结果
@@ -273,13 +273,13 @@ python demo.py --problems mine.json   # 换用自定义题库
 | `--output 路径` | 把逐题结果写入 JSON 文件 |
 | `--verbose` | 打印生成的代码与沙箱执行结果 |
 
-可用环境变量：`OPENAI_API_KEY`（或 `MOONSHOT_API_KEY` / `ARK_API_KEY`）、
+可用环境变量：`OPENAI_API_KEY`（或 `OPENAI_API_KEY` / `OPENAI_API_KEY`）、
 `OPENAI_BASE_URL`（切换兼容端点）、`MODEL`（默认 `gpt-5.6-luna`）。
 
-**通用 OpenRouter 兜底**：未配置任何直连 key 时，只要设置了 `OPENROUTER_API_KEY`
+**通用 OpenRouter 兜底**：未配置任何直连 key 时，只要设置了 `OPENAI_API_KEY`
 即可自动改走 OpenRouter（模型名自动映射：`gpt-*` → `openai/*`，其它 → `openai/gpt-5.6-luna`）。
 另外默认模型 `gpt-5.6-luna` 属于 gpt-5.x，直连 OpenAI 调用它需要组织实名认证，
-因此只要设置了 `OPENROUTER_API_KEY` 就会优先走 OpenRouter（route `openai/gpt-5.6-luna`）。
+因此只要设置了 `OPENAI_API_KEY` 就会优先走 OpenRouter（route `openai/gpt-5.6-luna`）。
 
 ### 预期输出示例 / 结论
 
@@ -322,7 +322,7 @@ python demo.py --problems mine.json   # 换用自定义题库
 ### 如何适配 / 扩展
 
 - **换模型 / 供应商**：设 `MODEL` 环境变量即可换模型（如 `MODEL=gpt-5.6-luna`、`MODEL=claude-opus-4.8`）；
-  换供应商则设 `MOONSHOT_API_KEY`（自动切 Kimi）或 `ARK_API_KEY`（自动切豆包），
+  换供应商则设 `OPENAI_API_KEY`（自动切 Kimi）或 `OPENAI_API_KEY`（自动切豆包），
   或用 `OPENAI_BASE_URL` 指向任意兼容 OpenAI 协议的端点。更强模型能把偶发的 bug 代码补齐。
 - **换题库**：编辑 `problems.json`，每题给出 `question` / `answer`（整数）/ `topic`，
   并附一段 `solution`（打印答案的 Python 参考解）。建议新增题目时像现有题一样**先用

@@ -27,7 +27,7 @@ def test_empty_problems_summary_does_not_divide_by_zero(tmp_path, monkeypatch):
     empty.write_text("", encoding="utf-8")
     raw = tmp_path / "raw.jsonl"
     sft = tmp_path / "sft.jsonl"
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-not-used")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-used")
 
     argv = [
         "generate_data.py",
@@ -52,10 +52,10 @@ def test_nonempty_pass_rate_still_computes():
 
 
 def test_native_moonshot_reasoning_effort_uses_supported_top_level_control():
-    assert gd.reasoning_extra_body("https://api.moonshot.cn/v1", "low", 0) == {
+    assert gd.reasoning_extra_body("https://api.openai.com/v1", "low", 0) == {
         "reasoning_effort": "low"
     }
-    assert gd.reasoning_extra_body("https://openrouter.ai/api/v1", "low", 0) == {
+    assert gd.reasoning_extra_body("https://api.openai.com/v1", "low", 0) == {
         "reasoning": {"effort": "low"}
     }
 
@@ -102,7 +102,7 @@ def test_targeted_resume_preserves_verified_rows_and_retries_failure(tmp_path, m
 
     monkeypatch.setattr(gd, "distill_one", fake_distill)
     monkeypatch.setattr(gd, "AsyncOpenAI", lambda **kwargs: object())
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-not-used")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-used")
     monkeypatch.setattr(sys, "argv", [
         "generate_data.py", "--input", str(problems), "--raw_output", str(raw),
         "--sft_output", str(sft), "--problem-id", "two", "--resume",

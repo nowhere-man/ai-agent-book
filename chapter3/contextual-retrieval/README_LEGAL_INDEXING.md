@@ -21,20 +21,20 @@ Unlike traditional RAG that loses context when chunking, this script:
 
 1. Set up your LLM API key:
    ```bash
-   export MOONSHOT_API_KEY="your_api_key"  # Default: Kimi
+   export OPENAI_API_KEY="your_api_key"  # Default: Kimi
    # Or use other providers:
    export OPENAI_API_KEY="your_api_key"
-   export SILICONFLOW_API_KEY="your_api_key"
+   export OPENAI_API_KEY="your_api_key"
    ```
 
 2. Ensure retrieval pipeline is running:
    ```bash
    # Terminal 1: Dense service
    python dense_service.py
-   
+
    # Terminal 2: Sparse service
    python sparse_service.py
-   
+
    # Terminal 3: Main pipeline
    python main.py
    ```

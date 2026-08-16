@@ -83,7 +83,7 @@ def build_client(args):
     try:
         from memobase import MemoBaseClient
     except ImportError:
-        print("❌ 未安装 memobase SDK，请先运行：pip install -r requirements.txt")
+        print("❌ 未安装 memobase SDK，请先运行：pip install -r ../../requirements.txt")
         sys.exit(1)
 
     client = MemoBaseClient(project_url=args.project_url, api_key=args.api_key)

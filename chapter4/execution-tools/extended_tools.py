@@ -33,10 +33,10 @@ def _safe_output(path: str) -> Path:
 
 
 class ExtendedTools:
-    async def excel_create_with_formula_and_screenshot(
+    async def excel_create_with_formula(
         self, output_path: str, rows: list[dict[str, Any]]
     ) -> dict[str, Any]:
-        """Create a real XLSX, apply formulas, and render a screenshot via LibreOffice."""
+        """Create an XLSX workbook and apply formulas."""
         from openpyxl import Workbook
 
         target = _safe_output(output_path)
@@ -56,34 +56,12 @@ class ExtendedTools:
             sheet.column_dimensions[column].width = 16
         workbook.save(target)
 
-        soffice = shutil.which("soffice") or shutil.which("libreoffice")
-        if not soffice:
-            return {"success": False, "error": "LibreOffice is required for formula rendering"}
         started = time.perf_counter()
-        process = subprocess.run(
-            [soffice, "--headless", "--convert-to", "pdf", "--outdir",
-             str(target.parent), str(target)],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=120,
-        )
-        pdf = target.with_suffix(".pdf")
-        if process.returncode != 0 or not pdf.is_file():
-            return {"success": False, "error": process.stderr or process.stdout,
-                    "returncode": process.returncode}
-        import fitz
-
-        document = fitz.open(pdf)
-        screenshot = target.with_suffix(".png")
-        document[0].get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False).save(screenshot)
-        document.close()
         return {
             "success": True,
             "xlsx": {"path": str(target), "bytes": target.stat().st_size, "sha256": _sha(target)},
-            "pdf": {"path": str(pdf), "bytes": pdf.stat().st_size, "sha256": _sha(pdf)},
-            "screenshot": {"path": str(screenshot), "bytes": screenshot.stat().st_size,
-                           "sha256": _sha(screenshot)},
             "formula_cells": [f"D{index}" for index in range(2, total_row + 1)],
             "rows": len(rows),
-            "renderer": "LibreOffice headless + PyMuPDF",
             "latency_seconds": round(time.perf_counter() - started, 3),
         }
 

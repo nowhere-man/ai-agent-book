@@ -129,7 +129,7 @@ source .venv/bin/activate
 cd chapter3/dense-embedding
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 BGE-M3 (~2.3GB) downloads on first use into the HuggingFace cache.
@@ -334,7 +334,7 @@ source .venv/bin/activate
 cd chapter3/dense-embedding
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 BGE-M3（约 2.3GB）首次运行自动下载。

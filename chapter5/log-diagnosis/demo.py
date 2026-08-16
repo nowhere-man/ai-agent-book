@@ -137,8 +137,8 @@ def run_smoke(data_dir=DATA, out_path=DEFAULT_OUTPUT):
 def run_full(model=None, do_github=True, data_dir=DATA,
              out_path=DEFAULT_OUTPUT, create_issue=False):
     """完整流程：真实调用 OpenAI 诊断并生成回归用例，再重放执行。"""
-    if not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")):
-        print("错误：未设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请 cp env.example .env 后填入"
+    if not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")):
+        print("错误：未设置 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请 cp env.example .env 后填入"
               "（或用 python demo.py --smoke 免 API 自检）。")
         sys.exit(1)
 

@@ -133,11 +133,11 @@ sudo apt install ffmpeg
 ## Installation
 
 1. Clone the repository
-2. Install backend dependencies: 
+2. Install backend dependencies:
    ```bash
    cd backend && npm install
    ```
-3. Install frontend dependencies: 
+3. Install frontend dependencies:
    ```bash
    cd frontend && npm install
    ```
@@ -173,14 +173,14 @@ Set up your API keys as environment variables:
 # Required for OpenAI services
 export OPENAI_API_KEY="your-openai-api-key"
 
-# Required for OpenRouter services  
-export OPENROUTER_API_KEY="your-openrouter-api-key"
+# Required for OpenRouter services
+export OPENAI_API_KEY="your-openrouter-api-key"
 
 # Required for ARK (Doubao) services
-export ARK_API_KEY="your-ark-api-key"
+export OPENAI_API_KEY="your-ark-api-key"
 
 # Required for Siliconflow services (ASR and TTS)
-export SILICONFLOW_API_KEY="your-siliconflow-api-key"
+export OPENAI_API_KEY="your-siliconflow-api-key"
 
 # For future use
 export ANTHROPIC_API_KEY="your-anthropic-api-key"
@@ -200,13 +200,13 @@ export ANTHROPIC_API_KEY="your-anthropic-api-key"
      ASR_PROVIDER: 'siliconflow',      // 'openai' (whisper-1) or 'siliconflow' (SenseVoice)
      LLM_PROVIDER: 'openrouter',       // 'openrouter' (gpt-5.6-luna, default), 'openai', 'openrouter-gemini', 'ark'
      TTS_PROVIDER: 'siliconflow',      // 'siliconflow' (CosyVoice2)
-     
+
      // API Keys (loaded from environment variables)
      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
-     ARK_API_KEY: process.env.ARK_API_KEY,
-     SILICONFLOW_API_KEY: process.env.SILICONFLOW_API_KEY,
-     
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+
      // ... other configuration options
    };
    ```
@@ -241,9 +241,9 @@ You only need the API keys for the providers you plan to use:
 | Provider | ASR | LLM | TTS | Required API Key |
 |----------|-----|-----|-----|------------------|
 | OpenAI | ✅ Whisper | ✅ gpt-5.6-luna | ❌ | `OPENAI_API_KEY` |
-| OpenRouter | ❌ | ✅ gpt-5.6-luna, Gemini | ❌ | `OPENROUTER_API_KEY` |
-| ARK (Doubao) | ❌ | ✅ Doubao | ❌ | `ARK_API_KEY` |
-| Siliconflow | ✅ SenseVoice | ❌ | ✅ CosyVoice2 | `SILICONFLOW_API_KEY` |
+| OpenRouter | ❌ | ✅ gpt-5.6-luna, Gemini | ❌ | `OPENAI_API_KEY` |
+| ARK (Doubao) | ❌ | ✅ Doubao | ❌ | `OPENAI_API_KEY` |
+| Siliconflow | ✅ SenseVoice | ❌ | ✅ CosyVoice2 | `OPENAI_API_KEY` |
 
 ### 5. Configuration Validation
 
@@ -269,13 +269,13 @@ The system maintains backward compatibility with the previous hardcoded configur
 
 3. (Optional) **Verify your setup**: `cd backend && npm run check`
 
-4. Start the backend server (WebSocket server on port **8848**): 
+4. Start the backend server (WebSocket server on port **8848**):
    ```bash
    cd backend && npm start
    ```
    You should see `Server is running on 0.0.0.0:8848`.
 
-5. Start the frontend development server (on port **3000**): 
+5. Start the frontend development server (on port **3000**):
    ```bash
    cd frontend && npm run dev
    ```
@@ -310,7 +310,7 @@ The test suite will automatically skip providers for which you don't have API ke
 ### Test Coverage
 
 - ✅ ASR provider functionality (OpenAI Whisper, SenseVoice)
-- ✅ LLM provider functionality (OpenAI, OpenRouter GPT-4o, OpenRouter Gemini, ARK Doubao)  
+- ✅ LLM provider functionality (OpenAI, OpenRouter GPT-4o, OpenRouter Gemini, ARK Doubao)
 - ✅ TTS provider functionality (CosyVoice2 via Siliconflow)
 - ✅ All provider combinations (8 ASR+LLM combinations)
 - ✅ Dynamic provider switching
@@ -511,13 +511,13 @@ cd backend && npm run check    # 或：node check-setup.js
 export OPENAI_API_KEY="your-openai-api-key"
 
 # OpenRouter 服务所必需
-export OPENROUTER_API_KEY="your-openrouter-api-key"
+export OPENAI_API_KEY="your-openrouter-api-key"
 
 # ARK（Doubao）服务所必需
-export ARK_API_KEY="your-ark-api-key"
+export OPENAI_API_KEY="your-ark-api-key"
 
 # Siliconflow 服务（ASR 和 TTS）所必需
-export SILICONFLOW_API_KEY="your-siliconflow-api-key"
+export OPENAI_API_KEY="your-siliconflow-api-key"
 
 # 留作将来使用
 export ANTHROPIC_API_KEY="your-anthropic-api-key"
@@ -540,9 +540,9 @@ export ANTHROPIC_API_KEY="your-anthropic-api-key"
 
      // API Key（从环境变量加载）
      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
-     ARK_API_KEY: process.env.ARK_API_KEY,
-     SILICONFLOW_API_KEY: process.env.SILICONFLOW_API_KEY,
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 
      // ……其他配置选项
    };
@@ -578,9 +578,9 @@ TTS_PROVIDER: 'siliconflow'       // CosyVoice2
 | 提供商 | ASR | LLM | TTS | 所需 API Key |
 |----------|-----|-----|-----|------------------|
 | OpenAI | ✅ Whisper | ✅ gpt-5.6-luna | ❌ | `OPENAI_API_KEY` |
-| OpenRouter | ❌ | ✅ gpt-5.6-luna、Gemini | ❌ | `OPENROUTER_API_KEY` |
-| ARK（Doubao） | ❌ | ✅ Doubao | ❌ | `ARK_API_KEY` |
-| Siliconflow | ✅ SenseVoice | ❌ | ✅ CosyVoice2 | `SILICONFLOW_API_KEY` |
+| OpenRouter | ❌ | ✅ gpt-5.6-luna、Gemini | ❌ | `OPENAI_API_KEY` |
+| ARK（Doubao） | ❌ | ✅ Doubao | ❌ | `OPENAI_API_KEY` |
+| Siliconflow | ✅ SenseVoice | ❌ | ✅ CosyVoice2 | `OPENAI_API_KEY` |
 
 ### 5. 配置校验
 

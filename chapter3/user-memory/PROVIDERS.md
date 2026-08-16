@@ -5,35 +5,35 @@ The User Memory System now supports multiple LLM providers, allowing you to choo
 ### Alibaba Cloud DashScope / Bailian (Qwen)
 
 - **Provider names**: `dashscope`, `qwen`, or `bailian` (aliases)
-- **API key**: `DASHSCOPE_API_KEY`
+- **API key**: `OPENAI_API_KEY`
 - **Default model**: `qwen3.7-plus`
-- **Base URL**: `https://dashscope.aliyuncs.com/compatible-mode/v1`
-- For an international-region key, set `DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`.
+- **Base URL**: `https://api.openai.com/v1`
+- For an international-region key, set `OPENAI_BASE_URL=https://api.openai.com/v1`.
 
 ## Supported Providers
 
 ### 1. **Kimi/Moonshot** (Default)
 - **Provider names**: `kimi` or `moonshot`
-- **API Key**: `MOONSHOT_API_KEY`
-- **Base URL**: `https://api.moonshot.cn/v1`
+- **API Key**: `OPENAI_API_KEY`
+- **Base URL**: `https://api.openai.com/v1`
 - **Default Model**: `kimi-k3`
 
 ### 2. **SiliconFlow**
 - **Provider name**: `siliconflow`
-- **API Key**: `SILICONFLOW_API_KEY`
-- **Base URL**: `https://api.siliconflow.cn/v1`
+- **API Key**: `OPENAI_API_KEY`
+- **Base URL**: `https://api.openai.com/v1`
 - **Default Model**: `Qwen/Qwen3-235B-A22B-Thinking-2507`
 
 ### 3. **Doubao**
 - **Provider name**: `doubao`
 - **API Key**: `DOUBAO_API_KEY`
-- **Base URL**: `https://ark.cn-beijing.volces.com/api/v3`
+- **Base URL**: `https://api.openai.com/v1`
 - **Default Model**: `doubao-seed-1-6-thinking-250715`
 
 ### 4. **OpenRouter**
 - **Provider name**: `openrouter`
-- **API Key**: `OPENROUTER_API_KEY`
-- **Base URL**: `https://openrouter.ai/api/v1`
+- **API Key**: `OPENAI_API_KEY`
+- **Base URL**: `https://api.openai.com/v1`
 - **Default Model**: `google/gemini-3.5-flash`
 - **Supported Models**:
   - `google/gemini-3.5-flash` - Google's Gemini 3.5 Flash model
@@ -48,16 +48,16 @@ Set the appropriate API key for your chosen provider:
 
 ```bash
 # For Kimi/Moonshot
-export MOONSHOT_API_KEY="your-api-key-here"
+export OPENAI_API_KEY="your-api-key-here"
 
 # For SiliconFlow
-export SILICONFLOW_API_KEY="your-api-key-here"
+export OPENAI_API_KEY="your-api-key-here"
 
 # For Doubao
 export DOUBAO_API_KEY="your-api-key-here"
 
 # For OpenRouter
-export OPENROUTER_API_KEY="your-api-key-here"
+export OPENAI_API_KEY="your-api-key-here"
 
 # Set default provider (optional, defaults to 'kimi')
 export PROVIDER="siliconflow"
@@ -76,7 +76,7 @@ python main.py --mode interactive
 python main.py --provider siliconflow --mode interactive
 
 # Alibaba Cloud Model Studio / Bailian
-export DASHSCOPE_API_KEY="your-dashscope-key"
+export OPENAI_API_KEY="your-dashscope-key"
 python main.py --provider dashscope --mode interactive
 # `qwen` and `bailian` are accepted aliases for `dashscope`.
 
@@ -213,7 +213,7 @@ To add support for a new provider, update the following files:
 
 1. **config.py**: Add API key and base URL configuration
 2. **agent.py**: Add provider case in `__init__` method
-3. **conversational_agent.py**: Add provider case in `__init__` method  
+3. **conversational_agent.py**: Add provider case in `__init__` method
 4. **background_memory_processor.py**: No changes needed (uses UserMemoryAgent)
 5. **main.py**: Add provider to choices in argparse
 
@@ -230,7 +230,7 @@ elif self.provider == "new_provider":
 elif self.provider == "openrouter":
     self.client = OpenAI(
         api_key=api_key,
-        base_url="https://openrouter.ai/api/v1"
+        base_url="https://api.openai.com/v1"
     )
     self.model = model or "google/gemini-3.5-flash"
 ```

@@ -67,7 +67,7 @@ class McpClient:
             url=url,
             headers={
                 "Authorization": f"Bearer {token}",
-                "MCP_SERVERS": "readweb-server,browser-server,browseruse-server,documents-csv-server,documents-docx-server,documents-pptx-server,documents-pdf-server,documents-txt-server,download-server,intelligence-code-server,intelligence-think-server,intelligence-guard-server,media-audio-server,media-image-server,media-video-server,parxiv-server,terminal-server,wayback-server,wiki-server,googlesearch-server",
+                "MCP_SERVERS": "readweb-server,browser-server,browseruse-server,documents-csv-server,documents-docx-server,documents-pptx-server,documents-txt-server,download-server,intelligence-code-server,intelligence-think-server,intelligence-guard-server,media-audio-server,media-image-server,media-video-server,terminal-server,wayback-server,wiki-server,googlesearch-server",
                 # "SESSION_ID": "CHAT_WLDEV",
             },
         ) as (

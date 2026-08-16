@@ -12,7 +12,7 @@ pip install --upgrade pip
 
 # Install with correct versions
 pip install --upgrade pydantic>=2.8.0 pydantic-settings>=2.4.0 anyio>=4.5.0
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 ```
 
 ### 2. Install Browser Dependencies
@@ -78,5 +78,5 @@ playwright install chromium --force
 ```bash
 # Clean install
 pip uninstall mcp fastmcp pydantic pydantic-settings anyio -y
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 ```

@@ -364,7 +364,7 @@ class PromptFactory:
 
             self.encoding = tiktoken.get_encoding("cl100k_base")
         except Exception as exc:  # pragma: no cover - dependency error is actionable
-            raise RuntimeError("Install tiktoken from requirements.txt") from exc
+            raise RuntimeError("Install tiktoken from ../../requirements.txt") from exc
 
     def build(self, target_tokens: int, output_tokens: int) -> str:
         instruction = (

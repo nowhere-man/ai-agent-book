@@ -193,7 +193,7 @@ def test_system_speech_falls_back_to_macos_say(monkeypatch, tmp_path):
 
     paths = {"espeak-ng": None, "espeak": None, "say": "/usr/bin/say", "ffmpeg": "/opt/bin/ffmpeg"}
     monkeypatch.setattr(simulator_module.shutil, "which", lambda name: paths.get(name))
-    monkeypatch.setenv("OPENROUTER_API_KEY", "configured-for-test")
+    monkeypatch.setenv("OPENAI_API_KEY", "configured-for-test")
 
     def fake_run(command, **kwargs):
         if command[0] == "/usr/bin/say":
@@ -212,8 +212,8 @@ def test_system_speech_falls_back_to_macos_say(monkeypatch, tmp_path):
 
 
 def test_simulated_user_cli_needs_no_human_consent(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "configured-for-test")
-    monkeypatch.setenv("GEMINI_API_KEY", "configured-for-test")
+    monkeypatch.setenv("OPENAI_API_KEY", "configured-for-test")
+    monkeypatch.setenv("OPENAI_API_KEY", "configured-for-test")
     monkeypatch.setattr(sys, "argv", ["demo.py", "--simulate-user"])
     with patch("demo.run_game", return_value=True) as run_game:
         demo.main()

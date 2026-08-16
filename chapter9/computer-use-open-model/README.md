@@ -47,7 +47,7 @@ release carrying the same version string is not substituted for that commit:
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 python -m playwright install chromium
 ```
 
@@ -55,7 +55,7 @@ python -m playwright install chromium
 
 ```bash
 cp env.example .env
-export OPENROUTER_API_KEY='replace-with-your-key'
+export OPENAI_API_KEY='replace-with-your-key'
 
 python main.py --dry-run
 python main.py \

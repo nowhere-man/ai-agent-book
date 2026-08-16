@@ -54,13 +54,13 @@ Hermes 会话，由它重新读代码、修正并再试。第四位全新 Review
 
 ## 复现
 
-要求：Git、`uv`、Python 3.12，以及 `OPENROUTER_API_KEY`。Hermes 使用自己的隔离环境，
+要求：Git、`uv`、Python 3.12，以及 `OPENAI_API_KEY`。Hermes 使用自己的隔离环境，
 不依赖根项目的 Chapter 8 extra。
 
 ```bash
 cd chapter8/hermes-self-evolution
 cp env.example .env
-# 把真实 OPENROUTER_API_KEY 放入当前 shell 或未跟踪的 .env；不要提交。
+# 把真实 OPENAI_API_KEY 放入当前 shell 或未跟踪的 .env；不要提交。
 set -a && source .env && set +a
 
 python run_experiment_8_6.py --run-id your-run-id

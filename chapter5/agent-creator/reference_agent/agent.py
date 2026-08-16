@@ -27,16 +27,16 @@ def _load_json(path: Path) -> Any:
 class GeneratedAgent:
     def __init__(self, *, model: str | None = None, client: Any | None = None):
         self.model = model or os.getenv("OPENAI_MODEL") or os.getenv(
-            "OPENROUTER_MODEL", "openai/gpt-5.6-luna"
+            "OPENAI_MODEL", "openai/gpt-5.6-luna"
         )
-        use_router = bool(os.getenv("OPENROUTER_API_KEY")) and (
+        use_router = bool(os.getenv("OPENAI_API_KEY")) and (
             "/" in self.model
             or os.getenv("AGENT_PROVIDER", "auto").casefold() in {"auto", "openrouter"}
         )
-        api_key = os.getenv("OPENROUTER_API_KEY") if use_router else os.getenv("OPENAI_API_KEY")
-        base_url = "https://openrouter.ai/api/v1" if use_router else os.getenv("OPENAI_BASE_URL")
+        api_key = os.getenv("OPENAI_API_KEY") if use_router else os.getenv("OPENAI_API_KEY")
+        base_url = "https://api.openai.com/v1" if use_router else os.getenv("OPENAI_BASE_URL")
         if client is None and not api_key:
-            raise RuntimeError("Set OPENAI_API_KEY or OPENROUTER_API_KEY")
+            raise RuntimeError("Set OPENAI_API_KEY or OPENAI_API_KEY")
         self.client = client or OpenAI(api_key=api_key, base_url=base_url)
         self.system_prompt = (ROOT / "system_prompt.md").read_text(encoding="utf-8")
         self.tools = _load_json(ROOT / "tools.json")["tools"]

@@ -39,7 +39,7 @@ def _timeout_handler(signum, frame):
     raise TimeoutError("timed out")
 
 def get_client():
-    return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return genai.Client(api_key=os.environ["OPENAI_API_KEY"])
 
 def gen(client, prompt, sys_prompt, model="gemini-3-flash-preview", retries=2):
     for attempt in range(retries):

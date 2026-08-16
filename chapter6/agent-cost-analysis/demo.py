@@ -3,7 +3,7 @@
 
 两种运行方式：
   1) 在线（--live，默认）：真实调用模型（默认 gpt-5.6-luna），token 与 cached_tokens
-     取自 API 返回的 usage，成本按单价换算。需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY
+     取自 API 返回的 usage，成本按单价换算。需要 OPENAI_API_KEY 或 OPENAI_API_KEY
      （无 OpenAI key 时自动回退到 OpenRouter；gpt-5.x 只要有 OpenRouter key 就优先走它）。
   2) 离线（--offline）：不打模型，读入一份此前真实运行录下的 trace（canned token
      counts），用可配置的单价重新计算成本、成本构成与 A/B 对比表。无需 API key。
@@ -74,8 +74,8 @@ def resolve_scenarios(arg: str):
 def collect_live(keys, pricing, warmup: bool):
     import agent
 
-    if not (os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")):
-        print("未检测到 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请先 export 其一 "
+    if not (os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY")):
+        print("未检测到 OPENAI_API_KEY 或 OPENAI_API_KEY，请先 export 其一 "
               "（无 OpenAI key 时会自动回退到 OpenRouter），或改用 --offline（离线复算，无需 key）。",
               file=sys.stderr)
         sys.exit(1)

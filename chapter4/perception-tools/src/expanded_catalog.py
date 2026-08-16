@@ -114,8 +114,6 @@ EXPANDED_SPECS += _specs(
 )
 EXPANDED_SPECS += _specs(
     [
-        ("pdf_metadata", "Read metadata and page count from a PDF."),
-        ("pdf_page_text", "Extract text from selected PDF pages."),
         ("docx_tables", "Extract tables and text from a Word document."),
         ("pptx_slide_text", "Extract text grouped by PowerPoint slide."),
         ("office_document_metadata", "Inspect local Office-document metadata."),
@@ -164,7 +162,7 @@ EXPANDED_SPECS += [
     )
 ]
 
-assert len(EXPANDED_SPECS) == 70, len(EXPANDED_SPECS)
+assert len(EXPANDED_SPECS) == 68, len(EXPANDED_SPECS)
 
 
 _BACKEND_CONTRACTS = {
@@ -216,7 +214,7 @@ relative to the requested root so results remain interpretable. Missing paths,
 permission denial, malformed JSON/CSV, decode problems, and a path of the wrong
 kind are explicit failures. File contents are untrusted observations.""",
     "document": """Document provenance and semantics: the operation reads the
-supplied local PDF, DOCX, PPTX, Markdown, or HTML resource using the format-aware
+supplied local DOCX, PPTX, Markdown, or HTML resource using the format-aware
 parser named below. It preserves page/slide/table boundaries whenever the source
 format exposes them. Page selection is explicit through `pages`; text extraction
 does not claim to reproduce visual layout. Remote HTML is fetched through the
@@ -263,7 +261,7 @@ EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
     "download": ("the caller's HTTP(S) URL fetched through the repository download adapter", "resolved output path, source URL, exact byte count, transfer duration, and an on-disk file", "non-HTTP URLs, an existing destination without overwrite, HTTP errors, timeout, and filesystem write failure"),
     "knowledge_base_search": ("local files under the caller-supplied knowledge-base root", "ranked matching chunks with their source paths, similarity scores, and bounded content", "missing directories, unreadable files, unsupported text encodings, and unavailable embedding dependencies"),
     "webpage_reader": ("a live TLS-verified HTTP fetch followed by BeautifulSoup extraction", "final page URL, title, bounded visible text, and optional anchor text/href pairs", "invalid URLs, access denial, non-2xx responses, parser failure, and timeout"),
-    "document_reader": ("the format-aware local/remote document reader selected from the resource suffix", "document type, extracted text, structural metadata, and optional extracted-image references", "missing or corrupt documents, unsupported formats, encrypted PDFs, parser dependency errors, and remote-fetch failure"),
+    "document_reader": ("the format-aware local/remote Office document reader selected from the resource suffix", "document type, extracted text, structural metadata, and optional extracted-image references", "missing or corrupt documents, unsupported formats, parser dependency errors, and remote-fetch failure"),
     "image_parser": ("the supplied local/remote image decoded by Pillow and optionally the configured vision model", "image metadata plus either decoded observations or model-produced visual analysis with method metadata", "unreadable images, unsupported codecs, missing vision credentials, model/API errors, and download failure"),
     "video_parser": ("the supplied video inspected with OpenCV/ffprobe-compatible readers", "container and stream metadata, duration and dimensions, plus optional timestamped extracted frame paths", "missing media, unsupported codec/container, corrupt streams, frame extraction failure, and timeout"),
     "file_reader": ("one resolved local file read with the caller-selected encoding", "path, encoding, bounded content, original character count, and truncation state", "missing paths, non-files, permission denial, unknown encodings, and decode failure"),
@@ -279,7 +277,7 @@ EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
     "location_search": ("OpenStreetMap Nominatim search API", "candidate display names, latitude/longitude, category/type, importance, and bounding boxes", "empty queries, no candidates, Nominatim throttling, non-2xx responses, and timeout"),
     "poi_search": ("OpenStreetMap Overpass API around resolved coordinates", "OSM node/way/relation IDs, names, categories, tags, coordinates, and requested radius", "invalid coordinates/radius, malformed Overpass query, rate limiting, server overload, and timeout"),
     "wikipedia_search": ("MediaWiki search API for the requested language edition", "page IDs, titles, snippets, canonical URLs, result count, and language", "unsupported language hosts, empty queries, no matches, MediaWiki errors, and timeout"),
-    "arxiv_search": ("the live arXiv Atom API through the arxiv client", "ordered paper titles, authors, summaries, publication times, entry/PDF URLs, categories, query, and count", "invalid query syntax, empty feeds, arXiv throttling, feed parsing errors, and timeout"),
+    "arxiv_search": ("the live arXiv Atom API through the arxiv client", "ordered paper titles, authors, summaries, publication times, entry URLs, categories, query, and count", "invalid query syntax, empty feeds, arXiv throttling, feed parsing errors, and timeout"),
     "wayback_search": ("Internet Archive CDX search API", "snapshot timestamps, original URLs, status codes, MIME types, archive URLs, requested year, and count", "invalid URLs/years, no captures, CDX access denial, malformed rows, and timeout"),
     "youtube_transcript": ("YouTube transcript endpoints through youtube-transcript-api", "video ID, language, ordered timestamped transcript segments, combined text, and segment count", "invalid/private/removed videos, disabled captions, unavailable language tracks, throttling, and timeout"),
     "pubchem_search": ("PubChem PUG REST compound-name search", "compound CIDs matching the query together with query and match-count metadata", "empty names, no compounds, invalid namespace responses, PubChem throttling, and timeout"),
@@ -290,7 +288,6 @@ EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
     "yfinance_historical": ("Yahoo Finance historical chart endpoints through yfinance", "symbol, requested date range/interval, exact row count, dated OHLCV rows, preview/truncation state, and execution metadata", "invalid dates/intervals, empty history, delisted symbols, throttling, and transport failure"),
     "yfinance_company_info": ("Yahoo Finance company-profile endpoints through yfinance", "symbol, names, sector/industry, description, officers/address, employee count, website, market metadata, and timestamp", "unknown symbols, missing profile data, Yahoo cookie/crumb failures, throttling, and schema changes"),
     "yfinance_financials": ("Yahoo Finance statement endpoints through yfinance", "symbol, statement type/period, dated line-item columns, source row labels, and bounded preview metadata", "invalid statement types, unavailable filings, empty frames, schema changes, throttling, and timeout"),
-    "pdf_extract": ("PyPDF2 over one validated local PDF", "file name/type, total pages, selected page markers and text, text length, extracted-page count, and truncation state", "missing/encrypted/corrupt PDFs, invalid page ranges, extraction errors, permission denial, and unsupported compression"),
     "docx_extract": ("python-docx over one validated DOCX package", "file name, paragraph count/text, table count and cell matrices, text length, and truncation state", "missing/corrupt ZIP packages, legacy DOC format, malformed relationships, permission denial, and parser errors"),
     "pptx_extract": ("python-pptx over one validated PPTX package", "total slides, slide-numbered text, slides-with-content count, text length, and truncation state", "missing/corrupt presentations, legacy PPT format, malformed slide relationships, permission denial, and parser errors"),
     "csv_parse": ("pandas CSV parsing of one validated local file", "file name, rows/columns, column names and inferred dtypes, bounded records, delimiter/encoding metadata, and truncation state", "missing files, malformed quoting, inconsistent fields, unknown encodings, parser errors, and memory limits"),
@@ -309,8 +306,7 @@ EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
     "wiki_article_categories": ("MediaWiki categorymembers/pageprops APIs for one article", "page identity plus bounded category names, hidden-category state, continuation metadata, and canonical source URL", "missing pages, invalid continuation, permission-restricted categories, API errors, and timeout"),
     "wiki_article_links": ("MediaWiki pagelinks API for one article", "page identity plus bounded linked article titles, namespaces, continuation metadata, and source URL", "missing pages, invalid namespaces/limits, continuation errors, rate limiting, and timeout"),
     "wiki_article_history": ("MediaWiki revisions API for one article", "revision IDs, parent IDs, timestamps, users, comments, size/flags, continuation state, and page identity", "missing pages, suppressed revisions, invalid limits, API errors, and timeout"),
-    "arxiv_paper_details": ("the live arXiv API queried by exact paper identifier", "entry/PDF IDs, title, authors, full summary, published/updated times, categories, DOI, and journal reference", "malformed or missing IDs, no matching paper, arXiv throttling, feed errors, and timeout"),
-    "arxiv_download": ("the canonical PDF URL returned by the live arXiv record", "paper ID/title/PDF URL, resolved local file path, exact byte count, and an on-disk PDF", "invalid IDs, missing papers, HTTP/download errors, unwritable directories, incomplete files, and timeout"),
+    "arxiv_paper_details": ("the live arXiv API queried by exact paper identifier", "entry ID, title, authors, full summary, published/updated times, categories, DOI, and journal reference", "malformed or missing IDs, no matching paper, arXiv throttling, feed errors, and timeout"),
     "arxiv_categories": ("the server's explicit arXiv subject taxonomy table", "category prefixes mapped to human-readable names together with exact category count", "server taxonomy corruption or serialization failure; this operation performs no fabricated remote lookup"),
     "wayback_archived_content": ("Internet Archive replay for the exact URL and timestamp", "original URL, requested/captured timestamp, archive URL, HTTP status, MIME type, and archived page content", "malformed timestamps, absent captures, replay access denial, non-2xx responses, and timeout"),
     "calendar_events": ("Google Calendar API for the configured account and calendar ID", "event IDs/status, summaries, starts/ends/timezones, attendees, locations, conferencing links, recurrence, and bounded result metadata", "missing/expired credentials, invalid calendars/date ranges, permission denial, quota errors, and timeout"),
@@ -415,8 +411,6 @@ def _specific_contract(spec: ExpandedToolSpec) -> str:
         return f"Accepted subject: one {kind}. Supported options: {options}. Local operation: {name} over the resolved path. Successful data shape: {output}. Example query: `{REPO_EXAMPLE}`."
     if spec.backend == "document":
         detail = {
-            "pdf_metadata": ("PDF path", "PyPDF-backed PDF extraction", "document metadata, page count, and bounded extraction metadata", "book/paper.pdf"),
-            "pdf_page_text": ("PDF path", "PyPDF-backed extraction for options.pages", "page-associated extracted text and page-range metadata", "book/paper.pdf"),
             "docx_tables": ("DOCX path", "python-docx extraction", "paragraphs, headings, and table cell content", "report.docx"),
             "pptx_slide_text": ("PPTX path", "python-pptx extraction", "slide-indexed titles and shape text", "slides.pptx"),
             "office_document_metadata": ("Office or text document path", "resolved filesystem stat", "path, suffix, bytes, and modification time", "report.docx"),
@@ -739,29 +733,6 @@ async def _filesystem(name: str, query: str, options: dict[str, Any]) -> Any:
 
 
 async def _document(name: str, query: str, options: dict[str, Any]) -> Any:
-    if name == "pdf_metadata":
-        import PyPDF2
-
-        path = _path(query)
-
-        def read_metadata() -> dict[str, Any]:
-            with path.open("rb") as stream:
-                reader = PyPDF2.PdfReader(stream)
-                metadata = reader.metadata or {}
-                return {
-                    "path": str(path),
-                    "bytes": path.stat().st_size,
-                    "page_count": len(reader.pages),
-                    "encrypted": bool(reader.is_encrypted),
-                    "metadata": {str(key).lstrip("/"): str(value)
-                                 for key, value in metadata.items()},
-                }
-
-        return await asyncio.to_thread(read_metadata)
-    if name == "pdf_page_text":
-        from document_processing_tools import extract_pdf_text
-        page_range = str(options.get("pages", "1-3"))
-        return await extract_pdf_text(str(_path(query)), page_range=page_range)
     if name == "docx_tables":
         from document_processing_tools import extract_docx_content
         return await extract_docx_content(str(_path(query)))
@@ -993,7 +964,7 @@ def _parameter_descriptions(spec: ExpandedToolSpec) -> tuple[str, str]:
         "web": "JSON object. Supported keys: limit (1-100), timeout seconds; search_domain_web requires domain.",
         "academic": "JSON object. Supported key: limit (1-100). Other keys are rejected or ignored by the named source.",
         "filesystem": "JSON object. Supported keys vary by tool: limit, encoding, start/end, or glob pattern.",
-        "document": "JSON object. pdf_page_text accepts pages such as 1-3; other operations need no options.",
+        "document": "JSON object. Document extraction operations need no options.",
         "media": "JSON object. Audio/video probing accepts timeout seconds; image and OCR operations need no options.",
         "geo": "JSON object. geocode_address accepts limit (1-100); other operations need no options.",
         "knowledge": "JSON object. Supported keys: limit (1-100); wikidata_search also accepts language.",
@@ -1004,7 +975,7 @@ def _parameter_descriptions(spec: ExpandedToolSpec) -> tuple[str, str]:
 
 
 def register_expanded_tools(mcp) -> None:
-    """Register all 70 real-backed tools on an MCPServer instance."""
+    """Register all expanded real-backed tools on an MCPServer instance."""
     for spec in EXPANDED_SPECS:
         mcp.add_tool(_make_mcp_function(spec), name=spec.name,
                      description=full_description(spec))

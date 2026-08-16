@@ -47,7 +47,7 @@ A production-ready Model Context Protocol (MCP) server that provides **19 collab
 cd projects/week4/collaboration-tools
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 
 # Install Playwright browsers
 playwright install chromium
@@ -301,7 +301,7 @@ playwright install chromium --force
 ### Import Errors
 ```bash
 # Reinstall dependencies
-pip install -r requirements.txt --force-reinstall
+pip install -r ../../requirements.txt --force-reinstall
 ```
 
 ### Permission Issues

@@ -103,7 +103,7 @@ python -m venv .venv-prompt-distillation
 source .venv-prompt-distillation/bin/activate
 
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 ```
 
 2. Setup Weights & Biases for training monitoring:
@@ -700,7 +700,7 @@ python -m venv .venv-prompt-distillation
 source .venv-prompt-distillation/bin/activate
 
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 ```
 
 2. 设置训练监控的权重和偏差：

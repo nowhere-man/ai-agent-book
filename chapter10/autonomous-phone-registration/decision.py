@@ -17,23 +17,23 @@ def _clients_and_models():
 
     model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
     candidates = []
-    if os.getenv("ARK_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         candidates.append(
             (
                 AsyncOpenAI(
-                    api_key=os.environ["ARK_API_KEY"],
-                    base_url="https://ark.cn-beijing.volces.com/api/v3",
+                    api_key=os.environ["OPENAI_API_KEY"],
+                    base_url="https://api.openai.com/v1",
                 ),
                 os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
                 "Volcengine ARK",
             )
         )
-    if os.getenv("MOONSHOT_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         candidates.append(
             (
                 AsyncOpenAI(
-                    api_key=os.environ["MOONSHOT_API_KEY"],
-                    base_url="https://api.moonshot.cn/v1",
+                    api_key=os.environ["OPENAI_API_KEY"],
+                    base_url="https://api.openai.com/v1",
                 ),
                 os.getenv("MOONSHOT_MODEL", "kimi-k3"),
                 "Moonshot",
@@ -50,13 +50,13 @@ def _clients_and_models():
                 "OpenAI",
             )
         )
-    if os.getenv("OPENROUTER_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         routed = model if "/" in model else f"openai/{model}"
         candidates.append(
             (
                 AsyncOpenAI(
-                    api_key=os.environ["OPENROUTER_API_KEY"],
-                    base_url="https://openrouter.ai/api/v1",
+                    api_key=os.environ["OPENAI_API_KEY"],
+                    base_url="https://api.openai.com/v1",
                 ),
                 routed,
                 "OpenRouter",
@@ -64,7 +64,7 @@ def _clients_and_models():
         )
     if not candidates:
         raise RuntimeError(
-            "需要 MOONSHOT_API_KEY、ARK_API_KEY、OPENAI_API_KEY 或 OPENROUTER_API_KEY"
+            "需要 OPENAI_API_KEY、OPENAI_API_KEY、OPENAI_API_KEY 或 OPENAI_API_KEY"
         )
     return candidates
 

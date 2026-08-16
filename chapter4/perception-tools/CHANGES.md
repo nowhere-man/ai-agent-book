@@ -178,7 +178,7 @@ All tests pass successfully with no API keys required!
 
 ## Benefits of These Changes
 
-1. **Zero Setup** - Works immediately after `pip install -r requirements.txt`
+1. **Zero Setup** - Works immediately after `pip install -r ../../requirements.txt`
 2. **No Cost** - All APIs are free for reasonable use
 3. **No Registration** - No need to sign up or manage API keys
 4. **Privacy** - DuckDuckGo and OpenStreetMap don't track users

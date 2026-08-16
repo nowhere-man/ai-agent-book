@@ -37,7 +37,7 @@ def test_complete_evidence_passes(tmp_path):
         },
         "implementation_sha256": {
             "requirements.txt": sha256_file(
-                Path(__file__).resolve().parents[1] / "requirements.txt"
+                Path(__file__).resolve().parents[3] / "requirements.txt"
             )
         },
         "external_api_calls": 0,

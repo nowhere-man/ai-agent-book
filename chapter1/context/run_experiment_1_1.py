@@ -40,15 +40,15 @@ rates yourself; use the tool observations."""
 
 EXPECTED_NUMBERS = ("9602895.73", "2400723.93")
 KEY_ENV = {
-    "dashscope": ("DASHSCOPE_API_KEY",),
-    "qwen": ("DASHSCOPE_API_KEY",),
-    "bailian": ("DASHSCOPE_API_KEY",),
-    "kimi": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
-    "moonshot": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
-    "doubao": ("ARK_API_KEY",),
-    "siliconflow": ("SILICONFLOW_API_KEY",),
-    "deepseek": ("DEEPSEEK_API_KEY",),
-    "openrouter": ("OPENROUTER_API_KEY",),
+    "dashscope": ("OPENAI_API_KEY",),
+    "qwen": ("OPENAI_API_KEY",),
+    "bailian": ("OPENAI_API_KEY",),
+    "kimi": ("OPENAI_API_KEY", "OPENAI_API_KEY"),
+    "moonshot": ("OPENAI_API_KEY", "OPENAI_API_KEY"),
+    "doubao": ("OPENAI_API_KEY",),
+    "siliconflow": ("OPENAI_API_KEY",),
+    "deepseek": ("OPENAI_API_KEY",),
+    "openrouter": ("OPENAI_API_KEY",),
 }
 
 

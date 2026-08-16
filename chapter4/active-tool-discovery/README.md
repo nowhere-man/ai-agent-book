@@ -1,6 +1,6 @@
 # Active Tool Discovery / 主动工具发现
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-7 ★★★: Proactive Tool Discovery**. Compares full injection, retrieval prefilter, and active discovery on a 126-tool library.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-7 ★★★: Proactive Tool Discovery**. Compares full injection, retrieval prefilter, and active discovery on a 126-tool library.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-7 ★★★：主动工具发现**。在 126 个跨领域工具上对比全量注入、检索预筛选与主动发现。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -104,7 +104,7 @@ offline_backend.py Offline backend: LocalEmbedder (local bag-of-words hash) + Mo
 demo.py            Same tasks under selected strategies; prints token / latency / call traces / exact match; summary table
 ```
 
-**Why “text inject + text parse” instead of native OpenAI function calling?**  
+**Why “text inject + text parse” instead of native OpenAI function calling?**
 Native function-calling is heavily optimized for tool choice and rarely errs even with hundreds of tools, so it cannot demonstrate long-context instruction-following degradation. Putting schemas in the prompt as plain text and letting the model emit JSON tool calls is the control condition—and matches the book’s “inject schemas into the system prompt (tens of thousands of tokens)” setup.
 
 **Why does embedding retrieval reduce wrong picks?** Generic tools like `web_search` claim to “do everything,” so their semantics are diluted; specialized tools (e.g. `search_news`) have focused descriptions. For a focused `need` (“recent Tesla news”), specialized tools score higher and rank first; generics often never enter top-k and are never loaded—retrieval acts as a precision filter.
@@ -129,14 +129,14 @@ source .venv/bin/activate
 cd chapter4/active-tool-discovery
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Path A: offline mechanism self-check (no keys; token/latency real; accuracy = heuristic routing only)
 python demo.py --offline
 
 # Path B: real model (needed for small-model instruction-following degradation)
 cp env.example .env    # set OPENAI_API_KEY (chat + embeddings both use OpenAI)
-# Fallback: if OPENAI_API_KEY is unset but OPENROUTER_API_KEY is set, chat routes via OpenRouter
+# Fallback: if OPENAI_API_KEY is unset but OPENAI_API_KEY is set, chat routes via OpenRouter
 # (model mapped to openai/gpt-5.6-luna, etc.); tool retrieval falls back to local hash embeddings
 # (OpenRouter has no embeddings API).
 python demo.py                                   # all 8 tasks × three strategies
@@ -148,8 +148,8 @@ python demo.py --query '查英伟达股价再搜点相关新闻' --offline   # o
 python demo.py --offline --output results/offline.json         # export structured results
 ```
 
-Default model `gpt-5.6-luna`; override with `--model` or env: `python demo.py --model gpt-5.6-luna`.  
-First run builds tool embeddings and caches under `.cache/`. Full flags: `python demo.py --help`  
+Default model `gpt-5.6-luna`; override with `--model` or env: `python demo.py --model gpt-5.6-luna`.
+First run builds tool embeddings and caches under `.cache/`. Full flags: `python demo.py --help`
 (`--query / --tasks / --strategies / --tool-set-size / --top-k / --prefilter-n / --model / --embed-model / --max-steps / --offline / --output`).
 
 ### Adaptation / extension
@@ -319,14 +319,14 @@ source .venv/bin/activate
 cd chapter4/active-tool-discovery
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # 方式 A：离线机制自检（无需任何 key；token/延迟真实，准确率仅反映启发式路由）
 python demo.py --offline
 
 # 方式 B：真实模型（体现小模型"指令遵循退化"需要真实 LLM）
 cp env.example .env    # 填入 OPENAI_API_KEY（chat 与 embeddings 都用 OpenAI）
-# 兜底：若无 OPENAI_API_KEY 但设置了 OPENROUTER_API_KEY，chat 会自动改走 OpenRouter
+# 兜底：若无 OPENAI_API_KEY 但设置了 OPENAI_API_KEY，chat 会自动改走 OpenRouter
 #（模型映射到 openai/gpt-5.6-luna 等），工具检索退用本地哈希嵌入（OpenRouter 无 embeddings 接口）。
 python demo.py                                   # 全部 8 任务 × 三种策略
 python demo.py --strategies full,discovery       # 只跑其中两种策略对比
@@ -494,7 +494,7 @@ python demo.py --offline --output results/offline.json         # 导出结构化
 
 ## Notes / 说明
 
-- Commands, paths, env vars, and measured tables are identical on both language sides.  
-- 两侧命令、路径、环境变量与实测表格保持一致。  
-- Offline path needs no API key; real-model tables are single-run, non-deterministic (temperature=1).  
+- Commands, paths, env vars, and measured tables are identical on both language sides.
+- 两侧命令、路径、环境变量与实测表格保持一致。
+- Offline path needs no API key; real-model tables are single-run, non-deterministic (temperature=1).
 - 离线路径无需 API Key；真实模型表为单次非确定性运行（temperature=1）。

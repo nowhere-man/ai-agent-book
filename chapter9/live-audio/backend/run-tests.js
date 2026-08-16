@@ -3,15 +3,15 @@
 /**
  * Test runner for provider tests
  * This script sets up the environment and runs comprehensive tests for all provider combinations
- * 
+ *
  * Usage:
  * node run-tests.js
- * 
+ *
  * Environment variables required:
- * - OPENROUTER_API_KEY: OpenRouter API key
- * - ANTHROPIC_API_KEY: Anthropic API key  
- * - ARK_API_KEY: ARK (Doubao) API key
- * - SILICONFLOW_API_KEY: Siliconflow API key
+ * - OPENAI_API_KEY: OpenRouter API key
+ * - ANTHROPIC_API_KEY: Anthropic API key
+ * - OPENAI_API_KEY: ARK (Doubao) API key
+ * - OPENAI_API_KEY: Siliconflow API key
  * - OPENAI_API_KEY: OpenAI API key (optional if using others)
  */
 
@@ -23,10 +23,10 @@ console.log('=' .repeat(60));
 
 // Check environment variables
 const requiredEnvVars = {
-  'OPENROUTER_API_KEY': 'OpenRouter API key',
-  'ANTHROPIC_API_KEY': 'Anthropic API key', 
-  'ARK_API_KEY': 'ARK (Doubao) API key',
-  'SILICONFLOW_API_KEY': 'Siliconflow API key'
+  'OPENAI_API_KEY': 'OpenRouter API key',
+  'ANTHROPIC_API_KEY': 'Anthropic API key',
+  'OPENAI_API_KEY': 'ARK (Doubao) API key',
+  'OPENAI_API_KEY': 'Siliconflow API key'
 };
 
 const missingKeys = [];
@@ -81,11 +81,11 @@ testProcess.on('close', (code) => {
     console.log('  3. Verify API key permissions and quotas');
     console.log('  4. Check the test output above for specific error details');
   }
-  
+
   process.exit(code);
 });
 
 testProcess.on('error', (error) => {
   console.error('❌ Failed to start test process:', error);
   process.exit(1);
-}); 
+});

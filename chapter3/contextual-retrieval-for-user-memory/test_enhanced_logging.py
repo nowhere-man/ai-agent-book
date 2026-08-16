@@ -12,8 +12,8 @@ logging.basicConfig(
 )
 
 # Ensure we have API keys
-if not os.getenv("KIMI_API_KEY"):
-    print("Please set KIMI_API_KEY environment variable")
+if not os.getenv("OPENAI_API_KEY"):
+    print("Please set OPENAI_API_KEY environment variable")
     sys.exit(1)
 
 from config import Config
@@ -24,14 +24,14 @@ def test_logging():
     print("\n" + "="*80)
     print("Testing Enhanced LLM Response Logging")
     print("="*80)
-    
+
     # Initialize agent
     config = Config.from_env()
     agent = UserMemoryRAGAgent(config)
-    
+
     # Test with a simple question
     test_question = "What is the purpose of this system?"
-    
+
     print(f"\nTest Question: {test_question}")
     print("\nYou should now see:")
     print("1. Iteration info")
@@ -39,20 +39,20 @@ def test_logging():
     print("3. Tool calls if any")
     print("4. Final answer")
     print("\n" + "-"*80)
-    
+
     # Run the agent
     result = agent.answer_question(
         question=test_question,
         test_id="test_logging",
         stream=False
     )
-    
+
     print("\n" + "-"*80)
     print(f"\nFinal Answer: {result.get('answer', 'No answer')[:200]}...")
     print(f"Success: {result.get('success', False)}")
     print(f"Iterations: {result.get('iterations', 0)}")
     print(f"Tool Calls: {result.get('tool_calls', 0)}")
-    
+
     print("\n✓ Enhanced logging is working!")
     print("  - LLM responses are shown during iterations")
     print("  - Tool calls and results are logged")

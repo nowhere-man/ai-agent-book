@@ -37,8 +37,8 @@ sys.path.insert(0, str(CHAPTER))
 from experiment_utils import ChatRecorder, jsonable, sha256_file, write_campaign_evidence
 
 
-ARK_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3"
-MOONSHOT_ENDPOINT = "https://api.moonshot.cn/v1"
+ARK_ENDPOINT = "https://api.openai.com/v1"
+MOONSHOT_ENDPOINT = "https://api.openai.com/v1"
 
 
 def parse_json(text: str) -> Dict[str, Any]:
@@ -403,8 +403,8 @@ class Campaign:
         # is not complete.  This makes the campaign safely resumable while the
         # 3-1 card arm is still filling its own checkpoints.
         card = load_advanced_card(case)
-        answer_client = OpenAI(api_key=os.environ["ARK_API_KEY"], base_url=self.args.answer_endpoint, timeout=self.args.timeout, max_retries=3)
-        judge_key = os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
+        answer_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=self.args.answer_endpoint, timeout=self.args.timeout, max_retries=3)
+        judge_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
         judge_client = OpenAI(api_key=judge_key, base_url=self.args.judge_endpoint, timeout=self.args.timeout, max_retries=3)
         answer_recorder = ChatRecorder(answer_client, "ark", self.args.answer_endpoint)
         judge_recorder = ChatRecorder(judge_client, "moonshot", self.args.judge_endpoint)
@@ -503,8 +503,8 @@ def main() -> int:
     parser.add_argument("--top-k", type=int, default=4)
     parser.add_argument("--max-searches", type=int, default=3)
     args = parser.parse_args()
-    if not os.getenv("ARK_API_KEY") or not (os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")):
-        raise RuntimeError("ARK_API_KEY and MOONSHOT_API_KEY/KIMI_API_KEY are required")
+    if not os.getenv("OPENAI_API_KEY") or not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")):
+        raise RuntimeError("OPENAI_API_KEY and OPENAI_API_KEY/OPENAI_API_KEY are required")
     cases = load_cases()
     if len(cases) != 60:
         raise RuntimeError(f"authoritative suite must have 60 cases, found {len(cases)}")

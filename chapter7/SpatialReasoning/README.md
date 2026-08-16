@@ -6,7 +6,7 @@ Experiment 7-12 is the **V-IRL-L/VL track inside SFTvsRL**, not a separate repos
 git clone https://github.com/bojieli/SFTvsRL.git chapter7/SFTvsRL
 git -C chapter7/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023
 cd chapter7/SFTvsRL
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 pip install -e gym
 bash scripts/virl_training/vl_train.sh
 bash scripts/virl_evaluation/vl_indist_eval.sh
@@ -149,7 +149,7 @@ conda create -n SFTvsRL python==3.13 -y
 conda activate SFTvsRL
 
 # 3. Install dependencies
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 
 # 4. Install gym environments
 cd gym
@@ -2472,7 +2472,7 @@ Confirm the following before running training:
 
 - [ ] **Use the fixed code** (`chapter7/SFTvsRL` at `fef0a4a3367260a0934be1e40b01e4021698e023`) ⭐
 - [ ] **Verify the bug is fixed** (`grep "self.save_every = save_every" rl/trainer/base_trainer.py`)
-- [ ] Install all dependencies (`pip install -r requirements.txt && cd gym && pip install -e .`)
+- [ ] Install all dependencies (`pip install -r ../../requirements.txt && cd gym && pip install -e .`)
 - [ ] **Download and extract the dataset** to `/root/SFTvsRL_Data/VIRL_routes/`
   - [ ] Extract `nyc_1k_routes.zip`
   - [ ] Extract `VLN_mini.zip` (for Visual OOD evaluation)
@@ -2633,7 +2633,7 @@ conda create -n SFTvsRL python==3.13 -y
 conda activate SFTvsRL
 
 # 3. Install dependencies
-pip install -r requirements.txt
+pip install -r ../../requirements.txt
 
 # 4. Install gym environments
 cd gym
@@ -4963,7 +4963,7 @@ by generating all possible combinations... [生成 Python 代码]"
 
 - [ ] **使用修复后的代码**（`chapter7/SFTvsRL`，提交 `fef0a4a3367260a0934be1e40b01e4021698e023`）⭐
 - [ ] **验证 bug 已修复**（`grep "self.save_every = save_every" rl/trainer/base_trainer.py`）
-- [ ] 安装所有依赖（`pip install -r requirements.txt && cd gym && pip install -e .`）
+- [ ] 安装所有依赖（`pip install -r ../../requirements.txt && cd gym && pip install -e .`）
 - [ ] **下载并解压数据集**到 `/root/SFTvsRL_Data/VIRL_routes/`
   - [ ] 解压 `nyc_1k_routes.zip`
   - [ ] 解压 `VLN_mini.zip`（用于 Visual OOD 评估）

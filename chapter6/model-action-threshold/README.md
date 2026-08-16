@@ -35,7 +35,7 @@ From the repository root:
 
 ```bash
 uv sync --locked --extra ch6
-export OPENROUTER_API_KEY=...
+export OPENAI_API_KEY=...
 uv run python chapter6/model-action-threshold/experiment.py \
   --models openai/gpt-5.6-sol anthropic/claude-sonnet-5 \
   --trials 3 \

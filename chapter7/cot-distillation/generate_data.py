@@ -212,8 +212,8 @@ async def main():
     parser.add_argument("--sft_output", default="./data/sft_cot_distill.jsonl", help="SFT 训练数据输出路径")
     parser.add_argument("--raw_output", default="./data/raw_trajectories.jsonl", help="原始轨迹（含失败样本）输出路径")
     parser.add_argument("--model", default="anthropic/claude-opus-4.8", help="教师模型 ID")
-    parser.add_argument("--base_url", default="https://openrouter.ai/api/v1", help="OpenAI 兼容 API 端点")
-    parser.add_argument("--api_key_env", default="OPENROUTER_API_KEY", help="存放 API Key 的环境变量名")
+    parser.add_argument("--base_url", default="https://api.openai.com/v1", help="OpenAI 兼容 API 端点")
+    parser.add_argument("--api_key_env", default="OPENAI_API_KEY", help="存放 API Key 的环境变量名")
     parser.add_argument("--reasoning_effort", default="",
                         help="OpenRouter 风格 reasoning effort（如 high/medium/low；设置后优先于 --reasoning_max_tokens，"
                              "用于 Claude Opus 4.8 等只支持自适应思考的模型）")

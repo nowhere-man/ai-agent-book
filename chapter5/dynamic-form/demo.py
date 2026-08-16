@@ -55,7 +55,7 @@ USER_REQUEST = "我想订一张去北京的机票"
 # ---------------------------------------------------------------------------
 # 配置（在线模式）
 # ---------------------------------------------------------------------------
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _map_to_openrouter_model(model: str) -> str:
@@ -83,13 +83,13 @@ def build_client_and_model(model_override=None):
     model = model_override or os.getenv("MODEL", "gpt-5.6-luna")
     api_key = os.getenv("OPENAI_API_KEY")
     base_url = os.getenv("OPENAI_BASE_URL")
-    orkey = os.getenv("OPENROUTER_API_KEY")
+    orkey = os.getenv("OPENAI_API_KEY")
     # 无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
     prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
     if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
+        api_key, base_url, model = orkey, OPENAI_BASE_URL, _map_to_openrouter_model(model)
     if not api_key:
-        raise SystemExit("未找到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请先在环境变量或 .env 中设置，或改用 --offline。")
+        raise SystemExit("未找到 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请先在环境变量或 .env 中设置，或改用 --offline。")
 
     client = (
         OpenAI(api_key=api_key, base_url=base_url)
@@ -635,10 +635,10 @@ def main():
     if not os.path.isabs(out_path):
         out_path = os.path.join(SCRIPT_DIR, out_path)
 
-    # 离线判定：显式 --offline，或既无 OPENAI_API_KEY 也无 OPENROUTER_API_KEY 时自动回落
+    # 离线判定：显式 --offline，或既无 OPENAI_API_KEY 也无 OPENAI_API_KEY 时自动回落
     offline = args.offline
-    if not offline and not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")):
-        print("未检测到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），自动切换到离线模式（等价于 --offline）。\n")
+    if not offline and not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")):
+        print("未检测到 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），自动切换到离线模式（等价于 --offline）。\n")
         offline = True
 
     client = model = None

@@ -21,7 +21,7 @@ from typing import Any
 from openai import OpenAI
 
 DEFAULT_ARK_MODEL = "doubao-seed-1-6-flash-250615"
-ARK_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+ARK_BASE_URL = "https://api.openai.com/v1"
 
 
 @dataclass(frozen=True)
@@ -84,9 +84,9 @@ def _redact_secrets(value: Any) -> Any:
 def _provider_config(model: str | None = None) -> ProviderConfig:
     provider = os.getenv("PHONE_MODEL_PROVIDER", "ark").casefold()
     if provider == "ark":
-        key = os.getenv("ARK_API_KEY", "")
+        key = os.getenv("OPENAI_API_KEY", "")
         if not key:
-            raise RuntimeError("PHONE_MODEL_PROVIDER=ark requires ARK_API_KEY")
+            raise RuntimeError("PHONE_MODEL_PROVIDER=ark requires OPENAI_API_KEY")
         return ProviderConfig(
             name="ark",
             api_key=key,
@@ -104,13 +104,13 @@ def _provider_config(model: str | None = None) -> ProviderConfig:
             model=model or os.getenv("PHONE_PLANNER_MODEL", "gpt-4.1-mini"),
         )
     if provider == "openrouter":
-        key = os.getenv("OPENROUTER_API_KEY", "")
+        key = os.getenv("OPENAI_API_KEY", "")
         if not key:
-            raise RuntimeError("PHONE_MODEL_PROVIDER=openrouter requires OPENROUTER_API_KEY")
+            raise RuntimeError("PHONE_MODEL_PROVIDER=openrouter requires OPENAI_API_KEY")
         return ProviderConfig(
             name="openrouter",
             api_key=key,
-            base_url="https://openrouter.ai/api/v1",
+            base_url="https://api.openai.com/v1",
             model=model or os.getenv("PHONE_PLANNER_MODEL", "openai/gpt-4.1-mini"),
         )
     raise RuntimeError("PHONE_MODEL_PROVIDER must be ark, openai, or openrouter")

@@ -8,7 +8,7 @@ set -e  # Exit on error
 # Configuration
 MODEL="${MODEL:-gpt-4o-mini}"
 # Provider is auto-detected from the model id: a bare id (gpt-4o-mini) uses OpenAI
-# direct (OPENAI_API_KEY); an id containing '/' (openai/gpt-5) uses OpenRouter (OPENROUTER_API_KEY).
+# direct (OPENAI_API_KEY); an id containing '/' (openai/gpt-5) uses OpenRouter (OPENAI_API_KEY).
 ENV="${ENV:-airline}"
 NUM_TASKS="${NUM_TASKS:-10}"  # Number of tasks to run per experiment
 
@@ -30,10 +30,10 @@ print_header() {
 run_experiment() {
     local name=$1
     local args=$2
-    
+
     echo -e "${YELLOW}Running: $name${NC}"
     echo "Arguments: $args"
-    
+
     python run_ablation.py \
         --model $MODEL \
         --env $ENV \
@@ -41,57 +41,57 @@ run_experiment() {
         --end-index $NUM_TASKS \
         --ablation-name "$name" \
         $args
-    
+
     echo -e "${GREEN}✓ Completed: $name${NC}\n"
 }
 
 # Main execution
 main() {
     print_header "PROMPT ENGINEERING ABLATION STUDY"
-    
+
     echo "Configuration:"
     echo "  Model: $MODEL"
     echo "  Provider: Auto-detected (OpenAI for bare ids, OpenRouter for ids with '/')"
     echo "  Environment: $ENV"
     echo "  Tasks per experiment: $NUM_TASKS"
     echo ""
-    
+
     # Create results directory
     mkdir -p results_ablation
-    
+
     # Track start time
     START_TIME=$(date +%s)
-    
+
     print_header "1. BASELINE EXPERIMENT"
     run_experiment "baseline" ""
-    
+
     print_header "2. TONE STYLE ABLATIONS"
     run_experiment "tone_trump" "--tone-style trump"
     run_experiment "tone_casual" "--tone-style casual"
-    
+
     print_header "3. WIKI ORGANIZATION ABLATION"
     run_experiment "wiki_random" "--randomize-wiki"
-    
+
     print_header "4. TOOL DESCRIPTION ABLATION"
     run_experiment "no_tool_desc" "--remove-tool-descriptions"
-    
+
     print_header "5. COMBINED ABLATIONS"
     run_experiment "casual_wiki" "--tone-style casual --randomize-wiki"
     run_experiment "casual_no_tools" "--tone-style casual --remove-tool-descriptions"
     run_experiment "wiki_no_tools" "--randomize-wiki --remove-tool-descriptions"
     run_experiment "all_ablations" "--tone-style casual --randomize-wiki --remove-tool-descriptions"
-    
+
     # Calculate elapsed time
     END_TIME=$(date +%s)
     ELAPSED=$((END_TIME - START_TIME))
     MINUTES=$((ELAPSED / 60))
     SECONDS=$((ELAPSED % 60))
-    
+
     print_header "EXPERIMENT COMPLETE"
     echo -e "${GREEN}All experiments completed successfully!${NC}"
     echo "Total time: ${MINUTES}m ${SECONDS}s"
     echo ""
-    
+
     # Generate summary
     print_header "GENERATING SUMMARY"
     python analyze_results.py
@@ -100,13 +100,13 @@ main() {
 # Check prerequisites
 check_prerequisites() {
     echo "Checking prerequisites..."
-    
+
     # Check Python
     if ! command -v python &> /dev/null; then
         echo -e "${RED}Error: Python not found${NC}"
         exit 1
     fi
-    
+
     # Check required files
     for file in run_ablation.py ablation_utils.py ablation_agent.py; do
         if [ ! -f "$file" ]; then
@@ -115,12 +115,12 @@ check_prerequisites() {
             exit 1
         fi
     done
-    
+
     # Check API key based on model (ids with '/' route through OpenRouter)
     if [[ "$MODEL" == */* ]]; then
-        if [ -z "$OPENROUTER_API_KEY" ]; then
-            echo -e "${YELLOW}Warning: OPENROUTER_API_KEY not set for model '$MODEL'${NC}"
-            echo "Please set: export OPENROUTER_API_KEY='your-key'"
+        if [ -z "$OPENAI_API_KEY" ]; then
+            echo -e "${YELLOW}Warning: OPENAI_API_KEY not set for model '$MODEL'${NC}"
+            echo "Please set: export OPENAI_API_KEY='your-key'"
             read -p "Continue anyway? (y/n) " -n 1 -r
             echo
             if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -136,7 +136,7 @@ check_prerequisites() {
             exit 1
         fi
     fi
-    
+
     echo -e "${GREEN}✓ Prerequisites check passed${NC}\n"
 }
 

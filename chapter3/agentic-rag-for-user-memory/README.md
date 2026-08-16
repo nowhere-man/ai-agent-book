@@ -1,6 +1,6 @@
 # Agentic RAG for User Memory / 面向用户记忆的 Agentic RAG
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — agentic multi-hop retrieval over conversation memory with offline demo and optional pipeline backend.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — agentic multi-hop retrieval over conversation memory with offline demo and optional pipeline backend.
 > 配套《深入理解 AI Agent》第 3 章——对话记忆上的 Agentic 多跳检索；含离线演示与可选检索流水线。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -19,12 +19,12 @@ retained. Canonical evidence is `validation/latest.json`.
 
 ### Learning objectives
 
-1. Chunk long conversations for indexing  
-2. Integrate external retrieval pipelines (hybrid search)  
-3. Agentic RAG with tool-calling and ReAct  
-4. Evaluate memory with automatic LLM scoring  
-5. Optimize retrieval for conversation queries  
-6. Integrate evaluation frameworks across projects  
+1. Chunk long conversations for indexing
+2. Integrate external retrieval pipelines (hybrid search)
+3. Agentic RAG with tool-calling and ReAct
+4. Evaluate memory with automatic LLM scoring
+5. Optimize retrieval for conversation queries
+6. Integrate evaluation frameworks across projects
 
 ### Architecture
 
@@ -39,18 +39,18 @@ User Memory Test Cases (60 cases, 3 layers)
 
 ### Key concepts
 
-1. **Conversation chunking** — ~20 rounds, searchable, contextual, efficient  
-2. **Hybrid retrieval** (optional pipeline) — dense + BM25 + fusion; scalable  
-3. **Agentic RAG** — Reason → Act → Observe → iterate  
-4. **LLM evaluation** — integrates user-memory-evaluation style scoring (≥0.6 pass)  
-5. **Contextual enrichment** — metadata, neighbors, tags  
+1. **Conversation chunking** — ~20 rounds, searchable, contextual, efficient
+2. **Hybrid retrieval** (optional pipeline) — dense + BM25 + fusion; scalable
+3. **Agentic RAG** — Reason → Act → Observe → iterate
+4. **LLM evaluation** — integrates user-memory-evaluation style scoring (≥0.6 pass)
+5. **Contextual enrichment** — metadata, neighbors, tags
 
 ### Prerequisites
 
 - Python 3.12 with the root `ch3` extra
-- **Port 4242 pipeline is OPTIONAL.** Default `retrieval_backend="auto"`: use pipeline if reachable, else **built-in local BM25** (offline).  
-- API keys only for LLM modes (`batch` / `interactive` / `demo`).  
-- **`--mode offline-demo` needs NO API key and NO port 4242.**  
+- **Port 4242 pipeline is OPTIONAL.** Default `retrieval_backend="auto"`: use pipeline if reachable, else **built-in local BM25** (offline).
+- API keys only for LLM modes (`batch` / `interactive` / `demo`).
+- **`--mode offline-demo` needs NO API key and NO port 4242.**
 
 ### Installation
 
@@ -70,7 +70,7 @@ source .venv/bin/activate
 cd chapter3/agentic-rag-for-user-memory
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # Edit API keys
@@ -150,9 +150,9 @@ config.evaluation.max_iterations = 10
 
 ### Test layers
 
-- **L1** simple retrieval — “What is my checking account number?”  
-- **L2** multi-conversation — “Which vehicle needs service first?”  
-- **L3** complex reasoning — “What urgent issues before my trip?”  
+- **L1** simple retrieval — “What is my checking account number?”
+- **L2** multi-conversation — “Which vehicle needs service first?”
+- **L3** complex reasoning — “What urgent issues before my trip?”
 
 ### Components
 
@@ -160,10 +160,10 @@ config.evaluation.max_iterations = 10
 
 ### Metrics / troubleshooting
 
-Success rate, LLM reward, iterations, tool calls, latency, index time.  
+Success rate, LLM reward, iterations, tool calls, latency, index time.
 
-**Top-k:** pipeline uses `top_k` (candidates) and `rerank_top_k` (final).  
-**LLM eval missing:** need evaluator API + criteria.  
+**Top-k:** pipeline uses `top_k` (candidates) and `rerank_top_k` (final).
+**LLM eval missing:** need evaluator API + criteria.
 **Pipeline down:** not fatal with `--backend auto`; force offline with `--backend local`.
 
 ### Related
@@ -180,12 +180,12 @@ Educational curriculum materials.
 
 ### 学习目标
 
-1. 长对话分块索引  
-2. 对接外部混合检索流水线  
-3. 工具调用 + ReAct 的 Agentic RAG  
-4. LLM 自动打分评测记忆  
-5. 面向对话查询的检索优化  
-6. 跨项目评估框架集成  
+1. 长对话分块索引
+2. 对接外部混合检索流水线
+3. 工具调用 + ReAct 的 Agentic RAG
+4. LLM 自动打分评测记忆
+5. 面向对话查询的检索优化
+6. 跨项目评估框架集成
 
 ### 架构
 
@@ -217,7 +217,7 @@ source .venv/bin/activate
 cd chapter3/agentic-rag-for-user-memory
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 
@@ -268,4 +268,4 @@ Top-k 需同时设 `top_k` 与 `rerank_top_k`；流水线不可达时用 `--back
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-If primary keys are absent and `OPENROUTER_API_KEY` is set, chat LLM routes through OpenRouter with automatic model mapping. See `env.example`.
+If primary keys are absent and `OPENAI_API_KEY` is set, chat LLM routes through OpenRouter with automatic model mapping. See `env.example`.

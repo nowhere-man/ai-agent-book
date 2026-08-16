@@ -32,11 +32,11 @@ from public_data_tools import (
 from private_data_tools import get_calendar_events, search_notion
 from pubchem_tools import search_compounds, get_compound_properties, get_compound_synonyms, search_similar_compounds
 from yahoo_finance_tools import get_stock_quote, get_historical_data, get_company_info, get_financial_statements
-from document_processing_tools import extract_pdf_text, extract_docx_content, extract_pptx_content, extract_csv_content
+from document_processing_tools import extract_docx_content, extract_pptx_content, extract_csv_content
 from media_processing_tools import transcribe_audio_whisper, extract_audio_metadata, extract_text_ocr, analyze_image_ai, extract_video_keyframes, analyze_video_ai, trim_audio, get_image_metadata
 from google_search_enhanced import google_search_api, read_webpage_content
 from wiki_enhanced import get_article_content, get_article_categories, get_article_links, get_article_history
-from arxiv_enhanced import get_paper_details, download_paper, get_arxiv_categories
+from arxiv_enhanced import get_paper_details, get_arxiv_categories
 from wayback_enhanced import get_archived_content
 from expanded_catalog import enrich_existing_tools, register_expanded_tools
 
@@ -64,7 +64,7 @@ A comprehensive MCP server providing various perception and data retrieval capab
 
 ## Multimodal Understanding
 - Web page content extraction
-- Document reading (PDF, DOCX, PPTX)
+- Document reading (DOCX, PPTX)
 - Image parsing and analysis
 - Video metadata extraction
 
@@ -140,7 +140,7 @@ async def webpage_reader(
     return await read_webpage(url, extract_text, extract_links)
 
 
-@mcp.tool(description="Read and extract content from documents (PDF, DOCX, PPTX)")
+@mcp.tool(description="Read and extract content from documents (DOCX, PPTX)")
 async def document_reader(
     file_path: str = Field(description="Path to document file or URL"),
     extract_images: bool = Field(default=False, description="Extract images")
@@ -430,15 +430,6 @@ async def yfinance_financials(
 # DOCUMENT PROCESSING TOOLS
 # ============================================================================
 
-@mcp.tool(description="Extract text from PDF file with optional page range")
-async def pdf_extract(
-    file_path: str = Field(description="Path to PDF file"),
-    page_range: str | None = Field(default=None, description="Page range (e.g., '1-5' or '1,3,5')")
-):
-    """Extract text from PDF."""
-    return await extract_pdf_text(file_path, page_range)
-
-
 @mcp.tool(description="Extract content from Word document (DOCX)")
 async def docx_extract(
     file_path: str = Field(description="Path to DOCX file")
@@ -628,15 +619,6 @@ async def arxiv_paper_details(
 ):
     """Get paper details."""
     return await get_paper_details(paper_id)
-
-
-@mcp.tool(description="Download ArXiv paper PDF")
-async def arxiv_download(
-    paper_id: str = Field(description="ArXiv paper ID"),
-    download_dir: str = Field(default=".", description="Download directory")
-):
-    """Download ArXiv paper."""
-    return await download_paper(paper_id, download_dir)
 
 
 @mcp.tool(description="Get ArXiv subject categories")

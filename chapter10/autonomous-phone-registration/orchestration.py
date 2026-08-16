@@ -31,25 +31,25 @@ async def _extract_value(field: FieldSpec, utterance: str) -> str:
     from openai import AsyncOpenAI
 
     clients = []
-    if os.getenv("ARK_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         clients.append((AsyncOpenAI(
-            api_key=os.environ["ARK_API_KEY"],
-            base_url="https://ark.cn-beijing.volces.com/api/v3",
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url="https://api.openai.com/v1",
         ), os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"), "Volcengine ARK"))
-    if os.getenv("MOONSHOT_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         clients.append((AsyncOpenAI(
-            api_key=os.environ["MOONSHOT_API_KEY"],
-            base_url="https://api.moonshot.cn/v1",
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url="https://api.openai.com/v1",
         ), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "Moonshot"))
     if os.getenv("OPENAI_API_KEY"):
         clients.append((AsyncOpenAI(
             api_key=os.environ["OPENAI_API_KEY"],
             base_url=os.getenv("OPENAI_BASE_URL") or None,
         ), os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), "OpenAI"))
-    if os.getenv("OPENROUTER_API_KEY"):
+    if os.getenv("OPENAI_API_KEY"):
         client = AsyncOpenAI(
-            api_key=os.environ["OPENROUTER_API_KEY"],
-            base_url="https://openrouter.ai/api/v1",
+            api_key=os.environ["OPENAI_API_KEY"],
+            base_url="https://api.openai.com/v1",
         )
         raw_model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
         clients.append((client, raw_model if "/" in raw_model else f"openai/{raw_model}", "OpenRouter"))

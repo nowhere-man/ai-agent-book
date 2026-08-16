@@ -116,7 +116,7 @@ def generate_local(model_name: str, questions: list[str], max_new_tokens: int) -
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError as exc:
-        raise SystemExit("Install the full requirements.txt before local evaluation") from exc
+        raise SystemExit("Install the full ../../requirements.txt before local evaluation") from exc
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,

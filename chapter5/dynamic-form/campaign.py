@@ -57,18 +57,18 @@ def atomic_json(path: Path, value: Any) -> None:
 def resolve_backend(provider: str, model: str | None) -> tuple[OpenAI, str, str]:
     choices = {
         "ark": (
-            os.getenv("ARK_API_KEY"),
-            "https://ark.cn-beijing.volces.com/api/v3",
+            os.getenv("OPENAI_API_KEY"),
+            "https://api.openai.com/v1",
             model or "doubao-seed-1-6-flash-250615",
         ),
         "moonshot": (
-            os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY"),
-            "https://api.moonshot.cn/v1",
+            os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"),
+            "https://api.openai.com/v1",
             model or "kimi-k3",
         ),
         "openrouter": (
-            os.getenv("OPENROUTER_API_KEY"),
-            "https://openrouter.ai/api/v1",
+            os.getenv("OPENAI_API_KEY"),
+            "https://api.openai.com/v1",
             model or "openai/gpt-5.6-luna",
         ),
         "openai": (
@@ -77,8 +77,8 @@ def resolve_backend(provider: str, model: str | None) -> tuple[OpenAI, str, str]
             model or "gpt-5.6-luna",
         ),
         "gemini": (
-            os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"),
-            "https://generativelanguage.googleapis.com/v1beta/openai/",
+            os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY"),
+            "https://api.openai.com/v1/",
             model or "gemini-2.5-flash",
         ),
     }

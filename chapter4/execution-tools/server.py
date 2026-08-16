@@ -190,8 +190,8 @@ async def handle_list_tools() -> list[types.Tool]:
             }
         ),
         types.Tool(
-            name="excel_create_with_formula_and_screenshot",
-            description="Create an XLSX workbook, apply formulas, and render a real screenshot with LibreOffice",
+            name="excel_create_with_formula",
+            description="Create an XLSX workbook and apply formulas",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -303,8 +303,8 @@ async def handle_call_tool(
                 head_branch=arguments["head_branch"],
                 base_branch=arguments.get("base_branch", "main")
             )
-        elif name == "excel_create_with_formula_and_screenshot":
-            result = await extended_tools.excel_create_with_formula_and_screenshot(
+        elif name == "excel_create_with_formula":
+            result = await extended_tools.excel_create_with_formula(
                 arguments["output_path"], arguments["rows"])
         elif name == "webhook_post":
             result = await extended_tools.webhook_post(arguments["url"], arguments["payload"])

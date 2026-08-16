@@ -1,6 +1,6 @@
 # Experiment 5-5: Paper Lecture Video / 实验 5-5：论文讲解视频的自动生成 ★★
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — spoken narration per slide, TTS, ffmpeg page-synced lecture video.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — spoken narration per slide, TTS, ffmpeg page-synced lecture video.
 > 《深入理解 AI Agent》第 5 章：每页口语讲解词 + TTS + ffmpeg 逐页同步合成带旁白的讲解视频。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -82,9 +82,9 @@ source .venv/bin/activate
 cd chapter5/paper-to-video
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env                  # OPENAI_API_KEY (or OPENROUTER_API_KEY for script fallback; TTS degrades offline)
+cp env.example .env                  # OPENAI_API_KEY (or OPENAI_API_KEY for script fallback; TTS degrades offline)
 python demo.py                       # full 5-page lecture video
 ```
 
@@ -140,7 +140,7 @@ Logs print per-page “slide → script → audio duration”; end summary compa
 - **ffmpeg / ffprobe** (validated on 8.x). macOS: `brew install ffmpeg`.
 - **Python**: root `ch5` extra (`openai`, `Pillow`, `python-dotenv`) or the compatibility `requirements.txt` path.
 - **CJK fonts**: script falls back over common macOS fonts (PingFang / STHeiti / Hiragino / Arial Unicode).
-- **Env**: `OPENAI_API_KEY` for official OpenAI; without it, `OPENROUTER_API_KEY` can fall back for scripts (TTS not on OpenRouter → offline silent). See `env.example`.
+- **Env**: `OPENAI_API_KEY` for official OpenAI; without it, `OPENAI_API_KEY` can fall back for scripts (TTS not on OpenRouter → offline silent). See `env.example`.
 
 ### Adapt / extend
 
@@ -235,9 +235,9 @@ source .venv/bin/activate
 cd chapter5/paper-to-video
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env                  # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 兜底讲解词，TTS 降级为离线占位）
+cp env.example .env                  # 填入 OPENAI_API_KEY（未配置时设 OPENAI_API_KEY 兜底讲解词，TTS 降级为离线占位）
 python demo.py                       # 生成全部 5 页的完整讲解视频
 ```
 
@@ -301,7 +301,7 @@ ffprobe -v error -show_format -show_streams output/lecture.mp4
 - **Python 包**：根目录 `ch5` extra（`openai`、`Pillow`、`python-dotenv`），或兼容 `requirements.txt` 路径。
 - **中文字体**：渲染幻灯片需系统中文字体，脚本已按 macOS 常见字体
   （PingFang / STHeiti / Hiragino / Arial Unicode）自动回退。
-- **环境变量**：需 `OPENAI_API_KEY`（走官方 OpenAI）；未配置时可用 `OPENROUTER_API_KEY` 兜底讲解词生成（此时 TTS 因不在 OpenRouter 上而降级为离线静音占位）。可选项见 `env.example`。
+- **环境变量**：需 `OPENAI_API_KEY`（走官方 OpenAI）；未配置时可用 `OPENAI_API_KEY` 兜底讲解词生成（此时 TTS 因不在 OpenRouter 上而降级为离线静音占位）。可选项见 `env.example`。
 
 ### 如何适配 / 扩展
 

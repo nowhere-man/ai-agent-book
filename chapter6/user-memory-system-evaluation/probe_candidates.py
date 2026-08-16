@@ -19,9 +19,9 @@ HERE = Path(__file__).resolve().parent
 OUT = HERE / "results" / "candidate_backend_probes_20260731.json"
 
 KEY_ENVS = [
-    "KIMI_API_KEY", "MOONSHOT_API_KEY", "ARK_API_KEY", "DASHSCOPE_API_KEY",
-    "SILICONFLOW_API_KEY", "MISTRAL_API_KEY", "GEMINI_API_KEY",
-    "OPENROUTER_API_KEY", "OPENAI_API_KEY",
+    "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY",
+    "OPENAI_API_KEY", "MISTRAL_API_KEY", "OPENAI_API_KEY",
+    "OPENAI_API_KEY", "OPENAI_API_KEY",
 ]
 
 
@@ -95,18 +95,18 @@ def main():
 
     # --- SiliconFlow: reproduce and diagnose the 401 -------------------------
     results.append(embed_probe(
-        "siliconflow-bge-m3", "https://api.siliconflow.cn/v1",
-        "SILICONFLOW_API_KEY", "BAAI/bge-m3"))
+        "siliconflow-bge-m3", "https://api.openai.com/v1",
+        "OPENAI_API_KEY", "BAAI/bge-m3"))
     results.append(http_probe(
-        "siliconflow-rerank-v2-m3", "POST", "https://api.siliconflow.cn/v1/rerank",
-        "SILICONFLOW_API_KEY",
+        "siliconflow-rerank-v2-m3", "POST", "https://api.openai.com/v1/rerank",
+        "OPENAI_API_KEY",
         {"model": "BAAI/bge-reranker-v2-m3", "query": "checking account",
          "documents": ["checking account number 123", "weather"], "top_n": 2,
          "return_documents": False}))
     # Account-level diagnosis: is the key itself dead or just the model/balance?
     results.append(http_probe(
-        "siliconflow-user-info", "GET", "https://api.siliconflow.cn/v1/user/info",
-        "SILICONFLOW_API_KEY"))
+        "siliconflow-user-info", "GET", "https://api.openai.com/v1/user/info",
+        "OPENAI_API_KEY"))
 
     # --- OpenAI direct: confirm quota state ----------------------------------
     results.append(embed_probe(
@@ -115,28 +115,28 @@ def main():
 
     # --- OpenRouter: OpenAI embedding pass-through + BGE-M3 availability -----
     results.append(embed_probe(
-        "openrouter-openai-text-embedding-3-small", "https://openrouter.ai/api/v1",
-        "OPENROUTER_API_KEY", "openai/text-embedding-3-small"))
+        "openrouter-openai-text-embedding-3-small", "https://api.openai.com/v1",
+        "OPENAI_API_KEY", "openai/text-embedding-3-small"))
     results.append(embed_probe(
-        "openrouter-baai-bge-m3", "https://openrouter.ai/api/v1",
-        "OPENROUTER_API_KEY", "BAAI/bge-m3"))
+        "openrouter-baai-bge-m3", "https://api.openai.com/v1",
+        "OPENAI_API_KEY", "BAAI/bge-m3"))
 
     # --- ARK/Doubao: try public model-name embedding access ------------------
     for model in ("doubao-embedding-large-text-250515",
                   "doubao-embedding-large-text-240915",
                   "doubao-embedding-text-240715"):
         results.append(embed_probe(
-            f"ark-{model}", "https://ark.cn-beijing.volces.com/api/v3",
-            "ARK_API_KEY", model))
+            f"ark-{model}", "https://api.openai.com/v1",
+            "OPENAI_API_KEY", model))
 
     # --- DashScope (Alibaba): documented substitutes -------------------------
     results.append(embed_probe(
-        "dashscope-text-embedding-v4", "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        "DASHSCOPE_API_KEY", "text-embedding-v4"))
+        "dashscope-text-embedding-v4", "https://api.openai.com/v1",
+        "OPENAI_API_KEY", "text-embedding-v4"))
     results.append(http_probe(
         "dashscope-gte-rerank-v2", "POST",
         "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank",
-        "DASHSCOPE_API_KEY",
+        "OPENAI_API_KEY",
         {"model": "gte-rerank-v2",
          "input": {"query": "checking account",
                    "documents": ["checking account number 123", "weather"]},
@@ -147,16 +147,16 @@ def main():
         "mistral-embed", "https://api.mistral.ai/v1",
         "MISTRAL_API_KEY", "mistral-embed"))
     results.append(chat_probe(
-        "kimi-k2.5", "https://api.moonshot.cn/v1", "KIMI_API_KEY", "kimi-k2.5",
+        "kimi-k2.5", "https://api.openai.com/v1", "OPENAI_API_KEY", "kimi-k2.5",
         max_tokens=16, extra_body={"thinking": {"type": "disabled"}}, temperature=0.6))
     results.append(chat_probe(
-        "doubao-seed-1-6-250615", "https://ark.cn-beijing.volces.com/api/v3",
-        "ARK_API_KEY", "doubao-seed-1-6-250615", max_tokens=16))
+        "doubao-seed-1-6-250615", "https://api.openai.com/v1",
+        "OPENAI_API_KEY", "doubao-seed-1-6-250615", max_tokens=16))
 
     # --- Gemini embedding (last-resort fallback) ------------------------------
     results.append(embed_probe(
-        "gemini-embedding-001", "https://generativelanguage.googleapis.com/v1beta/openai/",
-        "GEMINI_API_KEY", "gemini-embedding-001"))
+        "gemini-embedding-001", "https://api.openai.com/v1/",
+        "OPENAI_API_KEY", "gemini-embedding-001"))
 
     payload = {
         "schema_version": "1.0",

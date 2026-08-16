@@ -68,7 +68,7 @@ TOOLS: list[Tool] = [
          "从 URL 下载文件到本地（含大小/覆盖保护）", online=True),
     Tool("google_search_enhanced", "search", "google_search_enhanced", "google_search_api",
          "Google Custom Search，失败时回退 DuckDuckGo", online=True,
-         note="Google API 需 GOOGLE_API_KEY，未配置则自动回退"),
+         note="Google API 需 OPENAI_API_KEY，未配置则自动回退"),
 
     # ---- 多模态理解 ----
     Tool("webpage_reader", "multimodal", "multimodal_tools", "read_webpage",
@@ -76,9 +76,7 @@ TOOLS: list[Tool] = [
     Tool("webpage_read_enhanced", "multimodal", "google_search_enhanced", "read_webpage_content",
          "增强版网页正文提取", online=True),
     Tool("document_reader", "multimodal", "multimodal_tools", "read_document",
-         "读取 PDF/DOCX/PPTX 文档内容"),
-    Tool("pdf_extract", "multimodal", "document_processing_tools", "extract_pdf_text",
-         "提取 PDF 文本（支持页码范围）"),
+         "读取 DOCX/PPTX 文档内容"),
     Tool("docx_extract", "multimodal", "document_processing_tools", "extract_docx_content",
          "提取 Word（DOCX）文档内容"),
     Tool("pptx_extract", "multimodal", "document_processing_tools", "extract_pptx_content",
@@ -163,8 +161,6 @@ TOOLS: list[Tool] = [
          "获取 Wikipedia 条目历史版本", online=True),
     Tool("arxiv_paper_details", "public", "arxiv_enhanced", "get_paper_details",
          "获取 ArXiv 论文详情", online=True),
-    Tool("arxiv_download", "public", "arxiv_enhanced", "download_paper",
-         "下载 ArXiv 论文 PDF", online=True),
     Tool("arxiv_categories", "public", "arxiv_enhanced", "get_arxiv_categories",
          "列出 ArXiv 学科分类", online=True),
     Tool("wayback_archived_content", "public", "wayback_enhanced", "get_archived_content",

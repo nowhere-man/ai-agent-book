@@ -68,21 +68,21 @@ mcp_loading_status = {
 async def lifespan(app: FastAPI):
     """Lifespan context manager for startup and shutdown"""
     global agent, monitoring_enabled
-    
+
     # Startup
     logger.info("🚀 Starting Event-Triggered Agent Server (FastAPI)")
     await init_agent()
     logger.info("✅ Server ready to receive events\n")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down server...")
     monitoring_enabled = False
-    
+
     if agent and agent.mcp_manager:
         await agent.mcp_manager.disconnect_all()
-    
+
     logger.info("✅ Server shutdown complete")
 
 
@@ -119,7 +119,7 @@ class ProcessUnregister(BaseModel):
 async def init_agent():
     """Initialize the agent with optional MCP tools"""
     global agent, mcp_loading_status
-    
+
     # Determine provider from environment (universal OpenRouter fallback applied)
     requested_provider = os.getenv("LLM_PROVIDER", "kimi").lower()
     provider, api_key = resolve_provider_and_key(requested_provider)
@@ -127,7 +127,7 @@ async def init_agent():
     if not api_key:
         raise ValueError(
             f"API key not set for provider '{requested_provider}'. Set the appropriate "
-            f"environment variable, or set OPENROUTER_API_KEY as a universal fallback."
+            f"environment variable, or set OPENAI_API_KEY as a universal fallback."
         )
 
     # Get model from environment if specified
@@ -139,10 +139,10 @@ async def init_agent():
         # Keep an explicit provider/model id; otherwise use OpenRouter's default.
         if not (model and "/" in model):
             model = None
-    
+
     # Check if MCP should be enabled (default: true)
     enable_mcp = os.getenv("ENABLE_MCP_TOOLS", "true").lower() not in ["false", "0", "no"]
-    
+
     config = SystemHintConfig(
         enable_timestamps=True,
         enable_tool_counter=True,
@@ -155,7 +155,7 @@ async def init_agent():
         max_tokens=4096,
         use_mcp_servers=enable_mcp
     )
-    
+
     agent = EventTriggeredAgent(
         api_key=api_key,
         provider=provider,
@@ -163,9 +163,9 @@ async def init_agent():
         config=config,
         verbose=True
     )
-    
+
     logger.info(f"✅ Agent initialized with {provider} provider")
-    
+
     if enable_mcp:
         logger.info("🔄 MCP tools enabled (default) - loading asynchronously...")
         await load_mcp_tools_async()
@@ -176,27 +176,27 @@ async def init_agent():
 async def load_mcp_tools_async():
     """Load MCP tools asynchronously"""
     global agent, mcp_loading_status
-    
+
     mcp_loading_status["loading"] = True
     mcp_loading_status["started_at"] = datetime.now().isoformat()
-    
+
     try:
         if agent:
             await agent.load_mcp_tools()
             tools_count = len(agent.mcp_manager.tools)
-            
+
             mcp_loading_status["loaded"] = True
             mcp_loading_status["loading"] = False
             mcp_loading_status["tools_count"] = tools_count
             mcp_loading_status["completed_at"] = datetime.now().isoformat()
-            
+
             logger.info(f"✅ MCP tools loaded: {tools_count} tools available")
             if tools_count > 0:
                 sample_tools = list(agent.mcp_manager.tools.keys())[:5]
                 logger.info(f"   Sample: {sample_tools}")
         else:
             raise RuntimeError("Agent not initialized")
-        
+
     except Exception as e:
         logger.error(f"❌ Failed to load MCP tools: {e}")
         mcp_loading_status["loading"] = False
@@ -245,11 +245,11 @@ async def health_check():
 async def get_mcp_status():
     """Get MCP tools loading status"""
     status = mcp_loading_status.copy()
-    
+
     # Add tool list if loaded
     if status["loaded"] and agent:
         status["tools"] = list(agent.mcp_manager.tools.keys())
-        
+
         # Group by server
         status["tools_by_server"] = {}
         for tool_name in agent.mcp_manager.tools.keys():
@@ -257,7 +257,7 @@ async def get_mcp_status():
             if server not in status["tools_by_server"]:
                 status["tools_by_server"][server] = []
             status["tools_by_server"][server].append(tool_name)
-    
+
     return status
 
 
@@ -266,13 +266,13 @@ async def reload_mcp_tools(background_tasks: BackgroundTasks):
     """Manually trigger MCP tools reload"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     if mcp_loading_status["loading"]:
         raise HTTPException(status_code=409, detail="MCP tools are already loading")
-    
+
     # Use FastAPI background tasks
     background_tasks.add_task(load_mcp_tools_async)
-    
+
     return {
         "success": True,
         "message": "MCP tools reload started in background"
@@ -284,7 +284,7 @@ async def handle_event(event_req: EventRequest):
     """Handle incoming event"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     try:
         # Create event
         event_data = {
@@ -293,11 +293,11 @@ async def handle_event(event_req: EventRequest):
             "metadata": event_req.metadata or {}
         }
         event = Event.from_dict(event_data)
-        
+
         # Handle the event
         with agent_lock:
             result = agent.handle_event(event, max_iterations=20)
-        
+
         return {
             "success": True,
             "event_id": event.event_id,
@@ -310,7 +310,7 @@ async def handle_event(event_req: EventRequest):
                 "trajectory_file": result.get('trajectory_file')
             }
         }
-        
+
     except Exception as e:
         logger.error(f"Error handling event: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -321,7 +321,7 @@ async def get_agent_status():
     """Get current agent status"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     with agent_lock:
         return {
             "provider": agent.provider,
@@ -339,10 +339,10 @@ async def reset_agent():
     """Reset agent state"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     with agent_lock:
         agent.reset()
-    
+
     return {
         "success": True,
         "message": "Agent state reset successfully"
@@ -354,7 +354,7 @@ async def register_process(process: ProcessRegister):
     """Register a background process for monitoring"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     with agent_lock:
         agent.background_processes[process.process_id] = {
             "name": process.process_name,
@@ -362,7 +362,7 @@ async def register_process(process: ProcessRegister):
             "metadata": process.metadata or {},
             "reminded": False
         }
-    
+
     return {
         "success": True,
         "message": f"Process '{process.process_name}' registered"
@@ -374,7 +374,7 @@ async def unregister_process(process: ProcessUnregister):
     """Unregister a background process"""
     if agent is None:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
+
     with agent_lock:
         if process.process_id in agent.background_processes:
             del agent.background_processes[process.process_id]

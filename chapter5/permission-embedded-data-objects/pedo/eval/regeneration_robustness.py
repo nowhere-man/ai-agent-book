@@ -14,7 +14,7 @@ Expected pattern: PE preserves invariants in 100% of regenerations by
 construction; raw varies handler-by-handler with no structural floor.
 
 Usage:
-    python -m pedo.eval.regeneration_robustness  # uses GEMINI_API_KEY
+    python -m pedo.eval.regeneration_robustness  # uses OPENAI_API_KEY
 """
 from __future__ import annotations
 
@@ -104,7 +104,7 @@ def _strip_markdown(s: str) -> str:
 def gen_code_gemini(model_id: str, prompt: str, sys_prompt: str,
                    temperature: float, retries: int = 2) -> str | None:
     from google import genai
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    client = genai.Client(api_key=os.environ["OPENAI_API_KEY"])
     for attempt in range(retries):
         try:
             response = client.models.generate_content(

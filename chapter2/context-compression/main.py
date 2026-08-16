@@ -45,7 +45,7 @@ def select_strategy() -> CompressionStrategy:
     print("4. Context-Aware Summarization")
     print("5. Context-Aware with Citations")
     print("6. Windowed Context (only compress when approaching context limit)")
-    
+
     while True:
         try:
             choice = input(f"\n{Fore.GREEN}Select strategy (1-6): {Style.RESET_ALL}")
@@ -75,21 +75,21 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
     if not Config.validate():
         print(f"\n{Fore.RED}Configuration validation failed!{Style.RESET_ALL}")
         print("\nPlease set up your .env file with:")
-        print("  DASHSCOPE_API_KEY=your_api_key_here (for LLM_PROVIDER=dashscope/qwen/bailian)")
-        print("  MOONSHOT_API_KEY=your_api_key_here")
+        print("  OPENAI_API_KEY=your_api_key_here (for LLM_PROVIDER=dashscope/qwen/bailian)")
+        print("  OPENAI_API_KEY=your_api_key_here")
         print("  SERPER_API_KEY=your_api_key_here (optional, will use mock data)")
         sys.exit(1)
 
     # Select strategy (interactively unless one was passed on the command line)
     if strategy is None:
         strategy = select_strategy()
-    
+
     print(f"\n{Fore.CYAN}Selected: {strategy.value}{Style.RESET_ALL}")
-    
+
     # Display streaming status
     streaming_status = "ENABLED" if enable_streaming else "DISABLED"
     print(f"{Fore.YELLOW}Streaming output: {streaming_status}{Style.RESET_ALL}")
-    
+
     # Create agent
     print(f"\n{Fore.YELLOW}Initializing agent...{Style.RESET_ALL}")
     agent = ResearchAgent(
@@ -98,20 +98,20 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
         verbose=False,
         enable_streaming=enable_streaming
     )
-    
+
     print(f"\n{Fore.CYAN}Starting research task...{Style.RESET_ALL}")
     print("Task: Find current affiliations of all OpenAI co-founders\n")
     print("-" * 70)
-    
+
     try:
         # Execute research
         result = agent.execute_research(max_iterations=Config.MAX_ITERATIONS)
-        
+
         # Print results
         print("\n" + "="*70)
         print(f"{Fore.GREEN}RESEARCH COMPLETE{Style.RESET_ALL}")
         print("="*70)
-        
+
         if result.get('success'):
             print(f"\n{Fore.GREEN}✅ Success!{Style.RESET_ALL}")
             print(f"\nFinal Answer:\n{result.get('final_answer', 'No answer found')}")
@@ -119,7 +119,7 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
             print(f"\n{Fore.RED}❌ Failed{Style.RESET_ALL}")
             if result.get('error'):
                 print(f"Error: {result['error']}")
-        
+
         # Print statistics
         trajectory = result.get('trajectory')
         if trajectory:
@@ -130,44 +130,44 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
             print(f"  Total Tokens Used: {trajectory.total_tokens_used:,}")
             print(f"    - Prompt Tokens: {trajectory.prompt_tokens_used:,}")
             print(f"    - Completion Tokens: {trajectory.completion_tokens_used:,}")
-            
+
             # Calculate compression stats
             if trajectory.tool_calls:
                 total_original = 0
                 total_compressed = 0
-                
+
                 for call in trajectory.tool_calls:
                     if call.compressed_result:
                         total_original += call.compressed_result.original_length
                         total_compressed += call.compressed_result.compressed_length
-                
+
                 if total_original > 0:
                     ratio = total_compressed / total_original
                     print(f"  Compression Ratio: {ratio:.1%}")
                     print(f"  Space Saved: {total_original - total_compressed:,} chars")
-        
+
         # Follow-up question demo (for citation strategy)
         if strategy == CompressionStrategy.CONTEXT_AWARE_CITATIONS and result.get('success'):
             print(f"\n{Fore.YELLOW}This strategy supports follow-up questions!{Style.RESET_ALL}")
             follow_up = input("\nAsk a follow-up question (or press Enter to skip): ")
-            
+
             if follow_up:
                 print(f"\n{Fore.CYAN}Processing follow-up...{Style.RESET_ALL}")
                 # Add follow-up to conversation
                 agent.conversation_history.append({"role": "user", "content": follow_up})
-                
+
                 # Get response (simplified for demo)
                 messages = agent.conversation_history.copy()
-                
+
                 if enable_streaming:
                     message = agent._stream_response(messages)
                 else:
                     message = agent._non_streaming_response(messages)
-                
+
                 if message.get('content'):
                     print(f"\n{Fore.GREEN}Follow-up Answer:{Style.RESET_ALL}")
                     print(message['content'])
-    
+
     except KeyboardInterrupt:
         print(f"\n\n{Fore.YELLOW}Demo interrupted by user{Style.RESET_ALL}")
     except Exception as e:

@@ -26,7 +26,7 @@ source .venv-sesame/bin/activate
 # Windows PowerShell: .\.venv-sesame\Scripts\Activate.ps1
 # Windows cmd: .venv-sesame\Scripts\activate.bat
 
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 
 # For Conda users, install ffmpeg
 conda install -c conda-forge "ffmpeg>=6.0" -y
@@ -273,7 +273,7 @@ source .venv-sesame/bin/activate
 # Windows PowerShell：.\.venv-sesame\Scripts\Activate.ps1
 # Windows cmd：.venv-sesame\Scripts\activate.bat
 
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 
 # Conda 用户可安装 ffmpeg
 conda install -c conda-forge ffmpeg

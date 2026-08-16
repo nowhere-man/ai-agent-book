@@ -67,7 +67,7 @@ conda create -n aworld_imo_env python=3.11 -y
 conda activate aworld_imo_env
 
 # 3. Install dependencies
-pip install -r requirements.txt
+pip install -r ../../../../../requirements.txt
 
 # 4. Install AWorld framework
 cd ../../../
@@ -197,7 +197,7 @@ python run.py --start 0 --end 6
 If you encounter issues:
 
 1. **conda command not found**: Ensure Miniconda or Anaconda is installed
-2. **Dependency installation failed**: Try manual installation: `pip install -r requirements.txt`
+2. **Dependency installation failed**: Try manual installation: `pip install -r ../../../../../requirements.txt`
 3. **AWorld framework installation failed**: Execute manually: `cd ../../../ && pip install -e .`
 
 ## Cleanup

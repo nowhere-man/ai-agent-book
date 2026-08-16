@@ -235,7 +235,7 @@ def single_query_compare(chunks: List[Dict], query: str, top_k: int, use_jieba: 
 # ---------------------------------------------------------------------------
 def embedding_unavailable_notice(method: str):
     print(f"\n[提示] --method {method} 需要调用 embedding API（稠密向量），无法离线运行。")
-    print("       请在 .env 中配置 OPENAI_API_KEY / SILICONFLOW_API_KEY 等，")
+    print("       请在 .env 中配置 OPENAI_API_KEY / OPENAI_API_KEY 等，")
     print("       并使用 contextual_tools.ContextualKnowledgeBaseTools 的 embedding/hybrid 检索。")
     print("       本脚本的默认 --method bm25 已可完整复现书中“上下文增强 BM25”的召回提升结论。")
 

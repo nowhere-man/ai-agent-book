@@ -120,9 +120,9 @@ def main() -> None:
     receipt_dir = run_dir / "raw_provider_receipts"
     receipt_dir.mkdir(parents=True, exist_ok=True)
 
-    api_key = os.environ.get("MOONSHOT_API_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise SystemExit("MOONSHOT_API_KEY is required for the official real-provider campaign")
+        raise SystemExit("OPENAI_API_KEY is required for the official real-provider campaign")
     Config.API_KEY = api_key
     Config.BASE_URL = protocol["backend"]["base_url"]
     Config.MODEL = protocol["backend"]["model"]

@@ -28,7 +28,7 @@ fi
 echo "Checking dependencies..."
 pip list | grep -q "FlagEmbedding" || {
     echo "Installing dependencies..."
-    pip install -r requirements.txt
+    pip install -r ../../requirements.txt
 }
 
 # Start the service

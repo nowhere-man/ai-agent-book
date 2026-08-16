@@ -1,6 +1,6 @@
 # Comprehensive Coding Agent / 综合编码 Agent（纯 Python 实现）
 
-> Production-ready AI coding agent (Claude + pure Python tools) implementing Chapter 2 techniques—no CLI tool dependencies.  
+> Production-ready AI coding agent (Claude + pure Python tools) implementing Chapter 2 techniques—no CLI tool dependencies.
 > 生产级 AI 编码 Agent：落地第 2 章技术，**纯 Python 工具**实现，无命令行工具依赖。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -41,7 +41,7 @@ A production-ready AI coding agent built with Claude, implementing techniques fr
 
 **File Operations (Pure Python):**
 
-- `Read` - File reading with image/PDF/notebook support
+- `Read` - File reading with image/notebook support
 - `Write` - File writing with auto lint checking
 - `Edit` - Search and replace editing
 - `MultiEdit` - Multiple edits in one operation
@@ -153,7 +153,7 @@ source .venv/bin/activate
 cd chapter5/coding-agent
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Set up environment
 cp .env.example .env
@@ -171,7 +171,7 @@ PROVIDER=anthropic
 # Add API key for your chosen provider
 ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=your-openrouter-api-key
+OPENAI_API_KEY=your-openrouter-api-key
 # or
 OPENAI_API_KEY=your-openai-api-key
 
@@ -192,7 +192,6 @@ DEFAULT_MODEL=claude-sonnet-5
 
 **Optional (for enhanced features):**
 
-- `PyPDF2` - For PDF reading
 - `requests`, `beautifulsoup4`, `html2text` - For WebFetch
 
 **No command-line tools needed!** Works on macOS without Homebrew packages.
@@ -210,12 +209,12 @@ The agent automatically handles the different API formats for each provider.
 You do **not** need a direct Anthropic or OpenAI key to run the agent. If the
 requested direct provider's key is missing, the agent transparently falls back
 to **OpenRouter** (via the OpenAI-compatible SDK) as long as
-`OPENROUTER_API_KEY` is set:
+`OPENAI_API_KEY` is set:
 
 - `PROVIDER=anthropic` **with** `ANTHROPIC_API_KEY` → Anthropic SDK, unchanged (default behavior).
-- `PROVIDER=anthropic` **without** `ANTHROPIC_API_KEY` (but `OPENROUTER_API_KEY` set) → routed through OpenRouter.
+- `PROVIDER=anthropic` **without** `ANTHROPIC_API_KEY` (but `OPENAI_API_KEY` set) → routed through OpenRouter.
 - `PROVIDER=openai` **with** `OPENAI_API_KEY` → OpenAI SDK, unchanged.
-- `PROVIDER=openai` **without** `OPENAI_API_KEY` (but `OPENROUTER_API_KEY` set) → routed through OpenRouter.
+- `PROVIDER=openai` **without** `OPENAI_API_KEY` (but `OPENAI_API_KEY` set) → routed through OpenRouter.
 
 When falling back, the native model id is **prefixed/mapped** to an OpenRouter id:
 
@@ -227,7 +226,7 @@ When falling back, the native model id is **prefixed/mapped** to an OpenRouter i
 | `gpt-*` / `o1-*` (e.g. `gpt-5.6-luna`) | `openai/<model>` |
 | already prefixed (`vendor/model`) | passed through unchanged |
 
-So a user with **only** an `OPENROUTER_API_KEY` can run, e.g.:
+So a user with **only** an `OPENAI_API_KEY` can run, e.g.:
 
 ```bash
 # No ANTHROPIC_API_KEY needed — falls back to OpenRouter automatically
@@ -402,7 +401,7 @@ class MyTool(BaseTool):
     @property
     def name(self) -> str:
         return "MyTool"
-    
+
     def _execute_impl(self, params: Dict[str, Any]) -> Dict[str, Any]:
         # Tool implementation
         return {"result": "success"}
@@ -529,7 +528,7 @@ class MyTool(BaseTool):
     @property
     def name(self) -> str:
         return "MyTool"
-    
+
     def _execute_impl(self, params):
         # Implementation
         return {"result": "success"}
@@ -703,7 +702,7 @@ This is an educational implementation. Feel free to adapt and extend!
 
 **文件操作（纯 Python）：**
 
-- `Read` - 读文件（含图像/PDF/Notebook）
+- `Read` - 读文件（含图像/Notebook）
 - `Write` - 写文件（自动 lint）
 - `Edit` - 查找替换编辑
 - `MultiEdit` - 一次多处编辑
@@ -815,7 +814,7 @@ source .venv/bin/activate
 cd chapter5/coding-agent
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 # Set up environment
 cp .env.example .env
@@ -833,7 +832,7 @@ PROVIDER=anthropic
 # Add API key for your chosen provider
 ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=your-openrouter-api-key
+OPENAI_API_KEY=your-openrouter-api-key
 # or
 OPENAI_API_KEY=your-openai-api-key
 
@@ -854,7 +853,6 @@ DEFAULT_MODEL=claude-sonnet-5
 
 **可选（增强能力）：**
 
-- `PyPDF2` - PDF 阅读
 - `requests`、`beautifulsoup4`、`html2text` - WebFetch
 
 **无需命令行工具！** 无 Homebrew 的 macOS 也可运行。
@@ -870,12 +868,12 @@ Agent 自动处理各供应商不同的 API 格式。
 #### OpenRouter 通用兜底
 
 **不必**持有直连 Anthropic/OpenAI key。若所请求直连供应商的 key 缺失，且设置了
-`OPENROUTER_API_KEY`，则经 OpenAI 兼容 SDK **透明回退到 OpenRouter**：
+`OPENAI_API_KEY`，则经 OpenAI 兼容 SDK **透明回退到 OpenRouter**：
 
 - `PROVIDER=anthropic` **且有** `ANTHROPIC_API_KEY` → Anthropic SDK（默认行为）。
-- `PROVIDER=anthropic` **无** `ANTHROPIC_API_KEY`（但有 `OPENROUTER_API_KEY`）→ 走 OpenRouter。
+- `PROVIDER=anthropic` **无** `ANTHROPIC_API_KEY`（但有 `OPENAI_API_KEY`）→ 走 OpenRouter。
 - `PROVIDER=openai` **且有** `OPENAI_API_KEY` → OpenAI SDK。
-- `PROVIDER=openai` **无** `OPENAI_API_KEY`（但有 `OPENROUTER_API_KEY`）→ 走 OpenRouter。
+- `PROVIDER=openai` **无** `OPENAI_API_KEY`（但有 `OPENAI_API_KEY`）→ 走 OpenRouter。
 
 回退时原生模型 id **加前缀/映射**为 OpenRouter id：
 
@@ -887,7 +885,7 @@ Agent 自动处理各供应商不同的 API 格式。
 | `gpt-*` / `o1-*` (e.g. `gpt-5.6-luna`) | `openai/<model>` |
 | already prefixed (`vendor/model`) | passed through unchanged |
 
-仅持有 `OPENROUTER_API_KEY` 时例如：
+仅持有 `OPENAI_API_KEY` 时例如：
 
 ```bash
 # No ANTHROPIC_API_KEY needed — falls back to OpenRouter automatically
@@ -1061,7 +1059,7 @@ class MyTool(BaseTool):
     @property
     def name(self) -> str:
         return "MyTool"
-    
+
     def _execute_impl(self, params: Dict[str, Any]) -> Dict[str, Any]:
         # Tool implementation
         return {"result": "success"}
@@ -1187,7 +1185,7 @@ class MyTool(BaseTool):
     @property
     def name(self) -> str:
         return "MyTool"
-    
+
     def _execute_impl(self, params):
         # Implementation
         return {"result": "success"}

@@ -90,7 +90,7 @@ class TestMultimodalAgent(unittest.IsolatedAsyncioTestCase):
         
         self.assertTrue(agent.enable_multimodal_tools)
         self.assertIsNotNone(agent.tools)
-        self.assertEqual(len(agent.tool_definitions), 3)
+        self.assertEqual(len(agent.tool_definitions), 2)
         
     async def test_conversation_history(self):
         """Test conversation history management"""
@@ -109,27 +109,6 @@ class TestMultimodalAgent(unittest.IsolatedAsyncioTestCase):
         agent.reset_conversation()
         history = agent.get_conversation_history()
         self.assertEqual(len(history), 0)
-        
-    @patch('agent.genai.Client')
-    async def test_extract_pdf_to_text(self, mock_client_class):
-        """Test PDF extraction to text"""
-        agent = MultimodalAgent(mode=ExtractionMode.EXTRACT_TO_TEXT)
-        
-        # Mock Gemini response
-        mock_response = Mock()
-        mock_response.candidates = []
-        mock_response.text = "Extracted PDF text"
-        mock_client = Mock()
-        mock_client.models.generate_content.return_value = mock_response
-        mock_client_class.return_value = mock_client
-        
-        content = MultimodalContent(
-            type="pdf",
-            data=b"PDF content"
-        )
-        
-        result = await agent._extract_pdf_to_text(content)
-        self.assertEqual(result, "Extracted PDF text")
         
     @patch('agent.AsyncOpenAI')
     async def test_extract_image_to_text(self, mock_openai_class):

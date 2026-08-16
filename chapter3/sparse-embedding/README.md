@@ -63,7 +63,7 @@ source .venv/bin/activate
 cd chapter3/sparse-embedding
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 `cli.py` (below) uses only the Python standard library and runs offline with no third-party packages; `server.py` / `demo.py` need the shared `ch3` environment or the compatibility `requirements.txt` path.
@@ -230,7 +230,7 @@ source .venv/bin/activate
 cd chapter3/sparse-embedding
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 `cli.py` 只依赖 Python 标准库，无需第三方包即可离线运行；`server.py` / `demo.py` 需要统一 `ch3` 环境或兼容 `requirements.txt` 路径提供的 FastAPI 等依赖。

@@ -9,7 +9,7 @@ Two backends are supported, selected automatically or via ``backend=``:
   * ``anthropic``  – the official ``anthropic`` SDK, using ``ANTHROPIC_API_KEY``
     (the default when that key is present).
   * ``openrouter`` – the OpenAI-compatible ``openai`` SDK pointed at
-    ``https://openrouter.ai/api/v1`` with ``OPENROUTER_API_KEY``. Internal
+    ``https://api.openai.com/v1`` with ``OPENAI_API_KEY``. Internal
     Claude ids (e.g. ``claude-opus-4-8``) are mapped to their OpenRouter ids
     (``anthropic/claude-opus-4.8``); ids that already contain a ``/`` such as
     ``openai/gpt-5.6-luna`` are passed through untouched. This lets the judge run
@@ -49,7 +49,7 @@ DEFAULT_PROMPTS = [
     "给出快速排序的时间复杂度，并简要说明最坏情况。",
 ]
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 # Map internal Claude ids -> OpenRouter model ids. Any id already containing a
 # '/' (e.g. 'openai/gpt-5.6-luna') is treated as a native OpenRouter id and used
@@ -121,7 +121,7 @@ def _resolve_backend(backend: str = "auto") -> str:
     Resolve the effective backend.
 
     ``auto`` -> ``anthropic`` if ANTHROPIC_API_KEY is set, else ``openrouter``
-    if OPENROUTER_API_KEY is set. Raises if neither key is available.
+    if OPENAI_API_KEY is set. Raises if neither key is available.
     """
     if backend not in ("anthropic", "openrouter", "auto"):
         raise ValueError(
@@ -132,11 +132,11 @@ def _resolve_backend(backend: str = "auto") -> str:
         return backend
     if os.environ.get("ANTHROPIC_API_KEY"):
         return "anthropic"
-    if os.environ.get("OPENROUTER_API_KEY"):
+    if os.environ.get("OPENAI_API_KEY"):
         return "openrouter"
     raise RuntimeError(
         "No LLM-judge credentials found. Set ANTHROPIC_API_KEY (direct Anthropic) "
-        "or OPENROUTER_API_KEY (OpenRouter fallback); or use --source simulate / "
+        "or OPENAI_API_KEY (OpenRouter fallback); or use --source simulate / "
         "--source arena to run the experiment fully offline."
     )
 
@@ -156,7 +156,7 @@ def _get_client(backend: str = "auto") -> JudgeClient:
         if not os.environ.get("ANTHROPIC_API_KEY"):
             raise RuntimeError(
                 "ANTHROPIC_API_KEY is not set. Set it, or use "
-                "--judge-backend openrouter with OPENROUTER_API_KEY, or run "
+                "--judge-backend openrouter with OPENAI_API_KEY, or run "
                 "--source simulate / --source arena fully offline."
             )
         return JudgeClient("anthropic", anthropic.Anthropic())
@@ -169,17 +169,17 @@ def _get_client(backend: str = "auto") -> JudgeClient:
             "The 'openai' package is required for the openrouter judge backend. "
             "Install it with: pip install openai"
         ) from exc
-    if not os.environ.get("OPENROUTER_API_KEY"):
+    if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError(
-            "OPENROUTER_API_KEY is not set. Set it, or use --judge-backend "
+            "OPENAI_API_KEY is not set. Set it, or use --judge-backend "
             "anthropic with ANTHROPIC_API_KEY, or run --source simulate / "
             "--source arena fully offline."
         )
     return JudgeClient(
         "openrouter",
         openai.OpenAI(
-            base_url=OPENROUTER_BASE_URL,
-            api_key=os.environ["OPENROUTER_API_KEY"],
+            base_url=OPENAI_BASE_URL,
+            api_key=os.environ["OPENAI_API_KEY"],
         ),
     )
 

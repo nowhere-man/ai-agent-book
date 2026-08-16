@@ -1,6 +1,6 @@
 # Experiment 5-9: Dynamic Form Intent Clarification / 实验 5-9：动态表单生成的意图澄清系统（★★）
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — incomplete user intent → one self-contained HTML form with cascading logic; submit JSON back to the Agent.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — incomplete user intent → one self-contained HTML form with cascading logic; submit JSON back to the Agent.
 > 《深入理解 AI Agent》第 5 章：信息不完整时动态生成含级联逻辑的 HTML 表单，一次提交 JSON 交回 Agent。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -53,9 +53,9 @@ source .venv/bin/activate
 cd chapter5/dynamic-form
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env                 # OPENAI_API_KEY (or OPENROUTER_API_KEY fallback)
+cp env.example .env                 # OPENAI_API_KEY (or OPENAI_API_KEY fallback)
 
 python demo.py                      # online: OpenAI generates (needs API key)
 python demo.py --offline            # offline schema render; no key
@@ -189,9 +189,9 @@ source .venv/bin/activate
 cd chapter5/dynamic-form
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
-cp env.example .env                 # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter）
+cp env.example .env                 # 填入 OPENAI_API_KEY（未配置时设 OPENAI_API_KEY 自动改走 OpenRouter）
 
 python demo.py                      # 在线：Agent 调 OpenAI 生成（需 API Key）
 python demo.py --offline            # 离线：内置 schema 确定性渲染，无需 API Key

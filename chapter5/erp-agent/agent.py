@@ -14,7 +14,7 @@ from openai import OpenAI
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 
 # --- 通用 OpenRouter 兜底 ---
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _map_to_openrouter_model(model: str) -> str:
@@ -38,16 +38,16 @@ def _map_to_openrouter_model(model: str) -> str:
 def _make_client_and_model(model: str):
     """构造客户端并解析模型名，含通用 OpenRouter 兜底。返回 (client, resolved_model)。
 
-    - 有 OPENAI_API_KEY：直连；但 model 为 gpt-5.x 且同时设置了 OPENROUTER_API_KEY
+    - 有 OPENAI_API_KEY：直连；但 model 为 gpt-5.x 且同时设置了 OPENAI_API_KEY
       时优先走 OpenRouter（直连 gpt-5.6 需组织实名认证）。
-    - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：改走 OpenRouter（模型名自动映射）。
+    - 无 OPENAI_API_KEY 但有 OPENAI_API_KEY：改走 OpenRouter（模型名自动映射）。
     """
     api_key = os.environ.get("OPENAI_API_KEY")
     base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
+    orkey = os.environ.get("OPENAI_API_KEY")
     prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
     if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
+        api_key, base_url, model = orkey, OPENAI_BASE_URL, _map_to_openrouter_model(model)
     kw = {}
     if api_key:
         kw["api_key"] = api_key

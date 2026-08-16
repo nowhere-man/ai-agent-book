@@ -31,7 +31,7 @@ Edit `.env` and add your API keys:
 
 ```env
 OPENAI_API_KEY=your-openai-api-key
-GOOGLE_API_KEY=your-google-key
+OPENAI_API_KEY=your-google-key
 # ... other keys
 ```
 
@@ -108,7 +108,7 @@ docker-compose up -d execution-tools
 
 **Key Environment Variables**:
 - `DATA_DIR`: Data storage directory
-- `GOOGLE_API_KEY`: Google search API key
+- `OPENAI_API_KEY`: Google search API key
 - `GOOGLE_CSE_ID`: Custom Search Engine ID
 
 ### Collaboration Tools
@@ -139,7 +139,7 @@ For local development without Docker:
 cd execution-tools
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 cp .env.example .env
 # Edit .env with your settings
 python server.py
@@ -151,7 +151,7 @@ python server.py
 cd perception-tools
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 cp env.example .env
 # Edit .env with your settings
 python src/main.py
@@ -163,7 +163,7 @@ python src/main.py
 cd collaboration-tools
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 cp env.example .env
 # Edit .env with your settings
 python src/main.py

@@ -59,7 +59,7 @@ cd chapter7/continued-pretraining
 
 # Single-project compatibility path, still supported for exact legacy parity
 # (including the original Unsloth Git install used by this project):
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 > Note: Unsloth depends on a GPU with a compatible CUDA/PyTorch version and cannot be used for training or inference in a pure CPU environment. The `--help` for each script uses lazy imports, so parameter descriptions can be viewed on machines without a GPU.
@@ -151,7 +151,7 @@ python chapter7/continued-pretraining/validation/validate_evidence.py
 python -m pytest chapter7/continued-pretraining/validation/test_report_audit.py -q
 ```
 
-To create a new independent audit from the retained report, set `ARK_API_KEY` and use a new run ID:
+To create a new independent audit from the retained report, set `OPENAI_API_KEY` and use a new run ID:
 
 ```bash
 python chapter7/continued-pretraining/validation/run_report_audit.py \
@@ -234,7 +234,7 @@ cd chapter7/continued-pretraining
 
 # 迁移期间仍支持单项目兼容路径，用于完全复现旧版依赖
 #（包括本项目原有的 Unsloth Git 安装方式）：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 > 注意：Unsloth 依赖 GPU 与匹配的 CUDA/PyTorch 版本，无法在纯 CPU 环境下训练或推理。各脚本的 `--help` 已做延迟导入，可在没有 GPU 的机器上直接查看参数说明。
@@ -326,7 +326,7 @@ python chapter7/continued-pretraining/validation/validate_evidence.py
 python -m pytest chapter7/continued-pretraining/validation/test_report_audit.py -q
 ```
 
-如需从保留报告创建新的独立审计，设置 `ARK_API_KEY` 并使用新的 run ID：
+如需从保留报告创建新的独立审计，设置 `OPENAI_API_KEY` 并使用新的 run ID：
 
 ```bash
 python chapter7/continued-pretraining/validation/run_report_audit.py \

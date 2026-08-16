@@ -54,7 +54,7 @@ TalkAct `7d70007…` 要求 Python 3.12。该版本不是 WebSocket 桥：`src/c
 ```bash
 cd chapter10/use-computer-while-calling
 python3.12 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r ../requirements.txt
 .venv/bin/playwright install chromium
 .venv/bin/python envs/app.py
 CUV_USER_MODEL=claude-sonnet-4-5-20250929 .venv/bin/python bench/run_bench.py \

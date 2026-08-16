@@ -1,5 +1,5 @@
 """
-Read tool - File reading with support for text, images, PDFs, and notebooks
+Read tool - File reading with support for text, images, and notebooks
 """
 
 import os
@@ -24,7 +24,7 @@ class ReadTool(BaseTool):
         - Can specify offset and limit for large files
         - Lines longer than 2000 characters are truncated
         - Results returned in cat -n format with line numbers starting at 1
-        - Supports images, PDFs, Jupyter notebooks
+        - Supports images and Jupyter notebooks
         """
         file_path = Path(params["file_path"]).expanduser().resolve()
         offset = params.get("offset")
@@ -46,8 +46,6 @@ class ReadTool(BaseTool):
         # Handle special file types
         if suffix in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']:
             return self._read_image(file_path)
-        elif suffix == '.pdf':
-            return self._read_pdf(file_path)
         elif suffix == '.ipynb':
             return self._read_notebook(file_path)
         else:
@@ -120,21 +118,6 @@ class ReadTool(BaseTool):
         except Exception as e:
             return {"error": f"Error reading image: {str(e)}"}
     
-    def _read_pdf(self, file_path: Path) -> Dict[str, Any]:
-        """Read PDF file"""
-        # For now, return basic info
-        # Full PDF support would require PyPDF2 or similar
-        try:
-            size = file_path.stat().st_size
-            return {
-                "file_path": str(file_path),
-                "file_type": "pdf",
-                "size_bytes": size,
-                "note": "PDF file detected. Full text extraction requires PyPDF2 library. Install with: pip install PyPDF2"
-            }
-        except Exception as e:
-            return {"error": f"Error reading PDF: {str(e)}"}
-    
     def _read_notebook(self, file_path: Path) -> Dict[str, Any]:
         """Read Jupyter notebook"""
         try:
@@ -194,4 +177,3 @@ class ReadTool(BaseTool):
             return {"error": "Invalid Jupyter notebook format"}
         except Exception as e:
             return {"error": f"Error reading notebook: {str(e)}"}
-

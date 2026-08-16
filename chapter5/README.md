@@ -21,7 +21,7 @@
 | 5-1 | [code-for-math](code-for-math/) | ✅ | 30 道 AIME 2024 同模型真实对照：代码臂全部调用沙箱（含 sympy/numpy/scipy），53.3% vs 纯 CoT 36.7%，但差异未达显著（p=0.125）；正式负结论与原始收据均保留 |
 | 5-2 | [code-for-logic](code-for-logic/) | ✅ | 固定版本 K&K 数据集 84 题真实对照：代码臂 100% 调用 `python-constraint`，实测 39.3% vs 纯思考 75.0%，未达到正文预期的 90%；完整负结论如实保留 |
 | 5-3 | [small-model-codified-rules](small-model-codified-rules/) | ✅ | 本地 Qwen3-4B 的 60×2 配对 τ-bench 风格活动：代码化规则臂 91.7% vs 控制组 95.0%（p=0.6875），未显著提升；服务端真值、checklist 和完整 120 条轨迹均已验证 |
-| 5-4 | [paper-to-ppt](paper-to-ppt/) | ✅ | 固定真实论文 PDF 的 20 页双臂正式对照：三张原图均带页码/裁剪/变换/哈希来源；两组独立 Vision 均以 95 分通过，质量持平，但双 Agent 峰值上下文 24,186 vs 单 Agent 92,601（低 3.83×） |
+| 5-4 | [paper-to-ppt](paper-to-ppt/) | ✅ | 使用本地 Markdown 稿件生成 Slidev 幻灯片，比较双 Agent 审核与单 Agent 自审的上下文开销；支持离线 dry-run 和 OpenAI Vision 审查 |
 | 5-5 | [paper-to-video](paper-to-video/) | ✅ | 12 页真实幻灯片逐页经 Kimi K3 生成讲解词、Qwen-VL-Max 对照像素审核、Fish Audio S1 合成；ffmpeg 成片 513.010 秒，最大页漂移 0.024 秒，全部真实收据与失败重试均保留 |
 | 5-6 | [video-edit](video-edit/) | ✅ | 一段多场景视频 + 一句自然语言需求，两步 Vision 定位剪出片段，Reviewer 抽帧核对不合格则迭代 |
 | 5-7 | [adaptive-log-parser](adaptive-log-parser/) | ✅ | 遇到无法解析的新格式时不报错，交给代码 Agent 生成 `parse` 函数，测试通过后热更新进引擎，全程无人介入 |

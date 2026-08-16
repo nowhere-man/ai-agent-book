@@ -1,6 +1,6 @@
 # Structured Indexing: RAPTOR & GraphRAG / 结构化索引：RAPTOR 与 GraphRAG
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-7**: hierarchical RAPTOR trees vs GraphRAG knowledge graphs, plus offline structured-vs-flat demo.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-7**: hierarchical RAPTOR trees vs GraphRAG knowledge graphs, plus offline structured-vs-flat demo.
 > 配套《深入理解 AI Agent》第 3 章 **实验 3-7**：RAPTOR 层次树 vs GraphRAG 知识图谱，含离线「结构化 vs 扁平」演示。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -13,8 +13,8 @@
 
 Two advanced approaches for large technical documents (e.g. Intel® SDM-style manuals):
 
-1. **RAPTOR** — hierarchical tree with recursive abstractive summarization  
-2. **GraphRAG** — entities, relations, communities, multi-hop traversal  
+1. **RAPTOR** — hierarchical tree with recursive abstractive summarization
+2. **GraphRAG** — entities, relations, communities, multi-hop traversal
 
 ### Features
 
@@ -42,7 +42,7 @@ source .venv/bin/activate
 cd chapter3/structured-index
 
 # Exact legacy parity path, including optional RAPTOR/GraphRAG/Azure packages:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # API keys and preferences
@@ -158,7 +158,7 @@ structured-index/
 
 ### Advanced params (see `config.py`)
 
-RAPTOR: `chunk_size`, `chunk_overlap`, `tree_depth`, `summarization_length`.  
+RAPTOR: `chunk_size`, `chunk_overlap`, `tree_depth`, `summarization_length`.
 GraphRAG: `chunk_size`, `max_knowledge_triples`, community algorithm, summarization model.
 
 ### Performance / troubleshooting
@@ -171,9 +171,9 @@ Backend for agentic-rag style projects; see related chapter labs.
 
 ### References
 
-- [RAPTOR](https://arxiv.org/abs/2401.18059)  
-- [GraphRAG](https://github.com/microsoft/graphrag)  
-- [Intel SDM](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)  
+- [RAPTOR](https://arxiv.org/abs/2401.18059)
+- [GraphRAG](https://github.com/microsoft/graphrag)
+- [Intel SDM](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
 
 ---
 
@@ -183,13 +183,13 @@ Backend for agentic-rag style projects; see related chapter labs.
 
 面向大型技术文档的两种结构化索引：
 
-1. **RAPTOR** — 递归摘要的层次树  
-2. **GraphRAG** — 实体/关系/社区与多跳遍历  
+1. **RAPTOR** — 递归摘要的层次树
+2. **GraphRAG** — 实体/关系/社区与多跳遍历
 
 ### 功能
 
-**RAPTOR：** 多层抽象、递归摘要、自叶到根检索、GMM 聚类、UMAP。  
-**GraphRAG：** LLM 抽实体关系、社区发现、社区摘要、多策略检索、**多跳关系遍历**（扁平向量难以表达的「A 与 B 如何相连」）。  
+**RAPTOR：** 多层抽象、递归摘要、自叶到根检索、GMM 聚类、UMAP。
+**GraphRAG：** LLM 抽实体关系、社区发现、社区摘要、多策略检索、**多跳关系遍历**（扁平向量难以表达的「A 与 B 如何相连」）。
 **HTTP API：** 构建/查询、上传、异步大文档、混合检索、状态统计。
 
 ### 安装
@@ -210,7 +210,7 @@ source .venv/bin/activate
 cd chapter3/structured-index
 
 # 精确复现旧版单项目环境，含可选 RAPTOR/GraphRAG/Azure 依赖：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 ```
@@ -268,7 +268,7 @@ structured-index/
 
 ### 工作原理
 
-**RAPTOR：** 分块 → 嵌入 → 叶节点 → 聚类 → 父节点摘要 → 多层树 → 多层检索。  
+**RAPTOR：** 分块 → 嵌入 → 叶节点 → 聚类 → 父节点摘要 → 多层树 → 多层检索。
 **GraphRAG：** 实体 → 关系 → 图 → 社区 → 摘要 → 层次聚合 → 实体/社区检索（+ 多跳）。
 
 ### 性能与排错
@@ -285,4 +285,4 @@ structured-index/
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-Chat LLM for RAPTOR summarization and GraphRAG entity extraction can use OpenRouter when `OPENROUTER_API_KEY` is set. **Embeddings stay local SentenceTransformers (all-MiniLM-L6-v2)** and are unaffected.
+Chat LLM for RAPTOR summarization and GraphRAG entity extraction can use OpenRouter when `OPENAI_API_KEY` is set. **Embeddings stay local SentenceTransformers (all-MiniLM-L6-v2)** and are unaffected.

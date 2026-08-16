@@ -1,6 +1,6 @@
 # Experiment 5-2: Code Tools for Logic / 实验 5-2：用代码生成工具提升逻辑思考能力
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — Knights & Knaves as CSP with `python-constraint`; pure reasoning vs code-assisted vs offline solver.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — Knights & Knaves as CSP with `python-constraint`; pure reasoning vs code-assisted vs offline solver.
 > 《深入理解 AI Agent》第 5 章配套：骑士与无赖谜题转 CSP，对比纯思考 / 代码辅助 / 离线约束求解。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -75,7 +75,7 @@ source .venv/bin/activate
 cd chapter5/code-for-logic
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 1) Offline solver baseline (no API key; recommended first)
@@ -87,7 +87,7 @@ python demo.py --mode solver --min-people 4   # only puzzles with >=4 people
 
 Fully offline and deterministic; demonstrates “puzzle → constraints → solve” at 100% accuracy.
 
-#### 2) LLM comparison (needs `OPENAI_API_KEY` or `OPENROUTER_API_KEY`)
+#### 2) LLM comparison (needs `OPENAI_API_KEY` or `OPENAI_API_KEY`)
 
 ```bash
 cp env.example .env        # then edit .env with OPENAI_API_KEY
@@ -101,7 +101,7 @@ python demo.py --model gpt-4o-mini   # model (default gpt-4o-mini)
 python demo.py --puzzles my.json --output run.json   # custom data / output path
 ```
 
-**OpenRouter fallback**: if `OPENAI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, traffic goes through OpenRouter (`gpt-*` → `openai/*`). Default `gpt-4o-mini` works on direct OpenAI; OpenRouter is preferred when you switch `--model` to gpt-5.x models that need org verification and `OPENROUTER_API_KEY` is set.
+**OpenRouter fallback**: if `OPENAI_API_KEY` is unset but `OPENAI_API_KEY` is set, traffic goes through OpenRouter (`gpt-*` → `openai/*`). Default `gpt-4o-mini` works on direct OpenAI; OpenRouter is preferred when you switch `--model` to gpt-5.x models that need org verification and `OPENAI_API_KEY` is set.
 
 Full flags: `python demo.py --help` (Chinese help text).
 
@@ -197,7 +197,7 @@ The solver enumerates \(2^5=32\) assignments and returns the unique solution—t
 ### Notes
 
 - **Cost**: default `gpt-4o-mini` (weaker model for contrast); 12 puzzles × two modes is cheap; override with `MODEL` / `--model`.
-- **API key**: `OPENAI_API_KEY` or `OPENROUTER_API_KEY` from env / `.env`; `MODEL` to switch models.
+- **API key**: `OPENAI_API_KEY` or `OPENAI_API_KEY` from env / `.env`; `MODEL` to switch models.
 - **Sandbox**: `sandbox.py` uses subprocess + timeout—teaching minimal sandbox; production should use containers/gVisor etc.
 - **Puzzle reliability**: `build_puzzles.py` solves each puzzle (curated or random) with `python-constraint` and asserts unique solution before writing; extend via `CURATED` or `--generate`.
 
@@ -263,7 +263,7 @@ source .venv/bin/activate
 cd chapter5/code-for-logic
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 1) 离线约束求解基线（不需要 API Key，推荐先跑）
@@ -275,7 +275,7 @@ python demo.py --mode solver --min-people 4   # 只跑 >=4 人的难题
 
 这条路径完全离线、确定性，直接演示「谜题→约束程序→求解」的核心论点，准确率 100%。
 
-#### 2) LLM 对照实验（需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY）
+#### 2) LLM 对照实验（需要 OPENAI_API_KEY 或 OPENAI_API_KEY）
 
 ```bash
 cp env.example .env        # 然后编辑 .env 填入 OPENAI_API_KEY
@@ -289,10 +289,10 @@ python demo.py --model gpt-4o-mini   # 指定模型(默认 gpt-4o-mini)
 python demo.py --puzzles my.json --output run.json   # 换数据集/输出路径
 ```
 
-**通用 OpenRouter 兜底**：未配置 `OPENAI_API_KEY` 时，只要设置了 `OPENROUTER_API_KEY`
+**通用 OpenRouter 兜底**：未配置 `OPENAI_API_KEY` 时，只要设置了 `OPENAI_API_KEY`
 即自动改走 OpenRouter（`gpt-*` → `openai/*`）。默认模型 `gpt-4o-mini` 是普通 gpt id，可
 直连 OpenAI；仅当把 `--model` 换成 `gpt-5.x` 这类需组织实名认证的模型、且设置了
-`OPENROUTER_API_KEY` 时，才会优先走 OpenRouter。
+`OPENAI_API_KEY` 时，才会优先走 OpenRouter。
 
 完整参数见 `python demo.py --help`（中文说明）。
 
@@ -402,7 +402,7 @@ for s in p.getSolutions():
 ### 注意事项
 
 - **成本**：默认 `gpt-4o-mini`（刻意选用较弱模型以显现对照，见上文），跑完 12 题两种模式的开销很小；用 `MODEL`/`--model` 可换更便宜或更强的模型。
-- **API Key**：从环境变量或 `.env` 读 `OPENAI_API_KEY`（或 `OPENROUTER_API_KEY` 兜底）；用 `MODEL` 可换模型。
+- **API Key**：从环境变量或 `.env` 读 `OPENAI_API_KEY`（或 `OPENAI_API_KEY` 兜底）；用 `MODEL` 可换模型。
 - **沙箱**：`sandbox.py` 用子进程 + 超时执行代码，属教学用极简沙箱；生产环境应换成
   容器/gVisor 等更强隔离。
 - **谜题可靠性**：`build_puzzles.py` 用 `python-constraint` 求解每题(内置精选题或随机生成)，

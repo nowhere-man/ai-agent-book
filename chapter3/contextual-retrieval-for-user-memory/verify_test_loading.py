@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # Set dummy API key
-os.environ["KIMI_API_KEY"] = os.getenv("KIMI_API_KEY", "test-kimi-key")
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "test-kimi-key")
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "test-openai-key")
 
 from config import Config
@@ -21,11 +21,11 @@ test_cases = evaluator.load_test_cases(category="layer1")
 
 if test_cases:
     print(f"\nLoaded {len(test_cases)} test cases")
-    
+
     # Check first test case
     test_id = test_cases[0]
     test_case = evaluator.test_cases[test_id]
-    
+
     print(f"\nTest Case: {test_id}")
     print(f"  Title: {test_case.title}")
     print(f"  Category: {test_case.category}")
@@ -33,7 +33,7 @@ if test_cases:
     print(f"  Evaluation Criteria: {test_case.evaluation_criteria[:200]}..." if test_case.evaluation_criteria else "  Evaluation Criteria: None")
     print(f"  Expected Behavior: {test_case.expected_behavior[:100]}..." if test_case.expected_behavior else "  Expected Behavior: None")
     print(f"  Conversations: {len(test_case.conversation_histories)}")
-    
+
     # Check conversation history structure
     if test_case.conversation_histories:
         conv = test_case.conversation_histories[0]
@@ -42,7 +42,7 @@ if test_cases:
         print(f"  Timestamp: {conv.get('timestamp', 'N/A')}")
         print(f"  Messages: {len(conv.get('messages', []))}")
         print(f"  Has metadata: {bool(conv.get('metadata', {}))}")
-        
+
     print("\n✓ Test case structure is correct")
 else:
     print("✗ No test cases loaded")

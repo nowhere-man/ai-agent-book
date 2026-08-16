@@ -40,7 +40,7 @@ source .venv/bin/activate
 cd chapter10/parallel-web-research
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 playwright install chromium
 cp env.example .env                 # configure one real text-model endpoint

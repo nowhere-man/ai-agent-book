@@ -1,6 +1,6 @@
 # Mem0 Agent with Kimi K3 for LOCOMO Benchmark / Mem0 Agent 与 LOCOMO 评测
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — Mem0 memory framework + Kimi for long-context multi-session memory (Experiment 3-2 comparison track).  
+> Companion material for *AI Agents in Depth*, Chapter 3 — Mem0 memory framework + Kimi for long-context multi-session memory (Experiment 3-2 comparison track).
 > 配套《深入理解 AI Agent》第 3 章——Mem0 记忆框架 + Kimi，长上下文多会话记忆（实验 3-2 对照实现之一）。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -13,10 +13,10 @@
 
 An agent that combines the **Mem0** memory framework with the **Kimi** language model for LOCOMO-style long-context multi-agent / multi-session tasks:
 
-- **Persistent memory** via Mem0 across sessions  
-- **Kimi** integration (experiment caps context budget below the model’s full window)  
-- **LOCOMO benchmark** scenarios  
-- Multi-session and multi-agent collaboration with shared memory  
+- **Persistent memory** via Mem0 across sessions
+- **Kimi** integration (experiment caps context budget below the model’s full window)
+- **LOCOMO benchmark** scenarios
+- Multi-session and multi-agent collaboration with shared memory
 
 ### Features
 
@@ -44,7 +44,7 @@ source .venv/bin/activate
 cd chapter3/mem0
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # Edit .env with API keys
@@ -52,10 +52,10 @@ cp env.example .env
 
 Required env:
 
-- `KIMI_API_KEY`  
-- `MODEL_NAME` (default `kimi-k3`) — **raw Moonshot model id** (e.g. `kimi-k3`, `kimi-k2.5`); do **not** use `provider/model` slash form; Mem0 uses OpenAI-compatible provider pointed at Moonshot `base_url` and forwards the string verbatim (`kimi/k3` → “Not found the model”)  
-- `MEMORY_BACKEND`: `local` / `cloud`  
-- `MAX_TOKENS` (default 128000)  
+- `OPENAI_API_KEY`
+- `MODEL_NAME` (default `kimi-k3`) — **raw Moonshot model id** (e.g. `kimi-k3`, `kimi-k2.5`); do **not** use `provider/model` slash form; Mem0 uses OpenAI-compatible provider pointed at Moonshot `base_url` and forwards the string verbatim (`kimi/k3` → “Not found the model”)
+- `MEMORY_BACKEND`: `local` / `cloud`
+- `MAX_TOKENS` (default 128000)
 
 ### Quick start
 
@@ -89,7 +89,7 @@ python main.py --mode memory --op delete --memory-id <id>
 
 Flags: `--op {add,search,get-all,history,delete}`, `--text`, `--query`, `--memory-id`, `--user-id`, `--agent-id`, `--model`, `--output`. `--text` may be a raw string or path to a JSON message list.
 
-> Demo, memory ops, and chat modes need a working LLM key (`KIMI_API_KEY`) and vector store. Without a key the CLI parses args then reports the missing key—no fabricated memory output.
+> Demo, memory ops, and chat modes need a working LLM key (`OPENAI_API_KEY`) and vector store. Without a key the CLI parses args then reports the missing key—no fabricated memory output.
 
 #### Interactive / batch
 
@@ -123,9 +123,9 @@ Metrics: consistency, coherence, memory retention, response time, context utiliz
 
 ### Architecture
 
-- `agent.py`: `Mem0Agent`, `KimiK3Client`, `AgentContext`  
-- `config.py`: Kimi / Mem0 / LOCOMO config  
-- `experiment.py`: `LOCOMOBenchmark`  
+- `agent.py`: `Mem0Agent`, `KimiK3Client`, `AgentContext`
+- `config.py`: Kimi / Mem0 / LOCOMO config
+- `experiment.py`: `LOCOMOBenchmark`
 
 Mem0 provides append-only extraction, hybrid retrieval, and multi-level (user/agent/session) organization.
 
@@ -146,10 +146,10 @@ config.mem0.api_key = "your_mem0_api_key"
 
 ### Troubleshooting
 
-1. API key: set valid `KIMI_API_KEY` in `.env`  
-2. Local backend: write permission under `./data/`  
-3. Cloud: valid `MEM0_API_KEY`  
-4. Debug: `export LOG_LEVEL=DEBUG`  
+1. API key: set valid `OPENAI_API_KEY` in `.env`
+2. Local backend: write permission under `./data/`
+3. Cloud: valid `MEM0_API_KEY`
+4. Debug: `export LOG_LEVEL=DEBUG`
 
 ### Project structure
 
@@ -175,10 +175,10 @@ Part of AI Agent Book materials. Mem0 by Mem0 AI; Kimi by Moonshot AI.
 
 将 **Mem0** 记忆框架与 **Kimi** 语言模型结合，面向 LOCOMO 风格长上下文、多会话 / 多 Agent 任务：
 
-- 跨会话**持久记忆**  
-- Kimi 集成（实验中会限制上下文预算）  
-- LOCOMO 场景评测  
-- 多会话、多 Agent 共享记忆协作  
+- 跨会话**持久记忆**
+- Kimi 集成（实验中会限制上下文预算）
+- LOCOMO 场景评测
+- 多会话、多 Agent 共享记忆协作
 
 ### 功能
 
@@ -206,7 +206,7 @@ source .venv/bin/activate
 cd chapter3/mem0
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # 编辑 .env 填入 API Key
@@ -214,10 +214,10 @@ cp env.example .env
 
 环境变量：
 
-- `KIMI_API_KEY`  
-- `MODEL_NAME`（默认 `kimi-k3`）——**原始 Moonshot 模型 id**，不要用 `provider/model` 斜杠形式  
-- `MEMORY_BACKEND`：`local` / `cloud`  
-- `MAX_TOKENS`（默认 128000）  
+- `OPENAI_API_KEY`
+- `MODEL_NAME`（默认 `kimi-k3`）——**原始 Moonshot 模型 id**，不要用 `provider/model` 斜杠形式
+- `MEMORY_BACKEND`：`local` / `cloud`
+- `MAX_TOKENS`（默认 128000）
 
 ### 快速开始
 
@@ -264,12 +264,12 @@ python experiment.py --scenarios 10 --output results/
 
 ### 架构与后端
 
-- `agent.py` / `config.py` / `experiment.py`  
-- 本地 Chroma 或 Mem0 Cloud（配置见 English 节代码块）  
+- `agent.py` / `config.py` / `experiment.py`
+- 本地 Chroma 或 Mem0 Cloud（配置见 English 节代码块）
 
 ### 故障排查
 
-检查 `KIMI_API_KEY`、`./data/` 写权限、`MEM0_API_KEY`；`LOG_LEVEL=DEBUG`。
+检查 `OPENAI_API_KEY`、`./data/` 写权限、`MEM0_API_KEY`；`LOG_LEVEL=DEBUG`。
 
 ### 项目结构
 
@@ -289,8 +289,8 @@ mem0/
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-- Primary provider keys unchanged if set.  
-- Else `OPENROUTER_API_KEY` routes chat LLM via `https://openrouter.ai/api/v1` with automatic model id mapping; `OPENROUTER_MODEL` forces a specific id.  
+- Primary provider keys unchanged if set.
+- Else `OPENAI_API_KEY` routes chat LLM via `https://api.openai.com/v1` with automatic model id mapping; `OPENAI_MODEL` forces a specific id.
 - **Note:** Mem0’s embedder still uses OpenAI embeddings (OpenRouter has no embeddings endpoint), so `OPENAI_API_KEY` is still required for store/retrieve. OpenRouter only covers the chat LLM (ADD-only fact extraction and answering).
 
-Add `OPENROUTER_API_KEY=...` to `.env` (see `env.example`).
+Add `OPENAI_API_KEY=...` to `.env` (see `env.example`).

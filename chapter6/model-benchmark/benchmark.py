@@ -34,9 +34,9 @@ from openai import OpenAI
 
 # ---------------------------------------------------------------------------
 # OpenRouter 回退：对「OpenAI 原生」条目（base_url 为空）在缺主 key 时改走 OpenRouter。
-# gpt-5.x 直连 OpenAI 需组织实名认证，只要有 OPENROUTER_API_KEY 就优先走 OpenRouter。
+# gpt-5.x 直连 OpenAI 需组织实名认证，只要有 OPENAI_API_KEY 就优先走 OpenRouter。
 # ---------------------------------------------------------------------------
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _to_openrouter_model(model: str) -> str:
@@ -67,16 +67,16 @@ class ProviderConfig:
         return os.environ.get(self.api_key_env)
 
     def _openrouter_key(self) -> Optional[str]:
-        return os.environ.get("OPENROUTER_API_KEY", "").strip() or None
+        return os.environ.get("OPENAI_API_KEY", "").strip() or None
 
     def resolve(self) -> tuple[Optional[str], Optional[str], str, bool]:
         """解析实际使用的 (api_key, base_url, model, 是否经 OpenRouter)。
 
         仅「OpenAI 原生」条目（base_url 为空）参与回退；带专属 base_url 的条目
         （如 Kimi/豆包）保持不变。回退规则：
-          - gpt-5.x 且有 OPENROUTER_API_KEY -> 优先走 OpenRouter（直连需实名认证）；
+          - gpt-5.x 且有 OPENAI_API_KEY -> 优先走 OpenRouter（直连需实名认证）；
           - 否则主 key 存在 -> 直连，模型名不变；
-          - 否则（OpenAI 原生 + 有 OPENROUTER_API_KEY）-> 走 OpenRouter，模型名映射。
+          - 否则（OpenAI 原生 + 有 OPENAI_API_KEY）-> 走 OpenRouter，模型名映射。
         """
         primary = self.api_key()
         openai_native = self.base_url is None
@@ -86,7 +86,7 @@ class ProviderConfig:
         if not prefer_or and primary:
             return primary, self.base_url, self.model, False
         if orkey:
-            return orkey, OPENROUTER_BASE_URL, _to_openrouter_model(self.model), True
+            return orkey, OPENAI_BASE_URL, _to_openrouter_model(self.model), True
         return primary, self.base_url, self.model, False
 
     def is_available(self) -> bool:
@@ -101,7 +101,7 @@ class ProviderConfig:
 DEFAULT_PROVIDERS: list[ProviderConfig] = [
     # OpenAI 官方（一个 key 测多个模型，观察同厂不同规格的差异）
     # gpt-5.6-luna 为当前廉价旗舰；无 OPENAI_API_KEY 时自动经 OpenRouter 路由
-    # （openai/gpt-5.6-luna），gpt-5.x 只要有 OPENROUTER_API_KEY 就优先走 OpenRouter。
+    # （openai/gpt-5.6-luna），gpt-5.x 只要有 OPENAI_API_KEY 就优先走 OpenRouter。
     ProviderConfig(
         name="OpenAI/gpt-5.6-luna",
         model="gpt-5.6-luna",
@@ -111,15 +111,15 @@ DEFAULT_PROVIDERS: list[ProviderConfig] = [
     ProviderConfig(
         name="Moonshot/moonshot-v1-8k",
         model="moonshot-v1-8k",
-        api_key_env="MOONSHOT_API_KEY",
-        base_url="https://api.moonshot.cn/v1",
+        api_key_env="OPENAI_API_KEY",
+        base_url="https://api.openai.com/v1",
     ),
     # 字节豆包 / 火山方舟（OpenAI 兼容）
     ProviderConfig(
         name="Doubao/doubao-1.5-pro-32k",
         model="doubao-1-5-pro-32k-250115",
-        api_key_env="ARK_API_KEY",
-        base_url="https://ark.cn-beijing.volces.com/api/v3",
+        api_key_env="OPENAI_API_KEY",
+        base_url="https://api.openai.com/v1",
     ),
 ]
 

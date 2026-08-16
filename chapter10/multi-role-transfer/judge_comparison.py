@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("campaign", type=Path)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--model", default="openai/gpt-oss-120b")
-    p.add_argument("--base-url", default="https://openrouter.ai/api/v1")
+    p.add_argument("--base-url", default="https://api.openai.com/v1")
     p.add_argument("--request-timeout", type=float, default=60.0)
     return p.parse_args()
 
@@ -56,9 +56,9 @@ def parse_judgment(text: str) -> dict[str, Any]:
 
 def main() -> int:
     args = parse_args()
-    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise SystemExit("quality judge requires OPENROUTER_API_KEY or OPENAI_API_KEY")
+        raise SystemExit("quality judge requires OPENAI_API_KEY or OPENAI_API_KEY")
     client = OpenAI(api_key=api_key, base_url=args.base_url, timeout=args.request_timeout)
     campaign = json.loads(args.campaign.read_text(encoding="utf-8"))
     tasks = {str(item["id"]): item["prompt"] for item in campaign["tasks"]}

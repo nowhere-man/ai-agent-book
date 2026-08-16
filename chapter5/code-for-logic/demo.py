@@ -59,7 +59,7 @@ MODEL = os.environ.get("MODEL", "gpt-4o-mini")
 PROVIDER = "unknown"
 
 # --- 通用 OpenRouter 兜底：无直连 key 时自动改走 OpenRouter ---
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def map_model_to_openrouter(model: str) -> str:
@@ -84,24 +84,24 @@ def build_client_and_model(provider="auto"):
     """构造 OpenAI 客户端并返回 (client, model)。
 
     - 有 OPENAI_API_KEY：直连（默认模型 gpt-4o-mini 是普通 gpt id，可直连 OpenAI）。
-      仅当模型是 gpt-5.x 且同时设置了 OPENROUTER_API_KEY 时才优先走 OpenRouter
+      仅当模型是 gpt-5.x 且同时设置了 OPENAI_API_KEY 时才优先走 OpenRouter
       （直连 gpt-5.x 需组织实名认证）。
-    - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：整体改走 OpenRouter。
+    - 无 OPENAI_API_KEY 但有 OPENAI_API_KEY：整体改走 OpenRouter。
     """
     from openai import OpenAI
     global MODEL, PROVIDER
     choices = {
         "ollama": ("ollama", os.environ.get(
-            "OLLAMA_BASE_URL", "http://127.0.0.1:11434/v1"
+            "OPENAI_BASE_URL", "http://127.0.0.1:11434/v1"
         ), MODEL),
         "openai": (os.environ.get("OPENAI_API_KEY"),
                    os.environ.get("OPENAI_BASE_URL"), MODEL),
-        "openrouter": (os.environ.get("OPENROUTER_API_KEY"),
-                       OPENROUTER_BASE_URL, map_model_to_openrouter(MODEL)),
-        "moonshot": (os.environ.get("MOONSHOT_API_KEY"),
-                     "https://api.moonshot.cn/v1", MODEL),
-        "ark": (os.environ.get("ARK_API_KEY"),
-                "https://ark.cn-beijing.volces.com/api/v3", MODEL),
+        "openrouter": (os.environ.get("OPENAI_API_KEY"),
+                       OPENAI_BASE_URL, map_model_to_openrouter(MODEL)),
+        "moonshot": (os.environ.get("OPENAI_API_KEY"),
+                     "https://api.openai.com/v1", MODEL),
+        "ark": (os.environ.get("OPENAI_API_KEY"),
+                "https://api.openai.com/v1", MODEL),
     }
     if provider == "auto":
         provider = next(

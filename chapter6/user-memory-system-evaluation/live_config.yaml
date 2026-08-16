@@ -3,8 +3,8 @@
 chat_models:
   kimi:
     model: kimi-k2.5
-    base_url: https://api.moonshot.cn/v1
-    api_key_env: KIMI_API_KEY
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
     disable_thinking: true
     temperature: 0.6
     pricing:
@@ -17,8 +17,8 @@ chat_models:
       source_note: Published Kimi K2.5 list price; input rate is cache-miss/uncached.
   doubao:
     model: doubao-seed-1-6-250615
-    base_url: https://ark.cn-beijing.volces.com/api/v3
-    api_key_env: ARK_API_KEY
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
 
 embeddings:
   mistral:

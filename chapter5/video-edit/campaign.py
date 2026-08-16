@@ -102,12 +102,12 @@ def _frame_set(source: Path, timestamps: list[float], directory: Path) -> list[d
 class Backend:
     def __init__(self, provider: str):
         if provider == "ark":
-            key = os.environ.get("ARK_API_KEY")
-            self.endpoint = os.environ.get("ARK_BASE_URL") or "https://ark.cn-beijing.volces.com/api/v3"
+            key = os.environ.get("OPENAI_API_KEY")
+            self.endpoint = os.environ.get("ARK_BASE_URL") or "https://api.openai.com/v1"
             self.model = os.environ.get("ARK_MODEL") or "doubao-seed-1-6-250615"
         elif provider == "moonshot":
-            key = os.environ.get("MOONSHOT_API_KEY") or os.environ.get("KIMI_API_KEY")
-            self.endpoint = os.environ.get("MOONSHOT_BASE_URL") or "https://api.moonshot.cn/v1"
+            key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+            self.endpoint = os.environ.get("MOONSHOT_BASE_URL") or "https://api.openai.com/v1"
             self.model = os.environ.get("KIMI_MODEL") or "kimi-k3"
         else:
             key = os.environ.get("OPENAI_API_KEY")

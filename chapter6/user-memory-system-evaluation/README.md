@@ -100,7 +100,7 @@ does not add or change any score.
 
 ```bash
 cd chapter6/user-memory-system-evaluation
-python -m pip install -r requirements.txt
+python -m pip install -r ../../requirements.txt
 cp env.example .env
 ```
 

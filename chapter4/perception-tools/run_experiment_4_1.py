@@ -40,7 +40,6 @@ CASE_TO_TOOL = {
     "knowledge_base_search": "knowledge_base_search",
     "download": "download",
     "webpage_reader": "webpage_reader",
-    "document_reader_pdf": "document_reader",
     "document_reader_docx": "document_reader",
     "document_reader_pptx": "document_reader",
     "image_ocr": "image_ocr",
@@ -153,13 +152,6 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
     outside_witness.write_text("OUTSIDE-WITNESS-MUST-REMAIN\n", encoding="utf-8")
     (mutation / "escape-link").symlink_to(outside_witness)
 
-    from reportlab.pdfgen import canvas
-
-    pdf = documents / "sample.pdf"
-    report = canvas.Canvas(str(pdf))
-    report.drawString(72, 760, f"Experiment 4-1 PDF {MARKER}")
-    report.save()
-
     from docx import Document
 
     docx = documents / "sample.docx"
@@ -212,7 +204,6 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
         "fixtures": fixtures,
         "knowledge": knowledge,
         "note": note,
-        "pdf": pdf,
         "docx": docx,
         "pptx": pptx,
         "image": image,
@@ -227,7 +218,7 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
         "paths": {name: str(path) for name, path in paths.items()},
         "files": [
             file_receipt(path)
-            for path in (note, pdf, docx, pptx, image, audio_aiff, video, outside_witness)
+            for path in (note, docx, pptx, image, audio_aiff, video, outside_witness)
         ],
         "generators": {"say": say_receipt, "ffmpeg": ffmpeg_receipt},
     }
@@ -251,9 +242,9 @@ def credential_preflight() -> dict[str, Any]:
         },
         "multimodal": {
             "openai_key_present": bool(os.environ.get("OPENAI_API_KEY")),
-            "openrouter_key_present": bool(os.environ.get("OPENROUTER_API_KEY")),
-            "gemini_key_present": bool(os.environ.get("GEMINI_API_KEY")),
-            "dashscope_key_present": bool(os.environ.get("DASHSCOPE_API_KEY")),
+            "openrouter_key_present": bool(os.environ.get("OPENAI_API_KEY")),
+            "gemini_key_present": bool(os.environ.get("OPENAI_API_KEY")),
+            "dashscope_key_present": bool(os.environ.get("OPENAI_API_KEY")),
             "local_whisper_importable": importlib.util.find_spec("whisper") is not None,
             "pytesseract_importable": importlib.util.find_spec("pytesseract") is not None,
             "tesseract_executable_present": bool(shutil.which("tesseract")),
@@ -590,10 +581,10 @@ async def run(campaign_id: str | None = None) -> Path:
     outside_before = file_receipt(paths["outside_witness"])
     server_env = os.environ.copy()
     server_env["PERCEPTION_MUTATION_ROOT"] = str(paths["mutation"])
-    if server_env.get("DASHSCOPE_API_KEY"):
+    if server_env.get("OPENAI_API_KEY"):
         server_env["PERCEPTION_VISION_PROVIDER"] = "dashscope"
         server_env["PERCEPTION_VISION_MODEL"] = "qwen-vl-max"
-    elif server_env.get("GEMINI_API_KEY"):
+    elif server_env.get("OPENAI_API_KEY"):
         server_env["PERCEPTION_VISION_PROVIDER"] = "gemini"
         server_env["PERCEPTION_VISION_MODEL"] = "gemini-2.5-flash"
     else:
@@ -629,7 +620,6 @@ async def run(campaign_id: str | None = None) -> Path:
             ("knowledge_base_search", {"query": MARKER, "knowledge_base_path": str(paths["knowledge"]), "top_k": 3}),
             ("download", {"url": "https://www.iana.org/help/example-domains", "output_path": str(paths["downloads"] / "iana-example.html"), "timeout": 60}),
             ("webpage_reader", {"url": "https://example.com", "extract_text": True, "extract_links": True}),
-            ("document_reader_pdf", {"file_path": str(paths["pdf"])}),
             ("document_reader_docx", {"file_path": str(paths["docx"])}),
             ("document_reader_pptx", {"file_path": str(paths["pptx"])}),
             ("image_ocr", {"image_path": str(paths["image"]), "language": "eng"}),

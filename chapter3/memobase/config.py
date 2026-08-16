@@ -12,8 +12,8 @@ load_dotenv()
 
 def _openrouter_model_id(model) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins."""
-    override = os.getenv("OPENROUTER_MODEL")
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins."""
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -36,21 +36,21 @@ def _openrouter_model_id(model) -> str:
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "kimi").lower()
 LLM_PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(LLM_PROVIDER, LLM_PROVIDER)
 if LLM_PROVIDER == "dashscope":
-    KIMI_API_KEY = os.getenv("DASHSCOPE_API_KEY", "")
-    KIMI_BASE_URL = os.getenv(
-        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL = os.getenv(
+        "OPENAI_BASE_URL", "https://api.openai.com/v1"
     )
     KIMI_MODEL = os.getenv("MODEL_NAME", "qwen3.7-plus")
 else:
-    KIMI_API_KEY = os.getenv("KIMI_API_KEY", "") or os.getenv("MOONSHOT_API_KEY", "")
-    KIMI_BASE_URL = "https://api.moonshot.cn/v1"
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "") or os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL = "https://api.openai.com/v1"
     KIMI_MODEL = os.getenv("MODEL_NAME", "kimi-k3")  # Kimi K3 model identifier
 
 # Universal OpenRouter fallback: primary key (KIMI/MOONSHOT) absent but
-# OPENROUTER_API_KEY present -> route the chat LLM through OpenRouter.
-if not KIMI_API_KEY and os.getenv("OPENROUTER_API_KEY"):
-    KIMI_API_KEY = os.getenv("OPENROUTER_API_KEY")
-    KIMI_BASE_URL = "https://openrouter.ai/api/v1"
+# OPENAI_API_KEY present -> route the chat LLM through OpenRouter.
+if not OPENAI_API_KEY and os.getenv("OPENAI_API_KEY"):
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    OPENAI_BASE_URL = "https://api.openai.com/v1"
     KIMI_MODEL = _openrouter_model_id(KIMI_MODEL)
 
 # Model Parameters

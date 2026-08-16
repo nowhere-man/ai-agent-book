@@ -1,6 +1,6 @@
 # Experiment 5-3: Codified Rules for Small Models / 实验 5-3：小模型通过代码化知识提升执行规则的准确性
 
-> Companion lab for *AI Agents in Depth*, Chapter 5 — τ-bench-style airline customer service: codified refund policy as CODE guard vs pure natural-language policy.  
+> Companion lab for *AI Agents in Depth*, Chapter 5 — τ-bench-style airline customer service: codified refund policy as CODE guard vs pure natural-language policy.
 > 《深入理解 AI Agent》第 5 章（实验 5-3）：τ-bench 航空客服对照——把退款规则从提示词搬进代码/工具。
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
@@ -104,10 +104,10 @@ source .venv/bin/activate
 cd chapter5/small-model-codified-rules
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env   # set OPENAI_API_KEY (or env vars)
-# Fallback: if OPENAI_API_KEY unset, OPENROUTER_API_KEY routes to OpenRouter
+# Fallback: if OPENAI_API_KEY unset, OPENAI_API_KEY routes to OpenRouter
 # (small model gpt-5.6-luna is gpt-5.x → prefer OpenRouter openai/gpt-5.6-luna; large baseline same)
 
 # Offline self-test (no API key): show codified guard logic
@@ -283,10 +283,10 @@ source .venv/bin/activate
 cd chapter5/small-model-codified-rules
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env   # 填入 OPENAI_API_KEY（也可直接用环境变量）
-# 通用兜底：未配置 OPENAI_API_KEY 时，设置 OPENROUTER_API_KEY 即自动改走 OpenRouter
+# 通用兜底：未配置 OPENAI_API_KEY 时，设置 OPENAI_API_KEY 即自动改走 OpenRouter
 #（小模型 gpt-5.6-luna 属 gpt-5.x，代码会自动优先走 OpenRouter：openai/gpt-5.6-luna；大模型基线同理）
 
 # 离线自检（无需 API Key）：直接看代码化守卫的校验逻辑

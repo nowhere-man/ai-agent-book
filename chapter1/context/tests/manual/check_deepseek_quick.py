@@ -21,10 +21,10 @@ print("=" * 60)
 print("QUICK TEST - DeepSeek Provider")
 print("=" * 60)
 
-deepseek_key = os.getenv("DEEPSEEK_API_KEY")
+deepseek_key = os.getenv("OPENAI_API_KEY")
 if not deepseek_key:
-    print("❌ DEEPSEEK_API_KEY not set")
-    print("Set it in .env or: export DEEPSEEK_API_KEY=your_key")
+    print("❌ OPENAI_API_KEY not set")
+    print("Set it in .env or: export OPENAI_API_KEY=your_key")
     print("Get a key at: https://platform.deepseek.com/api_keys")
     sys.exit(1)
 

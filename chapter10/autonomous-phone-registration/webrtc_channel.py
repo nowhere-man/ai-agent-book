@@ -301,8 +301,8 @@ class SystemGeminiSpeechBackend:
     provider = "local system TTS + Google Gemini ASR"
 
     def __init__(self):
-        if not os.getenv("GEMINI_API_KEY"):
-            raise RuntimeError("Gemini ASR requires GEMINI_API_KEY")
+        if not os.getenv("OPENAI_API_KEY"):
+            raise RuntimeError("Gemini ASR requires OPENAI_API_KEY")
         self.say = shutil.which("say")
         self.espeak = shutil.which("espeak-ng") or shutil.which("espeak")
         self.ffmpeg = shutil.which("ffmpeg")
@@ -358,7 +358,7 @@ class SystemGeminiSpeechBackend:
                 ]}],
                 "generationConfig": {"temperature": 0, "maxOutputTokens": 256},
             }).encode("utf-8")
-            key = os.environ["GEMINI_API_KEY"]
+            key = os.environ["OPENAI_API_KEY"]
             request = urllib.request.Request(
                 f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
                 data=payload,
@@ -473,7 +473,7 @@ def default_speech_backend() -> SpeechBackend:
     if requested == "local-whisper":
         return SystemWhisperSpeechBackend()
     if requested == "gemini-system" or (
-        requested == "auto" and os.getenv("GEMINI_API_KEY")
+        requested == "auto" and os.getenv("OPENAI_API_KEY")
         and (shutil.which("say") or shutil.which("espeak-ng") or shutil.which("espeak"))
         and shutil.which("ffmpeg")
     ):

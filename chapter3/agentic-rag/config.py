@@ -11,8 +11,8 @@ load_dotenv()
 
 def _openrouter_model_id(model: Optional[str]) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins."""
-    override = os.getenv("OPENROUTER_MODEL")
+    universal OpenRouter fallback. An explicit OPENAI_MODEL env var wins."""
+    override = os.getenv("OPENAI_MODEL")
     if override:
         return override
     m = (model or "").strip()
@@ -65,35 +65,35 @@ class LLMConfig:
     temperature: float = 0.7
     max_tokens: int = 1024
     stream: bool = True
-    
+
     # Provider-specific defaults
     PROVIDER_DEFAULTS = {
         "dashscope": {
             "model": "qwen3.7-plus",
             "base_url": os.getenv(
-                "DASHSCOPE_BASE_URL",
-                "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                "OPENAI_BASE_URL",
+                "https://api.openai.com/v1",
             ),
         },
         "siliconflow": {
             "model": "Qwen/Qwen3-235B-A22B-Thinking-2507",
-            "base_url": "https://api.siliconflow.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "doubao": {
             "model": "doubao-seed-1-6-thinking-250715",
-            "base_url": "https://ark.cn-beijing.volces.com/api/v3"
+            "base_url": "https://api.openai.com/v1"
         },
         "kimi": {
             "model": "kimi-k3",
-            "base_url": "https://api.moonshot.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "moonshot": {
             "model": "kimi-k3",
-            "base_url": "https://api.moonshot.cn/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "openrouter": {
             "model": "openai/gpt-5.6-luna",
-            "base_url": "https://openrouter.ai/api/v1"
+            "base_url": "https://api.openai.com/v1"
         },
         "openai": {
             "model": "gpt-5.6-luna",
@@ -109,29 +109,29 @@ class LLMConfig:
         },
         "deepseek": {
             "model": "deepseek-reasoner",
-            "base_url": "https://api.deepseek.com/v1"
+            "base_url": "https://api.openai.com/v1/v1"
         }
     }
-    
+
     @classmethod
     def get_api_key(cls, provider: str) -> Optional[str]:
         """Get API key from environment"""
         env_mappings = {
-            "dashscope": "DASHSCOPE_API_KEY",
-            "qwen": "DASHSCOPE_API_KEY",
-            "bailian": "DASHSCOPE_API_KEY",
-            "siliconflow": "SILICONFLOW_API_KEY",
-            "doubao": "ARK_API_KEY",
-            "kimi": "MOONSHOT_API_KEY",
-            "moonshot": "MOONSHOT_API_KEY",
-            "openrouter": "OPENROUTER_API_KEY",
+            "dashscope": "OPENAI_API_KEY",
+            "qwen": "OPENAI_API_KEY",
+            "bailian": "OPENAI_API_KEY",
+            "siliconflow": "OPENAI_API_KEY",
+            "doubao": "OPENAI_API_KEY",
+            "kimi": "OPENAI_API_KEY",
+            "moonshot": "OPENAI_API_KEY",
+            "openrouter": "OPENAI_API_KEY",
             "openai": "OPENAI_API_KEY",
             "groq": "GROQ_API_KEY",
             "together": "TOGETHER_API_KEY",
-            "deepseek": "DEEPSEEK_API_KEY"
+            "deepseek": "OPENAI_API_KEY"
         }
         return os.getenv(env_mappings.get(provider.lower(), ""))
-    
+
     def get_client_config(self) -> Dict[str, Any]:
         """Get OpenAI client configuration"""
         provider_lower = self.provider.lower()
@@ -139,24 +139,24 @@ class LLMConfig:
             provider_lower, provider_lower
         )
         defaults = self.PROVIDER_DEFAULTS.get(provider_lower, {})
-        
+
         # Get API key
         api_key = self.api_key or self.get_api_key(provider_lower)
 
         # Universal OpenRouter fallback: primary provider key absent but
-        # OPENROUTER_API_KEY present -> route through OpenRouter.
-        if not api_key and provider_lower != "openrouter" and os.getenv("OPENROUTER_API_KEY"):
+        # OPENAI_API_KEY present -> route through OpenRouter.
+        if not api_key and provider_lower != "openrouter" and os.getenv("OPENAI_API_KEY"):
             model = _openrouter_model_id(self.model or defaults.get("model"))
             return {
-                "api_key": os.getenv("OPENROUTER_API_KEY"),
-                "base_url": "https://openrouter.ai/api/v1",
+                "api_key": os.getenv("OPENAI_API_KEY"),
+                "base_url": "https://api.openai.com/v1",
             }, model
 
         if not api_key:
             raise ValueError(
                 f"API key required for provider '{provider_lower}'. Set the "
-                f"provider's key (e.g. MOONSHOT_API_KEY / OPENAI_API_KEY) or "
-                f"OPENROUTER_API_KEY to use the OpenRouter fallback."
+                f"provider's key (e.g. OPENAI_API_KEY / OPENAI_API_KEY) or "
+                f"OPENAI_API_KEY to use the OpenRouter fallback."
             )
 
         # Build config
@@ -184,27 +184,27 @@ class KnowledgeBaseConfig:
     # Local retrieval pipeline config
     local_base_url: str = "http://localhost:4242"
     local_top_k: int = 3
-    
+
     # Dify config
     dify_api_key: Optional[str] = field(default_factory=lambda: os.getenv("DIFY_API_KEY"))
     dify_base_url: str = "https://api.dify.ai/v1"
     dify_dataset_id: Optional[str] = None
     dify_top_k: int = 3
-    
+
     # RAPTOR tree-based index config
     raptor_base_url: str = "http://localhost:4242"
     raptor_top_k: int = 3
     raptor_search_levels: bool = True  # Search across multiple tree levels
-    
+
     # GraphRAG graph-based index config
     graphrag_base_url: str = "http://localhost:4242"
     graphrag_top_k: int = 3
     graphrag_search_type: str = "hybrid"  # entity, community, or hybrid
-    
+
     # Document storage
     document_store_path: str = "document_store.json"
-    
-    
+
+
 @dataclass
 class ChunkingConfig:
     """Document chunking configuration"""
@@ -215,7 +215,7 @@ class ChunkingConfig:
     min_chunk_size: int = 100  # Minimum chunk size
 
 
-@dataclass 
+@dataclass
 class AgentConfig:
     """Agent configuration"""
     max_iterations: int = 10  # Max reasoning iterations
@@ -242,12 +242,12 @@ class Config:
     chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
     agent: AgentConfig = field(default_factory=AgentConfig)
     evaluation: EvaluationConfig = field(default_factory=EvaluationConfig)
-    
+
     @classmethod
     def from_env(cls) -> "Config":
         """Create config from environment variables"""
         config = cls()
-        
+
         # Override from env
         if provider := os.getenv("LLM_PROVIDER"):
             config.llm.provider = provider
@@ -255,5 +255,5 @@ class Config:
             config.llm.model = model
         if kb_type := os.getenv("KB_TYPE"):
             config.knowledge_base.type = KnowledgeBaseType(kb_type.lower())
-        
+
         return config

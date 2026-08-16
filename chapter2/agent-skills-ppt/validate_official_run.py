@@ -223,8 +223,8 @@ def validate(run_dir: Path) -> dict:
     configured_secrets = [
         value
         for name in (
-            "ANTHROPIC_API_KEY", "KIMI_API_KEY", "MOONSHOT_API_KEY",
-            "OPENAI_API_KEY", "OPENROUTER_API_KEY",
+            "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY",
+            "OPENAI_API_KEY", "OPENAI_API_KEY",
         )
         if (value := os.getenv(name))
     ]

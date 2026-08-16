@@ -34,7 +34,7 @@ DSN = "dbname=pedo_test"
 # ── Gemini Client ──────────────────────────────────────────────
 
 def get_gemini_client():
-    return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return genai.Client(api_key=os.environ["OPENAI_API_KEY"])
 
 
 # ── Ground Truth Oracle ──────────────────────────────────────

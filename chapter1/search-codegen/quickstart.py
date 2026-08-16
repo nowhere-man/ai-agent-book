@@ -14,18 +14,18 @@ def demo_web_search():
     print("\n" + "="*60)
     print("DEMO: Web Search Tool")
     print("="*60)
-    
+
     agent = GPT5NativeAgent(
-        api_key=Config.OPENROUTER_API_KEY,
-        base_url=Config.OPENROUTER_BASE_URL
+        api_key=Config.OPENAI_API_KEY,
+        base_url=Config.OPENAI_BASE_URL
     )
-    
+
     result = agent.process_request(
         "What are the latest developments in GPT-5 and its capabilities?",
         use_tools=True,
         reasoning_effort="low"
     )
-    
+
     if result["success"]:
         print("\n✅ Web Search Result:")
         print(result["response"][:500] + "...")
@@ -39,12 +39,12 @@ def demo_code_interpreter():
     print("\n" + "="*60)
     print("DEMO: Code Generation and Analysis")
     print("="*60)
-    
+
     agent = GPT5NativeAgent(
-        api_key=Config.OPENROUTER_API_KEY,
-        base_url=Config.OPENROUTER_BASE_URL
+        api_key=Config.OPENAI_API_KEY,
+        base_url=Config.OPENAI_BASE_URL
     )
-    
+
     result = agent.process_request(
         """Create Python code to:
         1. Generate the first 20 Fibonacci numbers
@@ -54,7 +54,7 @@ def demo_code_interpreter():
         use_tools=True,
         reasoning_effort="medium"
     )
-    
+
     if result["success"]:
         print("\n✅ Code and Analysis Result:")
         print(result["response"][:500] + "...")
@@ -68,12 +68,12 @@ def demo_combined_tools():
     print("\n" + "="*60)
     print("DEMO: Combined Web Search + Code Analysis")
     print("="*60)
-    
+
     agent = GPT5NativeAgent(
-        api_key=Config.OPENROUTER_API_KEY,
-        base_url=Config.OPENROUTER_BASE_URL
+        api_key=Config.OPENAI_API_KEY,
+        base_url=Config.OPENAI_BASE_URL
     )
-    
+
     result = agent.search_and_analyze(
         topic="Current S&P 500 performance and major tech stocks",
         analysis_code="""
@@ -96,7 +96,7 @@ for symbol, prices in stocks.items():
     print(f"{symbol}: Avg=${avg:.2f}, Volatility=${vol:.2f}, Trend={trend}")
 """
     )
-    
+
     if result["success"]:
         print("\n✅ Combined Analysis Result:")
         print(result["response"][:500] + "...")
@@ -110,29 +110,29 @@ def main():
     print("\n" + "="*60)
     print("      GPT-5 Native Tools Agent - Quick Start Demo")
     print("="*60)
-    
+
     # Check configuration
     if not Config.validate():
         print("\n❌ Configuration Error!")
-        print("Please set up your .env file with OPENROUTER_API_KEY")
+        print("Please set up your .env file with OPENAI_API_KEY")
         print("\nSteps:")
         print("1. Copy env.example to .env")
         print("2. Add your OpenRouter API key")
         print("3. Get a key at: https://openrouter.ai/keys")
         sys.exit(1)
-    
+
     print("\n✅ Configuration valid")
     print(f"Using model: {Config.MODEL_NAME}")
-    
+
     # Ask user which demo to run
     print("\nSelect demo to run:")
     print("1. Web Search only")
     print("2. Code Generation and Analysis")
     print("3. Combined Tools")
     print("4. All demos")
-    
+
     choice = input("\nEnter choice (1-4): ").strip()
-    
+
     if choice == "1":
         demo_web_search()
     elif choice == "2":
@@ -148,7 +148,7 @@ def main():
         demo_web_search()
         demo_code_interpreter()
         demo_combined_tools()
-    
+
     print("\n" + "="*60)
     print("Demo complete! 🎉")
     print("\nNext steps:")

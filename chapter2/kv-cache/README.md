@@ -1,6 +1,6 @@
 # KV Cache Demonstration / KV Cache 与错误上下文管理模式
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-3 ★★: Common but harmful context management patterns**.  
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-3 ★★: Common but harmful context management patterns**.
 > 配套《深入理解 AI Agent》第 2 章 **实验 2-3 ★★：常见的错误上下文管理模式**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
@@ -79,13 +79,13 @@ source .venv/bin/activate
 cd chapter2/kv-cache
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env                  # edit .env with your key
-# Or export MOONSHOT_API_KEY="your-api-key-here"
+# Or export OPENAI_API_KEY="your-api-key-here"
 ```
 
-> **OpenRouter fallback:** If `MOONSHOT_API_KEY` / `KIMI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With a Moonshot key set, behavior is unchanged.
+> **OpenRouter fallback:** If `OPENAI_API_KEY` / `OPENAI_API_KEY` is unset but `OPENAI_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With a Moonshot key set, behavior is unchanged.
 
 ### Usage
 
@@ -154,10 +154,10 @@ Live smoke checks and demonstrations live under `tests/manual/`. They are not
 collected by pytest because their filenames use `check_*.py` or `demo_*.py`:
 
 ```bash
-MOONSHOT_API_KEY="your-key" python tests/manual/demo_quick.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_tool_calling.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
+OPENAI_API_KEY="your-key" python tests/manual/demo_quick.py
+OPENAI_API_KEY="your-key" python tests/manual/check_tool_calling.py
+OPENAI_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
+OPENAI_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
 ```
 
 ### Metrics
@@ -212,11 +212,11 @@ Reading: `shuffled_tools` reorders tool definitions near the front of the prefix
 
 ### Key insights
 
-1. Stable context is critical  
-2. Order matters (even reordering identical content breaks cache)  
-3. Avoid dynamic metadata in the prefix  
-4. Use the API’s structured message format  
-5. Full history often beats aggressive truncation for cache  
+1. Stable context is critical
+2. Order matters (even reordering identical content breaks cache)
+3. Avoid dynamic metadata in the prefix
+4. Use the API’s structured message format
+5. Full history often beats aggressive truncation for cache
 
 ### Architecture
 
@@ -239,7 +239,7 @@ kv-cache/
 ### Advanced configuration
 
 ```bash
-export MOONSHOT_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
 export LOG_LEVEL="DEBUG"  # INFO, WARNING, ERROR
 ```
 
@@ -247,18 +247,18 @@ Extend `KVCacheMode` in `agent.py` and implement `_get_system_prompt()` / `_get_
 
 ### Best practices
 
-1. Keep system prompts stable  
-2. Keep tool order fixed  
-3. Avoid counters/credits/timestamps in the prefix  
-4. Use proper message structure  
-5. Prefer continuity over aggressive truncation  
-6. Design context with caching in mind  
+1. Keep system prompts stable
+2. Keep tool order fixed
+3. Avoid counters/credits/timestamps in the prefix
+4. Use proper message structure
+5. Prefer continuity over aggressive truncation
+6. Design context with caching in mind
 
 ### Troubleshooting
 
-- **High TTFT in correct mode:** first request cold start; check key/network/model  
-- **Zero cache hits:** use current Kimi models that report `cached_tokens` (not `moonshot-v1-*`); verify context stability  
-- **Tool errors:** permissions, paths within root, files exist  
+- **High TTFT in correct mode:** first request cold start; check key/network/model
+- **Zero cache hits:** use current Kimi models that report `cached_tokens` (not `moonshot-v1-*`); verify context stability
+- **Tool errors:** permissions, paths within root, files exist
 
 ### References
 
@@ -317,7 +317,7 @@ KV Cache 存储注意力机制中的键值对。对话上下文稳定时，可�
 
 错误模式要**真正**使 KV Cache 失效，必须在**每一轮迭代开始时**整表重建 messages。
 
-1. **CORRECT：** 首次构建 messages，之后只在同一列表上追加 assistant/tool → 前缀稳定 → 缓存生效。  
+1. **CORRECT：** 首次构建 messages，之后只在同一列表上追加 assistant/tool → 前缀稳定 → 缓存生效。
 2. **错误模式：** 每轮开始从对话历史重建整个 messages（轮内仍追加 tool 结果以保证 API 流正确）→ 下一轮从新列表开始 → 缓存失效。
 
 两模式在轮内都会追加 tool 结果；差异在于下一轮是否丢弃并重建列表。
@@ -340,13 +340,13 @@ source .venv/bin/activate
 cd chapter2/kv-cache
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env                  # 编辑 .env，填入 API Key
-# 或 export MOONSHOT_API_KEY="your-api-key-here"
+# 或 export OPENAI_API_KEY="your-api-key-here"
 ```
 
-> **通用回退（OpenRouter）**：未设置 `MOONSHOT_API_KEY` / `KIMI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，实验会自动改走 OpenRouter（`kimi-*` 会映射为 `moonshotai/kimi-k2`）。设置了 Moonshot key 时行为完全不变。
+> **通用回退（OpenRouter）**：未设置 `OPENAI_API_KEY` / `OPENAI_API_KEY` 时，只要配置了 `OPENAI_API_KEY`，实验会自动改走 OpenRouter（`kimi-*` 会映射为 `moonshotai/kimi-k2`）。设置了 Moonshot key 时行为完全不变。
 
 ### 用法
 
@@ -413,10 +413,10 @@ python -m pytest tests
 `check_*.py` 或 `demo_*.py` 命名，因此不会被 pytest 默认收集：
 
 ```bash
-MOONSHOT_API_KEY="your-key" python tests/manual/demo_quick.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_tool_calling.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
-MOONSHOT_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
+OPENAI_API_KEY="your-key" python tests/manual/demo_quick.py
+OPENAI_API_KEY="your-key" python tests/manual/check_tool_calling.py
+OPENAI_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
+OPENAI_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
 ```
 
 ### 指标说明
@@ -429,7 +429,7 @@ MOONSHOT_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
 
 ### 预期结果
 
-1. **正确实现：** 第一轮之后上报缓存 token；TTFT 更稳；稳定前缀由缓存服务。  
+1. **正确实现：** 第一轮之后上报缓存 token；TTFT 更稳；稳定前缀由缓存服务。
 2. **错误实现：** **缓存比例**崩塌（如打乱工具可将比例降到正确模式约 1/3）；TTFT 更高（text_format / 打乱工具可让首 token 延迟翻倍以上）；总时间更长（实测 `text_format` 可达约 2.4×）。
 
 > 推理模型上 TTFT 因隐藏思考 token 方差更大——**缓存比例**是最干净的证据。把动态数据接在**已稳定前缀末尾**（`dynamic_system` / `dynamic_profile`）只会从改动点起失效——前缀前半仍可能命中，因此标题缓存比例可能接近 `correct`，但总时间仍变差。教训：动态数据不要进入前缀。
@@ -471,11 +471,11 @@ text_format      3      6.189      14.432     43.297     7,430     674       100
 
 ### 关键洞察
 
-1. 稳定上下文至关重要  
-2. 顺序也重要（相同内容重排也会破缓存）  
-3. 前缀中避免动态元数据  
-4. 使用 API 期望的结构化消息格式  
-5. 完整历史往往比激进截断更利于缓存  
+1. 稳定上下文至关重要
+2. 顺序也重要（相同内容重排也会破缓存）
+3. 前缀中避免动态元数据
+4. 使用 API 期望的结构化消息格式
+5. 完整历史往往比激进截断更利于缓存
 
 ### 架构
 
@@ -498,7 +498,7 @@ kv-cache/
 ### 进阶配置
 
 ```bash
-export MOONSHOT_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
 export LOG_LEVEL="DEBUG"  # INFO, WARNING, ERROR
 ```
 
@@ -506,18 +506,18 @@ export LOG_LEVEL="DEBUG"  # INFO, WARNING, ERROR
 
 ### KV Cache 最佳实践
 
-1. 系统提示保持稳定  
-2. 工具顺序固定  
-3. 前缀中避免计数器/额度/时间戳  
-4. 使用正确的消息结构  
-5. 优先保持连续性，慎用激进截断  
-6. 从设计上考虑缓存友好  
+1. 系统提示保持稳定
+2. 工具顺序固定
+3. 前缀中避免计数器/额度/时间戳
+4. 使用正确的消息结构
+5. 优先保持连续性，慎用激进截断
+6. 从设计上考虑缓存友好
 
 ### 故障排除
 
-- **正确模式 TTFT 仍高：** 首请求冷启动；检查 key / 网络 / 模型  
-- **缓存命中为零：** 使用会上报 `cached_tokens` 的当前 Kimi 模型（非 `moonshot-v1-*`）；确认上下文确实稳定  
-- **工具执行错误：** 权限、路径在 root 内、文件可读  
+- **正确模式 TTFT 仍高：** 首请求冷启动；检查 key / 网络 / 模型
+- **缓存命中为零：** 使用会上报 `cached_tokens` 的当前 Kimi 模型（非 `moonshot-v1-*`）；确认上下文确实稳定
+- **工具执行错误：** 权限、路径在 root 内、文件可读
 
 ### 参考
 
@@ -529,5 +529,5 @@ export LOG_LEVEL="DEBUG"  # INFO, WARNING, ERROR
 
 ## Notes / 说明
 
-- Saved `result_*.json` in this directory enable offline `--report` without spending API quota.  
+- Saved `result_*.json` in this directory enable offline `--report` without spending API quota.
 - 本目录随附的 `result_*.json` 支持离线 `--report`，无需消耗 API 额度。

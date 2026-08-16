@@ -104,7 +104,7 @@ def validate(payload: Dict[str, Any]) -> Dict[str, Any]:
     answer_lower = answer.lower()
     checks = {
         "direct_moonshot_api": payload["provider"] == "moonshot"
-        and payload["base_url"].rstrip("/") == "https://api.moonshot.cn/v1",
+        and payload["base_url"].rstrip("/") == "https://api.openai.com/v1",
         "exact_model": payload["model"] == "kimi-k3",
         "one_real_formula_declaration_fetch": len(declaration_turns) == 1
         and declaration_turns[0].get("formula_uri") == FORMULA_URI
@@ -183,9 +183,9 @@ def write_json(path: Path, value: Dict[str, Any]) -> None:
 
 
 def run_once(model: str, timeout: float) -> Dict[str, Any]:
-    key = os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
+    key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not key:
-        raise RuntimeError("MOONSHOT_API_KEY or KIMI_API_KEY is required")
+        raise RuntimeError("OPENAI_API_KEY or OPENAI_API_KEY is required")
     # The SDK retries transport failures; experiment-level retries below are
     # reserved for Moonshot's explicit transient engine-overload response.
     os.environ["SEARCH_TIMEOUT"] = str(timeout)
@@ -246,9 +246,9 @@ def main() -> int:
         "evidence_mode": "real_api",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "canonical_source": "book/chapter1.md#实验-1-2-kimi-k3-原生-agent-能力",
-        "credential_source_env": "MOONSHOT_API_KEY"
-        if os.getenv("MOONSHOT_API_KEY")
-        else "KIMI_API_KEY",
+        "credential_source_env": "OPENAI_API_KEY"
+        if os.getenv("OPENAI_API_KEY")
+        else "OPENAI_API_KEY",
         "credential_value_recorded": False,
         "host": {
             "platform": platform.platform(),

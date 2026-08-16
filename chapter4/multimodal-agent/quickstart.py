@@ -115,13 +115,10 @@ async def test_basic_functionality():
         
         print("Processing sample document...")
         try:
-            # Simulate as if it's a PDF for demonstration
-            content.type = "pdf"
-            result = await agent._extract_pdf_to_text(content)
-            print("Extracted content preview:")
+            result = doc_path.read_text(encoding="utf-8")
+            print("Sample text preview:")
             print(result[:300] + "..." if len(result) > 300 else result)
-            
-            # Answer a question
+
             print("\nAsking a question about the document...")
             answer = await agent._answer_with_context(
                 result,

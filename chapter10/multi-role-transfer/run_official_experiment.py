@@ -28,7 +28,7 @@ from orchestrator import MultiRoleOrchestrator
 
 
 ROOT = Path(__file__).resolve().parent
-BASE_URL = "https://api.moonshot.cn/v1"
+BASE_URL = "https://api.openai.com/v1"
 SOURCE_FILES = [
     "run_official_experiment.py",
     "demo.py",
@@ -37,10 +37,10 @@ SOURCE_FILES = [
     "tools.py",
 ]
 SECRET_ENV_NAMES = (
-    "MOONSHOT_API_KEY",
+    "OPENAI_API_KEY",
     "TAVILY_API_KEY",
     "OPENAI_API_KEY",
-    "OPENROUTER_API_KEY",
+    "OPENAI_API_KEY",
 )
 
 
@@ -126,12 +126,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> int:
-    moonshot_key = os.getenv("MOONSHOT_API_KEY", "").strip()
+    moonshot_key = os.getenv("OPENAI_API_KEY", "").strip()
     tavily_key = os.getenv("TAVILY_API_KEY", "").strip()
     if not moonshot_key or not tavily_key:
         missing = [
             name
-            for name, value in (("MOONSHOT_API_KEY", moonshot_key), ("TAVILY_API_KEY", tavily_key))
+            for name, value in (("OPENAI_API_KEY", moonshot_key), ("TAVILY_API_KEY", tavily_key))
             if not value
         ]
         raise RuntimeError(f"official run requires configured credentials: {', '.join(missing)}")

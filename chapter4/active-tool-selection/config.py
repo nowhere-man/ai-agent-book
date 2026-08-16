@@ -8,9 +8,9 @@ load_dotenv()
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()
 LLM_PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(LLM_PROVIDER, LLM_PROVIDER)
 if LLM_PROVIDER == "dashscope":
-    OPENAI_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_BASE_URL = os.getenv(
-        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        "OPENAI_BASE_URL", "https://api.openai.com/v1"
     )
     OPENAI_MODEL = os.getenv("DASHSCOPE_MODEL", "qwen3.7-plus")
 else:
@@ -39,11 +39,11 @@ def _map_model_for_openrouter(model: str) -> str:
 # OPENAI_API_KEY is configured, OR when the model is a gpt-5.x id (incl. gpt-5.6*)
 # which needs OpenAI org-verification on the direct API. Explicit OPENAI_BASE_URL /
 # OPENAI_MODEL overrides are kept.
-_OR_KEY = os.getenv("OPENROUTER_API_KEY")
+_OR_KEY = os.getenv("OPENAI_API_KEY")
 if _OR_KEY and (not OPENAI_API_KEY or OPENAI_MODEL.lower().startswith("gpt-5")):
     OPENAI_API_KEY = _OR_KEY
     if not os.getenv("OPENAI_BASE_URL"):
-        OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
+        OPENAI_BASE_URL = "https://api.openai.com/v1"
     OPENAI_MODEL = _map_model_for_openrouter(OPENAI_MODEL)
 
 # Agent Configuration

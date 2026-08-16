@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class InteractiveCLI:
     """Interactive command-line interface for GPT-5 Agent"""
-    
+
     def __init__(self, backend: str = None, model: str = None):
         """Initialize the CLI"""
         if not Config.validate(backend):
@@ -33,7 +33,7 @@ class InteractiveCLI:
             model=resolved_model,
         )
         self.backend = backend or Config.BACKEND
-        
+
         self.commands = {
             "/help": self.show_help,
             "/clear": self.clear_history,
@@ -47,112 +47,112 @@ class InteractiveCLI:
             "/exit": self.exit_cli,
             "/quit": self.exit_cli,
         }
-        
+
         self.use_tools = True
         self.tool_choice = "auto"
         self.reasoning_effort = "low"  # Default reasoning effort
-    
+
     def show_help(self):
         """Display help information"""
         help_text = """
-Commands:                                              
-  /help     - Show this help message                    
-  /clear    - Clear conversation history                
-  /history  - Show conversation history                 
-  /tools    - Toggle tools on/off                       
-  /search   - Enter web search mode                     
-  /code     - Enter code interpreter mode               
-  /analyze  - Combined search + analysis mode           
-  /config   - Show current configuration                
-  /reasoning - Set reasoning effort (low/medium/high)   
-  /exit     - Exit the application                      
-                                                        
-Native Tools:                                           
-  • web_search - Search the internet for real-time info 
-  • code_interpreter - Execute Python code and analyze  
-                                                        
-Usage:                                                  
-  Simply type your request and the agent will use       
-  appropriate tools automatically.                      
-                                                        
-Examples:                                               
+Commands:
+  /help     - Show this help message
+  /clear    - Clear conversation history
+  /history  - Show conversation history
+  /tools    - Toggle tools on/off
+  /search   - Enter web search mode
+  /code     - Enter code interpreter mode
+  /analyze  - Combined search + analysis mode
+  /config   - Show current configuration
+  /reasoning - Set reasoning effort (low/medium/high)
+  /exit     - Exit the application
+
+Native Tools:
+  • web_search - Search the internet for real-time info
+  • code_interpreter - Execute Python code and analyze
+
+Usage:
+  Simply type your request and the agent will use
+  appropriate tools automatically.
+
+Examples:
   "东盟 10 国首都之间，距离最近的两个首都是？给出你的详细分析推理过程。"
   "搜索最近一年比特币的价格，计算收益率、最大回撤、年化波动等重要指标"
         """
         print(help_text)
-    
+
     def clear_history(self):
         """Clear conversation history"""
         self.agent.clear_history()
         print("✅ Conversation history cleared")
-    
+
     def show_history(self):
         """Display conversation history"""
         history = self.agent.get_history()
         if not history:
             print("📭 No conversation history")
             return
-        
+
         print("\n" + "="*60)
         print("CONVERSATION HISTORY")
         print("="*60)
-        
+
         for i, msg in enumerate(history, 1):
             role = msg["role"].upper()
             content = msg["content"][:200] + "..." if len(msg["content"]) > 200 else msg["content"]
             print(f"\n[{i}] {role}:\n{content}")
-        
+
         print("="*60)
-    
+
     def toggle_tools(self):
         """Toggle tool usage on/off"""
         self.use_tools = not self.use_tools
         status = "enabled" if self.use_tools else "disabled"
         print(f"🔧 Tools {status}")
-    
+
     def search_mode(self):
         """Enter web search mode"""
         print("\n🔍 Web Search Mode")
         print("Enter your search query (or 'back' to return):")
-        
+
         query = input("> ").strip()
         if query.lower() == "back":
             return
-        
+
         request = f"Search the web for: {query}"
         self._process_request(request, force_tools=True)
-    
+
     def code_mode(self):
         """Enter code interpreter mode"""
         print("\n💻 Code Interpreter Mode")
         print("Enter your code or computational request (or 'back' to return):")
-        
+
         request = input("> ").strip()
         if request.lower() == "back":
             return
-        
+
         enhanced_request = f"Use the code interpreter to: {request}"
         self._process_request(enhanced_request, force_tools=True)
-    
+
     def analyze_mode(self):
         """Combined search and analysis mode"""
         print("\n🔬 Search & Analyze Mode")
         print("Enter topic to research and analyze (or 'back' to return):")
-        
+
         topic = input("> ").strip()
         if topic.lower() == "back":
             return
-        
+
         print("\nOptional: Enter Python code for analysis (press Enter to skip):")
         code = input("> ").strip()
-        
+
         if code:
             result = self.agent.search_and_analyze(topic, code)
         else:
             result = self.agent.search_and_analyze(topic)
-        
+
         self._display_result(result)
-    
+
     def show_config(self):
         """Display current configuration"""
         Config.display()
@@ -160,35 +160,35 @@ Examples:
         print(f"  Tools Enabled: {self.use_tools}")
         print(f"  Tool Choice: {self.tool_choice}")
         print(f"  Reasoning Effort: {self.reasoning_effort}")
-    
+
     def set_reasoning_effort(self):
         """Set the reasoning effort level"""
         print("\n🧠 Set Reasoning Effort")
         print("Options: low, medium, high")
         print(f"Current: {self.reasoning_effort}")
-        
+
         effort = input("Enter new effort level: ").strip().lower()
         if effort in ["low", "medium", "high"]:
             self.reasoning_effort = effort
             print(f"✅ Reasoning effort set to: {effort}")
         else:
             print(f"❌ Invalid effort level. Must be low, medium, or high")
-    
+
     def exit_cli(self):
         """Exit the application"""
         print("\n👋 Goodbye!")
         sys.exit(0)
-    
+
     def _process_request(self, request: str, force_tools: bool = False):
         """
         Process a user request
-        
+
         Args:
             request: User request
             force_tools: Force tool usage regardless of settings
         """
         use_tools = force_tools or self.use_tools
-        
+
         result = self.agent.process_request(
             request,
             use_tools=use_tools,
@@ -197,18 +197,18 @@ Examples:
             max_tokens=Config.DEFAULT_MAX_TOKENS,
             reasoning_effort=self.reasoning_effort
         )
-        
+
         self._display_result(result)
-    
+
     def _display_result(self, result: dict):
         """
         Display the result of a request
-        
+
         Args:
             result: Result dictionary from agent
         """
         print("\n" + "="*60)
-        
+
         if result["success"]:
             # Display tool usage
             if result["tool_calls"]:
@@ -216,13 +216,13 @@ Examples:
                 for tool in result["tool_calls"]:
                     print(f"  • {tool.get('type', 'unknown_tool')}")
                 print()
-            
+
             # Display response
             print("📝 Response:")
             print("-"*60)
             print(result["response"])
             print("-"*60)
-            
+
             # Display token usage
             if result.get("usage"):
                 usage = result["usage"]
@@ -231,26 +231,26 @@ Examples:
                     print(f"\n📊 Tokens used: {total}")
         else:
             print(f"❌ Error: {result.get('error', 'Unknown error')}")
-        
+
         print("="*60)
-    
+
     def run(self):
         """Run the interactive CLI"""
         print("\n" + "="*60)
         print("     🤖 GPT-5 Native Tools Agent")
         print(f"     Responses API backend: {self.backend}")
         print("="*60)
-        
+
         self.show_help()
-        
+
         while True:
             try:
                 print("\n💬 Enter your request (or /help for commands):")
                 user_input = input("> ").strip()
-                
+
                 if not user_input:
                     continue
-                
+
                 # Check for commands
                 if user_input.startswith("/"):
                     command = user_input.split()[0].lower()
@@ -262,7 +262,7 @@ Examples:
                 else:
                     # Process as regular request
                     self._process_request(user_input)
-                    
+
             except KeyboardInterrupt:
                 print("\n\n⚠️  Interrupted. Type /exit to quit or continue chatting.")
             except Exception as e:
@@ -415,9 +415,9 @@ def main():
     # 其余模式需要有效配置
     if not Config.validate(args.backend):
         print("❌ 配置错误！")
-        print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENROUTER_API_KEY / DASHSCOPE_API_KEY")
+        print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENAI_API_KEY / OPENAI_API_KEY")
         print("\n示例 .env：")
-        print("DASHSCOPE_API_KEY=your-dashscope-api-key")
+        print("OPENAI_API_KEY=your-dashscope-api-key")
         sys.exit(1)
 
     if args.mode == "interactive":

@@ -6,8 +6,6 @@ Specializes in processing technical documentation like Intel manuals.
 import re
 from pathlib import Path
 from typing import List, Optional, Dict, Any
-import pypdf
-import pdfplumber
 from bs4 import BeautifulSoup
 import markdown
 from loguru import logger
@@ -20,7 +18,6 @@ class DocumentProcessor:
     
     def __init__(self):
         self.supported_formats = {
-            '.pdf': self.process_pdf,
             '.txt': self.process_text,
             '.md': self.process_markdown,
             '.html': self.process_html
@@ -45,88 +42,6 @@ class DocumentProcessor:
         else:
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(None, processor, file_path)
-    
-    def process_pdf(self, file_path: Path) -> str:
-        """
-        Process PDF files with special handling for technical documentation.
-        Optimized for Intel manuals with complex formatting.
-        """
-        logger.info(f"Processing PDF: {file_path}")
-        
-        try:
-            # Try pdfplumber first for better table extraction
-            return self._process_pdf_with_pdfplumber(file_path)
-        except Exception as e:
-            logger.warning(f"pdfplumber failed, falling back to pypdf: {e}")
-            return self._process_pdf_with_pypdf(file_path)
-    
-    def _process_pdf_with_pdfplumber(self, file_path: Path) -> str:
-        """Process PDF using pdfplumber for better structure preservation."""
-        text_content = []
-        
-        with pdfplumber.open(file_path) as pdf:
-            total_pages = len(pdf.pages)
-            logger.info(f"Processing {total_pages} pages...")
-            
-            for i, page in enumerate(pdf.pages):
-                if i % 100 == 0:
-                    logger.info(f"Processing page {i}/{total_pages}")
-                
-                # Extract text
-                page_text = page.extract_text()
-                if page_text:
-                    # Clean up the text
-                    page_text = self._clean_pdf_text(page_text)
-                    text_content.append(page_text)
-                
-                # Extract tables if present
-                tables = page.extract_tables()
-                for table in tables:
-                    if table:
-                        # Convert table to structured text
-                        table_text = self._format_table(table)
-                        if table_text:
-                            text_content.append(table_text)
-        
-        return "\n\n".join(text_content)
-    
-    def _process_pdf_with_pypdf(self, file_path: Path) -> str:
-        """Fallback PDF processing using pypdf."""
-        text_content = []
-        
-        with open(file_path, 'rb') as file:
-            reader = pypdf.PdfReader(file)
-            total_pages = len(reader.pages)
-            logger.info(f"Processing {total_pages} pages with pypdf...")
-            
-            for i, page in enumerate(reader.pages):
-                if i % 100 == 0:
-                    logger.info(f"Processing page {i}/{total_pages}")
-                
-                text = page.extract_text()
-                if text:
-                    text = self._clean_pdf_text(text)
-                    text_content.append(text)
-        
-        return "\n\n".join(text_content)
-    
-    def _clean_pdf_text(self, text: str) -> str:
-        """Clean extracted PDF text."""
-        # Remove excessive whitespace
-        text = re.sub(r'\s+', ' ', text)
-        
-        # Fix common PDF extraction issues
-        text = re.sub(r'(\w)-\s+(\w)', r'\1\2', text)  # Fix hyphenated words
-        text = re.sub(r'\s*\n\s*', '\n', text)  # Clean up newlines
-        
-        # Remove page numbers and headers (common in Intel manuals)
-        text = re.sub(r'^[\d\s]*Intel.*?Manual.*?\n', '', text, flags=re.MULTILINE)
-        text = re.sub(r'^\d+-\d+\s*$', '', text, flags=re.MULTILINE)
-        
-        # Extract instruction definitions (Intel manual specific)
-        text = self._extract_intel_instructions(text)
-        
-        return text.strip()
     
     def _extract_intel_instructions(self, text: str) -> str:
         """Extract and format Intel x86/x64 instructions."""
@@ -154,24 +69,6 @@ class DocumentProcessor:
         formatted_parts.append(text[last_end:])
         
         return ''.join(formatted_parts)
-    
-    def _format_table(self, table: List[List]) -> str:
-        """Format a table into structured text."""
-        if not table or not table[0]:
-            return ""
-        
-        formatted = []
-        
-        # Assume first row is header
-        headers = table[0]
-        formatted.append("Table: " + " | ".join(str(h) for h in headers if h))
-        
-        # Format data rows
-        for row in table[1:]:
-            if row and any(cell for cell in row):
-                formatted.append("  " + " | ".join(str(cell) if cell else "-" for cell in row))
-        
-        return "\n".join(formatted)
     
     async def process_text(self, file_path: Path) -> str:
         """Process plain text files."""

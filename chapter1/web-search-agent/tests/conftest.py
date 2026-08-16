@@ -7,11 +7,11 @@ from types import SimpleNamespace
 import pytest
 
 PROVIDER_ENV_VARS = (
-    "MOONSHOT_API_KEY",
-    "KIMI_API_KEY",
-    "OPENROUTER_API_KEY",
-    "OPENROUTER_BASE_URL",
-    "OPENROUTER_MODEL",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_BASE_URL",
+    "OPENAI_MODEL",
 )
 
 

@@ -22,10 +22,10 @@ python train_dpo.py --smoke             # 数据/tokenizer/前向一次性检查
 uv sync --locked --python 3.12 --extra ch7
 source .venv/bin/activate
 cd chapter7/premature-completion-dpo
-# 单项目兼容路径（兜底）：python -m pip install -r requirements.txt
+# 单项目兼容路径（兜底）：python -m pip install -r ../../requirements.txt
 
 # 可选：用教师模型生成 chosen（规则过滤的拒绝采样，留证据回执）
-export ARK_API_KEY=your_api_key_here
+export OPENAI_API_KEY=your_api_key_here
 python build_preference_data.py --teacher --provider ark --model doubao-seed-1-6-250615
 
 # 单卡 LoRA DPO 训练（默认 Qwen/Qwen2.5-7B-Instruct，可用 --model 覆盖）

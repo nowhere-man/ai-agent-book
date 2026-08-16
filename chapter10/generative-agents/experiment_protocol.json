@@ -12,8 +12,8 @@
   },
   "provider": {
     "api_style": "OpenAI-compatible",
-    "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-    "credential_environment_variable": "DASHSCOPE_API_KEY",
+    "endpoint": "https://api.openai.com/v1",
+    "credential_environment_variable": "OPENAI_API_KEY",
     "chat_model": "qwen3.7-flash",
     "chat_thinking": false,
     "embedding_model": "text-embedding-v4",

@@ -34,8 +34,8 @@ sys.path.insert(0, str(CHAPTER))
 from experiment_utils import ChatRecorder, jsonable, sha256_file, write_campaign_evidence
 
 
-ARK_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3"
-MOONSHOT_ENDPOINT = "https://api.moonshot.cn/v1"
+ARK_ENDPOINT = "https://api.openai.com/v1"
+MOONSHOT_ENDPOINT = "https://api.openai.com/v1"
 MODES = ("notes", "enhanced_notes", "json_cards", "advanced_json_cards")
 
 MODE_INSTRUCTIONS = {
@@ -190,10 +190,10 @@ def judge_summary(raw: Dict[str, Any]) -> Dict[str, Any]:
 
 class Campaign:
     def __init__(self, args: argparse.Namespace):
-        ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY")
-        moonshot_key = os.getenv("MOONSHOT_API_KEY")
+        ark_key = os.getenv("OPENAI_API_KEY") or os.getenv("DOUBAO_API_KEY")
+        moonshot_key = os.getenv("OPENAI_API_KEY")
         if not ark_key or not moonshot_key:
-            raise RuntimeError("ARK_API_KEY and MOONSHOT_API_KEY are both required")
+            raise RuntimeError("OPENAI_API_KEY and OPENAI_API_KEY are both required")
         self.args = args
         self.writer_client = OpenAI(
             api_key=ark_key, base_url=args.writer_endpoint, timeout=args.timeout, max_retries=3

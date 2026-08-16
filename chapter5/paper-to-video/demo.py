@@ -14,8 +14,8 @@
           再用 concat 拼接为一个 output/lecture.mp4（输出路径可用 --output 指定）。
   5) 校验：用 ffprobe 打印最终 mp4 的时长/分辨率/音视频流信息。
 
-依赖：ffmpeg / ffprobe（命令行）、Python 包见 requirements.txt。
-环境变量：OPENAI_API_KEY（用 openai 供应商时必填；未配置时可用 OPENROUTER_API_KEY 兜底讲解词生成，TTS 降级为离线占位），
+依赖：ffmpeg / ffprobe（命令行）、Python 包见 ../../requirements.txt。
+环境变量：OPENAI_API_KEY（用 openai 供应商时必填；未配置时可用 OPENAI_API_KEY 兜底讲解词生成，TTS 降级为离线占位），
           可选 OPENAI_BASE_URL / TEXT_MODEL / TTS_MODEL / TTS_VOICE。
 提示：想在无 API / 无网络时验证整条 ffmpeg 合成流水线，用 `python demo.py --offline`。
 """
@@ -54,7 +54,7 @@ DEFAULT_TEXT_MODEL = os.getenv("TEXT_MODEL", "gpt-5.6-luna")
 DEFAULT_TTS_MODEL = os.getenv("TTS_MODEL", "tts-1")
 DEFAULT_TTS_VOICE = os.getenv("TTS_VOICE", "alloy")
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def map_model_to_openrouter(model: str) -> str:
@@ -413,12 +413,12 @@ def self_check(cfg: Config) -> int:
     print(f"  {'[OK]' if font else '[回退]'} 中文字体: {font or '未找到系统中文字体，将回退默认字体'}")
 
     key_set = bool(os.getenv("OPENAI_API_KEY"))
-    or_set = bool(os.getenv("OPENROUTER_API_KEY"))
+    or_set = bool(os.getenv("OPENAI_API_KEY"))
     if cfg.provider == "offline":
         print("  [OK] 供应商: offline（占位静音音轨，无需 OPENAI_API_KEY）")
     else:
         print(f"  {'[OK]' if (key_set or or_set) else '[缺失]'} OPENAI_API_KEY: {'已设置' if key_set else '未设置'}"
-              f"  OPENROUTER_API_KEY(兜底): {'已设置' if or_set else '未设置'}"
+              f"  OPENAI_API_KEY(兜底): {'已设置' if or_set else '未设置'}"
               + ("" if key_set else "  ← 无直连 key 时讲解词走 OpenRouter、TTS 降级为离线占位"))
     print(f"  [配置] provider={cfg.provider}  TEXT_MODEL={cfg.text_model}  "
           f"TTS_MODEL={cfg.tts_model}  TTS_VOICE={cfg.tts_voice}")
@@ -443,16 +443,16 @@ def main(cfg: Config) -> None:
     if online:
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL") or None
-        orkey = os.getenv("OPENROUTER_API_KEY")
+        orkey = os.getenv("OPENAI_API_KEY")
         if not (api_key or orkey):
-            sys.exit("[错误] 未设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请复制 env.example 为 .env 并填入；"
+            sys.exit("[错误] 未设置 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请复制 env.example 为 .env 并填入；"
                      "或用 --offline 在无 API 时验证合成流水线。")
         from openai import OpenAI  # 延迟导入：--offline 时无需安装/联网 openai
 
         # 文本客户端：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
         prefer_or = bool(orkey) and (cfg.text_model or "").lower().startswith("gpt-5")
         if prefer_or or (not api_key and orkey):
-            client = OpenAI(api_key=orkey, base_url=OPENROUTER_BASE_URL, timeout=120.0, max_retries=3)
+            client = OpenAI(api_key=orkey, base_url=OPENAI_BASE_URL, timeout=120.0, max_retries=3)
             cfg.text_model = map_model_to_openrouter(cfg.text_model)
         else:
             client = OpenAI(base_url=base_url, timeout=120.0, max_retries=3)

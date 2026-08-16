@@ -26,9 +26,9 @@ def test_basic_conversation():
     print("=" * 60)
 
     try:
-        api_key = os.getenv("DEEPSEEK_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print("❌ ERROR: DEEPSEEK_API_KEY not set in environment")
+            print("❌ ERROR: OPENAI_API_KEY not set in environment")
             print("Please set it in your .env file or as environment variable")
             return False
 
@@ -64,9 +64,9 @@ def test_tool_usage():
     print("=" * 60)
 
     try:
-        api_key = os.getenv("DEEPSEEK_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print("❌ ERROR: DEEPSEEK_API_KEY not set")
+            print("❌ ERROR: OPENAI_API_KEY not set")
             return False
 
         agent = ContextAwareAgent(
@@ -107,9 +107,9 @@ def test_currency_conversion():
     print("=" * 60)
 
     try:
-        api_key = os.getenv("DEEPSEEK_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print("❌ ERROR: DEEPSEEK_API_KEY not set")
+            print("❌ ERROR: OPENAI_API_KEY not set")
             return False
 
         agent = ContextAwareAgent(
@@ -146,9 +146,9 @@ def test_model_info():
     print("=" * 60)
 
     try:
-        api_key = os.getenv("DEEPSEEK_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print("❌ ERROR: DEEPSEEK_API_KEY not set")
+            print("❌ ERROR: OPENAI_API_KEY not set")
             return False
 
         agent = ContextAwareAgent(
@@ -185,12 +185,12 @@ def main():
     print("=" * 60)
     print("\nModel: deepseek-v4-flash (default)")
     print("Provider: DeepSeek")
-    print("API: https://api.deepseek.com")
+    print("API: https://api.openai.com/v1")
 
-    if not os.getenv("DEEPSEEK_API_KEY"):
-        print("\n❌ ERROR: DEEPSEEK_API_KEY not found in environment")
+    if not os.getenv("OPENAI_API_KEY"):
+        print("\n❌ ERROR: OPENAI_API_KEY not found in environment")
         print("\nPlease set up your .env file with:")
-        print("  DEEPSEEK_API_KEY=your_api_key_here")
+        print("  OPENAI_API_KEY=your_api_key_here")
         print("\nYou can get an API key from: https://platform.deepseek.com/api_keys")
         sys.exit(1)
 

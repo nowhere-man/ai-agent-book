@@ -323,7 +323,7 @@ def main() -> int:
     parser.add_argument("--workers", type=int, default=3)
     args = parser.parse_args()
     load_dotenv(HERE / ".env")
-    required = ("MOONSHOT_API_KEY", "DASHSCOPE_API_KEY", "FISH_API_KEY")
+    required = ("OPENAI_API_KEY", "OPENAI_API_KEY", "FISH_API_KEY")
     missing = [name for name in required if not os.getenv(name)]
     if missing:
         raise RuntimeError(f"missing required real-provider credentials: {missing}")
@@ -370,8 +370,8 @@ def main() -> int:
         raise RuntimeError("authorized Fish voice manifest has no source_reference_id")
     narration_provider = protocol["providers"]["narration"]
     vision_provider = protocol["providers"]["independent_visual_reviewer"]
-    narration_client = OpenAI(api_key=os.environ["MOONSHOT_API_KEY"], base_url=narration_provider["endpoint"], timeout=180, max_retries=3)
-    vision_client = OpenAI(api_key=os.environ["DASHSCOPE_API_KEY"], base_url=vision_provider["endpoint"], timeout=180, max_retries=3)
+    narration_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=narration_provider["endpoint"], timeout=180, max_retries=3)
+    vision_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=vision_provider["endpoint"], timeout=180, max_retries=3)
 
     page_results = []
     with ThreadPoolExecutor(max_workers=args.workers) as pool:

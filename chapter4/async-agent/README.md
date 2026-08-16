@@ -1,6 +1,6 @@
 # Asynchronous Agent with Parallel Execution and Interruption / 带并行执行和打断能力的异步 Agent
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-6 ★★★**. Event-driven async Agent framework (Flux): parallel tools, interrupt/cancel, state checkpoints.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-6 ★★★**. Event-driven async Agent framework (Flux): parallel tools, interrupt/cancel, state checkpoints.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-6 ★★★**。事件驱动异步 Agent 框架（Flux）：并行工具、打断取消、状态检查点。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -150,7 +150,7 @@ source .venv/bin/activate
 cd chapter4/async-agent
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env         # set OPENAI_API_KEY
 
@@ -167,11 +167,11 @@ LLM_PROVIDER=moonshot python demo.py scenarios --scenario 1
 # Volcengine ARK (LLM_MODEL = inference endpoint id)
 LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 # Alibaba Cloud Model Studio / Bailian (Qwen)
-LLM_PROVIDER=dashscope DASHSCOPE_API_KEY=your-key LLM_MODEL=qwen3.7-plus python demo.py scenarios --scenario 1
+LLM_PROVIDER=dashscope OPENAI_API_KEY=your-key LLM_MODEL=qwen3.7-plus python demo.py scenarios --scenario 1
 ```
 
-> **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset (and not moonshot/ark), with `OPENROUTER_API_KEY` set, `demo.py` routes via OpenRouter and maps model ids to `provider/model` (`gpt-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids with `/` pass through). Or set `LLM_PROVIDER=openrouter` explicitly. Example:  
-> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset (and not moonshot/ark), with `OPENAI_API_KEY` set, `demo.py` routes via OpenRouter and maps model ids to `provider/model` (`gpt-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids with `/` pass through). Or set `LLM_PROVIDER=openrouter` explicitly. Example:
+> `OPENAI_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot defaults to **reasoning model `kimi-k3`** (older `kimi-k2-*-preview` / `moonshot-v1-*` are outdated/retired). Reasoning models need `temperature=1` and `max_tokens>=2048`; `demo.py` applies these automatically by model.
 
@@ -306,7 +306,7 @@ User: “run these three scripts at once; when the first finishes, query the oth
 ### Notes
 
 - **Offline demos (`parallel`/`interrupt`/`state`) need no API key and no `openai` package.**
-- **Only `scenarios` needs network and a valid API key** (`OPENAI_API_KEY`, or `MOONSHOT_API_KEY` / `ARK_API_KEY`).
+- **Only `scenarios` needs network and a valid API key** (`OPENAI_API_KEY`, or `OPENAI_API_KEY` / `OPENAI_API_KEY`).
 - LLM wording varies per run; the four scenarios’ **behavioral logic** is stable. Retry on occasional high latency.
 - Timeline is accelerated; larger `FLUX_TICK_REAL` is closer to book “tens of seconds”; too small may break scenario 4’s under-50% cancel window.
 - Terminal jobs are real allowlisted Python child processes. Arbitrary commands and shell syntax are rejected before task allocation.
@@ -449,7 +449,7 @@ source .venv/bin/activate
 cd chapter4/async-agent
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env         # 填入 OPENAI_API_KEY
 
@@ -468,10 +468,10 @@ LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 ```
 
 > **OpenRouter 通用兜底**：未配置 `OPENAI_API_KEY`（且未用 moonshot/ark provider）时，
-> 只要设置了 `OPENROUTER_API_KEY`，`demo.py` 会自动改走 OpenRouter，并把模型名映射为
+> 只要设置了 `OPENAI_API_KEY`，`demo.py` 会自动改走 OpenRouter，并把模型名映射为
 > `provider/model` 形式（`gpt-*` → `openai/…`、`claude-*` → `anthropic/claude-opus-4.8`、
 > 含 `/` 的原样透传）。也可显式 `LLM_PROVIDER=openrouter`。例如：
-> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> `OPENAI_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot 默认走**推理模型 `kimi-k3`**（旧的 `kimi-k2-*-preview` 与 `moonshot-v1-*` 已过时/停用）。
 > 推理模型要求 `temperature=1` 且 `max_tokens>=2048`，`demo.py` 会按模型自动套用这套采样参数，无需手动配置。
@@ -620,7 +620,7 @@ Agent 执行长任务，用户发"取消"。框架立即取消当前执行流并
 
 - **离线演示（`parallel`/`interrupt`/`state`）无需任何 API key、也无需安装 `openai`**，开箱即跑。
 - **只有 `scenarios` 子命令需要联网并配置有效的 API key**（`OPENAI_API_KEY`，或切换到
-  `MOONSHOT_API_KEY` / `ARK_API_KEY`）。
+  `OPENAI_API_KEY` / `OPENAI_API_KEY`）。
 - LLM 决策由真实模型产生，输出措辞每次可能略有不同；四个场景的**行为逻辑**是稳定可复现的。
   若遇到 OpenAI 偶发的高延迟，重跑即可。
 - 时间轴已加速；把 `FLUX_TICK_REAL` 调大可让演示更接近书中"几十秒"的真实节奏，
@@ -631,7 +631,7 @@ Agent 执行长任务，用户发"取消"。框架立即取消当前执行流并
 
 ## Notes / 说明
 
-- Design details: [`agent_framework_design.md`](./agent_framework_design.md).  
-- 设计细节见 [`agent_framework_design.md`](./agent_framework_design.md)。  
+- Design details: [`agent_framework_design.md`](./agent_framework_design.md).
+- 设计细节见 [`agent_framework_design.md`](./agent_framework_design.md)。
 - Terminal jobs are real allowlisted child processes and never invoke a shell.
 - 终端任务是白名单真实子进程，且绝不调用 shell。

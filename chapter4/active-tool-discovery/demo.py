@@ -166,7 +166,7 @@ def main():
             from dotenv import load_dotenv
             from openai import OpenAI
         except ImportError:
-            print("缺少 openai / python-dotenv，请先 pip install -r requirements.txt，"
+            print("缺少 openai / python-dotenv，请先 pip install -r ../../requirements.txt，"
                   "或改用 --offline 离线自检。")
             sys.exit(1)
         load_dotenv()
@@ -176,19 +176,19 @@ def main():
             client = OpenAI()
             model = args.model
             embedder = OpenAIEmbedder(client, model=args.embed_model)
-        elif os.getenv("OPENROUTER_API_KEY"):
+        elif os.getenv("OPENAI_API_KEY"):
             # 统一兜底：OpenRouter 只代理 chat completions，没有 embeddings 接口，
             # 因此对话走 OpenRouter（真实模型），工具检索改用本地哈希嵌入。
             from offline_backend import LocalEmbedder
-            client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"),
-                            base_url="https://openrouter.ai/api/v1")
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"),
+                            base_url="https://api.openai.com/v1")
             model = _to_openrouter_model(args.model)
             embedder = LocalEmbedder()
             print("未检测到 OPENAI_API_KEY，改走 OpenRouter 兜底：")
             print(f"  · 对话模型: {model}（真实调用）")
             print("  · 工具检索: 本地哈希嵌入（OpenRouter 无 embeddings 接口）。")
         else:
-            print("请设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY（见 env.example），"
+            print("请设置 OPENAI_API_KEY 或 OPENAI_API_KEY（见 env.example），"
                   "或改用 --offline 离线自检。")
             sys.exit(1)
 

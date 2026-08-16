@@ -30,7 +30,7 @@
 ```bash
 cd chapter9/end-to-end-speech
 uv venv .venv --python 3.10
-uv pip install --python .venv/bin/python -r requirements.txt
+uv pip install --python .venv/bin/python -r ../../requirements.txt
 source .venv/bin/activate
 
 hf download openbmb/MiniCPM-o-4_5 \

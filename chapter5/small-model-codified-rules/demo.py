@@ -436,9 +436,9 @@ def main():
         return
 
     if args.provider != "ollama" and not any(os.environ.get(name) for name in (
-        "OPENAI_API_KEY", "OPENROUTER_API_KEY", "MOONSHOT_API_KEY", "ARK_API_KEY"
+        "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_API_KEY"
     )):
-        sys.exit("错误：未设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请复制 env.example 为 .env 并填入，或直接 export。"
+        sys.exit("错误：未设置 OPENAI_API_KEY（或 OPENAI_API_KEY 兜底），请复制 env.example 为 .env 并填入，或直接 export。"
                  "\n（提示：想离线看代码化校验逻辑，可跑 `python demo.py --selftest`，无需 Key。）")
 
     arms = build_arms(args.small_model, args.big_model, args.mode)

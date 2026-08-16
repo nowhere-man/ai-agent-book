@@ -28,19 +28,19 @@ class ExperimentRunner:
     """
     Runs experiments comparing different learning approaches.
     """
-    
+
     def __init__(self, results_dir: str = "results"):
         """Initialize experiment runner."""
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create timestamp for this experiment run
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.experiment_dir = self.results_dir / self.timestamp
         self.experiment_dir.mkdir(exist_ok=True)
-        
+
         self.results = {}
-    
+
     def run_rl_experiment(self,
                          num_training_episodes: int = 10000,
                          num_eval_episodes: int = 100,
@@ -95,7 +95,7 @@ class ExperimentRunner:
         # core point of experiment 7-1: the agent slowly LEARNS from experience.
         self._print_learning_curve(train_results.get("learning_curve", []),
                                     checkpoint_interval)
-        
+
         # Evaluation phase
         print(f"\nEvaluating on {num_eval_episodes} episodes...")
         eval_results = agent.evaluate(
@@ -103,7 +103,7 @@ class ExperimentRunner:
             verbose=False,
             stochastic=stochastic
         )
-        
+
         # Compile results
         results = {
             "method": "Q-Learning",
@@ -123,15 +123,15 @@ class ExperimentRunner:
 
         # Save agent
         agent.save(self.experiment_dir / "rl_agent.pkl")
-        
+
         print(f"\nRL Training Summary:")
         print(f"  Training time: {training_time:.2f} seconds")
         print(f"  Q-table size: {train_results['q_table_size']} states")
         print(f"  Training victory rate: {train_results['victory_rate']:.2%}")
         print(f"  Evaluation victory rate: {eval_results['victory_rate']:.2%}")
-        
+
         return results
-    
+
     def _print_learning_curve(self, learning_curve: List[Dict[str, Any]],
                               checkpoint_interval: int):
         """Print the Q-learning success-rate-over-episodes table.
@@ -162,7 +162,7 @@ class ExperimentRunner:
                           model: str = "kimi-k3") -> Dict[str, Any]:
         """
         Run experiment with LLM-based in-context learning agent.
-        
+
         Args:
             num_training_episodes: Number of episodes to train
             num_eval_episodes: Number of episodes to evaluate
@@ -175,12 +175,12 @@ class ExperimentRunner:
 
         # Check for API key
         provider = os.getenv("LLM_PROVIDER", "moonshot").lower()
-        api_key = os.getenv("DASHSCOPE_API_KEY") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("MOONSHOT_API_KEY")
-        if not api_key and not os.getenv("OPENROUTER_API_KEY"):
+        api_key = os.getenv("OPENAI_API_KEY") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("OPENAI_API_KEY")
+        if not api_key and not os.getenv("OPENAI_API_KEY"):
             print(f"\n⚠️ Warning: API key for provider '{provider}' not set. Skipping LLM experiment.")
-            print("📝 Set DASHSCOPE_API_KEY for dashscope/qwen/bailian or MOONSHOT_API_KEY for moonshot/kimi")
+            print("📝 Set OPENAI_API_KEY for dashscope/qwen/bailian or OPENAI_API_KEY for moonshot/kimi")
             print("🔗 Get your key at: https://platform.moonshot.cn/")
-            print("💡 Or set OPENROUTER_API_KEY as a universal fallback.")
+            print("💡 Or set OPENAI_API_KEY as a universal fallback.")
             return None
 
         print("\n✅ API key found. Initializing LLM agent...")
@@ -195,22 +195,22 @@ class ExperimentRunner:
             temperature=0.7,
             max_experiences=50
         )
-        
+
         # Training phase (experience collection)
         print(f"\n🎓 Training Phase: Playing {num_training_episodes} episodes")
         print("💡 Watch how the LLM learns from experience without any parameter updates!")
         print("-"*70)
-        
+
         start_time = time.time()
-        
+
         train_results = agent.train(
             num_episodes=num_training_episodes,
             verbose=verbose,
             stochastic=stochastic
         )
-        
+
         training_time = time.time() - start_time
-        
+
         # Evaluation phase
         print(f"\nEvaluating on {num_eval_episodes} episodes...")
         eval_results = agent.evaluate(
@@ -218,7 +218,7 @@ class ExperimentRunner:
             verbose=False,
             stochastic=stochastic
         )
-        
+
         # Compile results
         results = {
             "method": "LLM In-Context Learning",
@@ -250,28 +250,28 @@ class ExperimentRunner:
                 if item["phase"] == "training"
             ],
         }
-        
+
         # Save experiences
         agent.save_experiences(self.experiment_dir / "llm_experiences.json")
-        
+
         print(f"\nLLM Training Summary:")
         print(f"  Training time: {training_time:.2f} seconds")
         print(f"  Experiences collected: {train_results['experiences_collected']}")
         print(f"  API calls: {train_results['total_api_calls']}")
         print(f"  Training victory rate: {train_results['victory_rate']:.2%}")
         print(f"  Evaluation victory rate: {eval_results['victory_rate']:.2%}")
-        
+
         return results
-    
+
     def compare_learning_curves(self, rl_results: Dict, llm_results: Dict):
         """
         Create visualization comparing learning curves of both methods.
         """
         fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-        
+
         # Plot 1: Victory rate over episodes
         ax = axes[0, 0]
-        
+
         # RL victory rate (computed over windows)
         rl_rewards = rl_results["episode_rewards"]
         window_size = 100
@@ -280,10 +280,10 @@ class ExperimentRunner:
             window = rl_rewards[i:i+window_size]
             victories = sum(1 for r in window if r > 50) / len(window)
             rl_victories.append(victories)
-        
-        ax.plot(range(0, len(rl_rewards), window_size), rl_victories, 
+
+        ax.plot(range(0, len(rl_rewards), window_size), rl_victories,
                 label=f"Q-Learning ({len(rl_rewards)} episodes)", linewidth=2)
-        
+
         # LLM victory rate (per episode)
         if llm_results:
             llm_rewards = llm_results["episode_rewards"]
@@ -291,47 +291,47 @@ class ExperimentRunner:
             llm_cumulative = np.cumsum(llm_victories) / (np.arange(len(llm_victories)) + 1)
             ax.plot(range(len(llm_cumulative)), llm_cumulative,
                    label=f"LLM In-Context ({len(llm_rewards)} episodes)", linewidth=2)
-        
+
         ax.set_xlabel("Episodes")
         ax.set_ylabel("Victory Rate")
         ax.set_title("Learning Progress: Victory Rate Over Time")
         ax.legend()
         ax.grid(True, alpha=0.3)
-        
+
         # Plot 2: Average reward over episodes
         ax = axes[0, 1]
-        
+
         # RL rewards (smoothed)
         rl_smooth = []
         for i in range(0, len(rl_rewards), window_size):
             window = rl_rewards[i:i+window_size]
             rl_smooth.append(np.mean(window))
-        
+
         ax.plot(range(0, len(rl_rewards), window_size), rl_smooth,
                 label="Q-Learning", linewidth=2)
-        
+
         # LLM rewards
         if llm_results:
             llm_rewards = llm_results["episode_rewards"]
             ax.plot(range(len(llm_rewards)), llm_rewards,
                    label="LLM In-Context", linewidth=2, alpha=0.7)
-        
+
         ax.set_xlabel("Episodes")
         ax.set_ylabel("Episode Reward")
         ax.set_title("Learning Progress: Reward Over Time")
         ax.legend()
         ax.grid(True, alpha=0.3)
-        
+
         # Plot 3: Sample efficiency comparison
         ax = axes[1, 0]
-        
+
         categories = ["Training\nEpisodes", "Evaluation\nVictory Rate", "Training\nTime (s)"]
         rl_values = [
             rl_results["training_episodes"],
             rl_results["eval_victory_rate"] * 100,
             rl_results["training_time"]
         ]
-        
+
         if llm_results:
             llm_values = [
                 llm_results["training_episodes"],
@@ -340,19 +340,19 @@ class ExperimentRunner:
             ]
         else:
             llm_values = [0, 0, 0]
-        
+
         x = np.arange(len(categories))
         width = 0.35
-        
+
         bars1 = ax.bar(x - width/2, rl_values, width, label='Q-Learning')
         bars2 = ax.bar(x + width/2, llm_values, width, label='LLM In-Context')
-        
+
         ax.set_ylabel('Value')
         ax.set_title('Sample Efficiency Comparison')
         ax.set_xticks(x)
         ax.set_xticklabels(categories)
         ax.legend()
-        
+
         # Add value labels on bars
         for bars in [bars1, bars2]:
             for bar in bars:
@@ -362,11 +362,11 @@ class ExperimentRunner:
                            xytext=(0, 3),
                            textcoords="offset points",
                            ha='center', va='bottom')
-        
+
         # Plot 4: Key insights text
         ax = axes[1, 1]
         ax.axis('off')
-        
+
         insights = [
             "KEY INSIGHTS (Replicating 'The Second Half' Findings):",
             "",
@@ -387,7 +387,7 @@ class ExperimentRunner:
             f"   • Q-Learning: Fast inference, slow learning",
             f"   • LLM: Slower inference (API calls), fast adaptation"
         ]
-        
+
         y_pos = 0.9
         for line in insights:
             if line.startswith("KEY INSIGHTS"):
@@ -400,13 +400,13 @@ class ExperimentRunner:
                 ax.text(0.1, y_pos, line, transform=ax.transAxes,
                        fontsize=10)
             y_pos -= 0.06
-        
+
         plt.tight_layout()
         plt.savefig(self.experiment_dir / "comparison_plots.png", dpi=150)
         plt.show()
-        
+
         print(f"\nPlots saved to {self.experiment_dir / 'comparison_plots.png'}")
-    
+
     def run_full_experiment(self,
                            rl_episodes: int = 10000,
                            llm_episodes: int = 20,
@@ -460,38 +460,38 @@ class ExperimentRunner:
             model=model
         )
         self.results["llm"] = llm_results
-        
+
         # Save combined results
         with open(self.experiment_dir / "experiment_results.json", 'w') as f:
             json.dump(self.results, f, indent=2)
-        
+
         # Generate comparison plots
         if llm_results:
             self.compare_learning_curves(rl_results, llm_results)
-        
+
         # Print final comparison
         print("\n" + "="*70)
         print("EXPERIMENT RESULTS SUMMARY")
         print("="*70)
-        
+
         print("\n1. SAMPLE EFFICIENCY:")
         print(f"   Q-Learning needed {rl_results['training_episodes']} episodes")
         if llm_results:
             print(f"   LLM needed {llm_results['training_episodes']} episodes")
             print(f"   → LLM is {rl_results['training_episodes'] / llm_results['training_episodes']:.1f}x more sample efficient")
-        
+
         print("\n2. PERFORMANCE:")
         print(f"   Q-Learning eval victory rate: {rl_results['eval_victory_rate']:.2%}")
         if llm_results:
             print(f"   LLM eval victory rate: {llm_results['eval_victory_rate']:.2%}")
-        
+
         print("\n3. COMPUTATIONAL COST:")
         print(f"   Q-Learning: {rl_results['training_time']:.2f} seconds, {rl_results['q_table_size']} states")
         if llm_results:
             print(f"   LLM: {llm_results['training_time']:.2f} seconds, {llm_results['api_calls']} API calls")
-        
+
         print(f"\nResults saved to: {self.experiment_dir}")
-        
+
         return self.results
 
 

@@ -1,6 +1,6 @@
 # User Memory Evaluation Framework / 用户记忆评估框架
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-1**: three-layer memory eval suite with offline keyword-recall compare.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-1**: three-layer memory eval suite with offline keyword-recall compare.
 > 配套《深入理解 AI Agent》第 3 章 **实验 3-1**：三层记忆评测集，含离线 keyword-recall 对照表。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -13,18 +13,18 @@
 
 Evaluates agent memory on three progressive layers using realistic business conversations: store, retrieve, and use information from user interactions.
 
-#### Layer 1: Basic Recall & Direct Retrieval  
+#### Layer 1: Basic Recall & Direct Retrieval
 Single conversation; explicit facts (account numbers, confirmation codes, appointments).
 
-#### Layer 2: Contextual Reasoning & Disambiguation  
+#### Layer 2: Contextual Reasoning & Disambiguation
 Multiple conversations; ambiguous asks; retrieve **all** relevant info; know when to clarify.
 
-#### Layer 3: Cross-Session Synthesis & Proactive Assistance  
+#### Layer 3: Cross-Session Synthesis & Proactive Assistance
 Synthesize across sessions; surface critical connections; proactive help without being asked.
 
 ### Features
 
-- **60 test cases** (20 per layer; 50+ rounds each)  
+- **60 test cases** (20 per layer; 50+ rounds each)
 - **Experiment 6-3 structured LLM-as-Judge**: precision, recall, reasoning,
   proactivity, plus a hallucination veto; every dimension includes evidence and
   a concrete boundary-case decision
@@ -56,8 +56,8 @@ Real output (8 annotated cases, four configs):
 
 Scores are **computed** from `fixtures/system_responses.example.json` (not hand-written). *Simple Notes* does OK on Layer 1 but drops on L2/L3; *Advanced JSON Cards* holds across layers.
 
-- `fixtures/gold_facts.json` — key facts from `test_cases/*.yaml`  
-- `fixtures/system_responses.example.json` — replace with your `{system: {test_id: answer}}`  
+- `fixtures/gold_facts.json` — key facts from `test_cases/*.yaml`
+- `fixtures/system_responses.example.json` — replace with your `{system: {test_id: answer}}`
 
 ### Installation
 
@@ -77,7 +77,7 @@ source .venv/bin/activate
 cd chapter3/user-memory-evaluation
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # API credentials for LLM judge (Kimi or OpenAI)
@@ -134,8 +134,8 @@ print(f"Reasoning: {result.reasoning}")
 
 Fields: `test_id`, `category`, `title`, `conversation_histories`, `user_question`, `evaluation_criteria`, `expected_behavior`.
 
-L1: bank accounts, claims, appointments, flights, installs.  
-L2: multi-vehicle, multi-card, multi-policy.  
+L1: bank accounts, claims, appointments, flights, installs.
+L2: multi-vehicle, multi-card, multi-policy.
 L3: passport vs travel, coverage vs procedures, cross-session tax/warranty.
 
 ### Metrics
@@ -168,7 +168,7 @@ Experiments 6-4 and 6-9 use this judge in the end-to-end runner at
 ### Configuration
 
 ```python
-KIMI_API_KEY=your_key_here
+OPENAI_API_KEY=your_key_here
 DEFAULT_EVALUATOR=kimi  # or openai
 MAX_RETRIES=3
 REQUEST_TIMEOUT=60
@@ -190,22 +190,22 @@ Python 3.12 with the root `ch3` extra, Kimi or OpenAI key for judge modes, 8GB+ 
 
 用真实业务对话，在三层递进难度上评测 Agent 记忆：能否存储、检索并利用用户交互中的信息。
 
-#### 第 1 层：基础回忆与直接检索  
+#### 第 1 层：基础回忆与直接检索
 单会话、明确事实（账号、确认码、预约等）。
 
-#### 第 2 层：上下文推理与消歧  
+#### 第 2 层：上下文推理与消歧
 多会话、请求含糊；需取回**全部**相关信息并知道何时澄清。
 
-#### 第 3 层：跨会话综合与主动协助  
+#### 第 3 层：跨会话综合与主动协助
 跨会话综合、发现关键关联、主动提示。
 
 ### 特性
 
-- **60 个用例**（每层 20；各 50+ 轮）  
-- **LLM-as-Judge**  
-- 银行、保险、医疗、出行、零售等  
-- 交互 / 批处理 / 编程接口  
-- 详细报告  
+- **60 个用例**（每层 20；各 50+ 轮）
+- **LLM-as-Judge**
+- 银行、保险、医疗、出行、零售等
+- 交互 / 批处理 / 编程接口
+- 详细报告
 
 ### 快速开始：记忆系统打分对照（实验 3-1）
 
@@ -235,7 +235,7 @@ source .venv/bin/activate
 cd chapter3/user-memory-evaluation
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 # LLM Judge 需配置 Kimi 或 OpenAI
@@ -261,7 +261,7 @@ python main.py --mode batch --responses agent_responses.json
 
 字段：`test_id`、`category`、`title`、`conversation_histories`、`user_question`、`evaluation_criteria`、`expected_behavior`。
 
-- **`keyword-recall`**：离线关键事实召回  
+- **`keyword-recall`**：离线关键事实召回
 - **`llm-judge`**：实验 6-3 的结构化 Rubric（需 API）。逐维输出事实精确率、事实召回率、
   思考正确性和主动性四档成绩、证据与边界案例；另设幻觉一票否决，触发后总分归零。
 
@@ -277,4 +277,4 @@ python main.py --mode batch --responses agent_responses.json
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-When primary keys are missing and `OPENROUTER_API_KEY` is set, the chat/judge LLM can route through OpenRouter with automatic model mapping. See `env.example`.
+When primary keys are missing and `OPENAI_API_KEY` is set, the chat/judge LLM can route through OpenRouter with automatic model mapping. See `env.example`.

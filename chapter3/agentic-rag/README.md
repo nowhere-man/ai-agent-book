@@ -1,6 +1,6 @@
 # Agentic RAG System / Agentic RAG 系统
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-8**: ReAct agentic vs non-agentic RAG on Chinese legal Q&A; offline multi-hop evidence recall.  
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-8**: ReAct agentic vs non-agentic RAG on Chinese legal Q&A; offline multi-hop evidence recall.
 > 配套《深入理解 AI Agent》第 3 章 **实验 3-8**：ReAct 式 Agentic vs 非 Agent 式 RAG 司法问答；离线多跳证据召回对比。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
@@ -21,14 +21,14 @@ hashes are written under `validation/runs/<run-id>/`; the auditable pointer is
 
 ### Features
 
-- **Agentic RAG (ReAct)**: iterative reason + tool search  
-- **Non-agentic RAG**: single retrieve + answer (for compare)  
+- **Agentic RAG (ReAct)**: iterative reason + tool search
+- **Non-agentic RAG**: single retrieve + answer (for compare)
 - **LLM providers**: Alibaba Cloud Model Studio / Bailian (Qwen), Kimi/Moonshot, Doubao, SiliconFlow, OpenAI, OpenRouter, Groq, Together, DeepSeek
-- **Knowledge bases**:  
-  - **Offline BM25** (built-in, zero deps) over bundled `laws/` — no server/API for retrieval  
-  - Local retrieval pipeline (`../retrieval-pipeline`)  
-  - Dify KB API  
-- Chunking with paragraph respect; evaluation on Chinese legal data; conversation history; verbose logs  
+- **Knowledge bases**:
+  - **Offline BM25** (built-in, zero deps) over bundled `laws/` — no server/API for retrieval
+  - Local retrieval pipeline (`../retrieval-pipeline`)
+  - Dify KB API
+- Chunking with paragraph respect; evaluation on Chinese legal data; conversation history; verbose logs
 
 ### Installation
 
@@ -48,23 +48,23 @@ source .venv/bin/activate
 cd chapter3/agentic-rag
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 ### Configuration
 
 ```bash
 # LLM keys (set the ones you use)
-MOONSHOT_API_KEY=...
-ARK_API_KEY=...
-SILICONFLOW_API_KEY=...
-DASHSCOPE_API_KEY=...  # Alibaba Cloud Model Studio / Bailian (Qwen)
-# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 OPENAI_API_KEY=...
-OPENROUTER_API_KEY=...
+OPENAI_API_KEY=...
+OPENAI_API_KEY=...
+OPENAI_API_KEY=...  # Alibaba Cloud Model Studio / Bailian (Qwen)
+# OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_API_KEY=...
+OPENAI_API_KEY=...
 GROQ_API_KEY=...
 TOGETHER_API_KEY=...
-DEEPSEEK_API_KEY=...
+OPENAI_API_KEY=...
 
 KB_TYPE=local  # "offline" | "local" | "dify"
 DIFY_API_KEY=...
@@ -222,9 +222,9 @@ Educational project.
 
 ### 功能特性
 
-- **Agentic RAG（ReAct）** 与 **非 Agentic RAG** 对照  
-- 多 LLM 提供商；知识库：**离线 BM25** / 本地检索流水线 / Dify  
-- 分块、中文法条评测、多轮对话、详细日志  
+- **Agentic RAG（ReAct）** 与 **非 Agentic RAG** 对照
+- 多 LLM 提供商；知识库：**离线 BM25** / 本地检索流水线 / Dify
+- 分块、中文法条评测、多轮对话、详细日志
 
 ### 安装与配置
 
@@ -244,10 +244,10 @@ source .venv/bin/activate
 cd chapter3/agentic-rag
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
-环境变量见 English 节（`MOONSHOT_API_KEY` 等；`KB_TYPE=offline|local|dify`）。
+环境变量见 English 节（`OPENAI_API_KEY` 等；`KB_TYPE=offline|local|dify`）。
 
 ### 用法
 
@@ -287,7 +287,7 @@ cd evaluation && python dataset_builder.py && python evaluate.py
 
 ### 项目结构与原理
 
-与 English 节相同：`offline_retriever.py` / `compare_offline.py` / `laws/` / `evaluation/`。  
+与 English 节相同：`offline_retriever.py` / `compare_offline.py` / `laws/` / `evaluation/`。
 Agentic：多轮检索+引用；Non-Agentic：单次检索注入 prompt。
 
 ### 结果解读
@@ -308,4 +308,4 @@ Agentic：多轮检索+引用；Non-Agentic：单次检索注入 prompt。
 
 ### OpenRouter 通用回退 / Universal OpenRouter fallback
 
-Primary provider keys take precedence; else `OPENROUTER_API_KEY` routes chat via OpenRouter with model id mapping. See `env.example`. Related: [`../agentic-rag-for-user-memory/`](../agentic-rag-for-user-memory/).
+Primary provider keys take precedence; else `OPENAI_API_KEY` routes chat via OpenRouter with model id mapping. See `env.example`. Related: [`../agentic-rag-for-user-memory/`](../agentic-rag-for-user-memory/).

@@ -10,7 +10,7 @@
 
 模型：OpenAI SDK，默认 gpt-5.6-luna，function calling。
 可通过 LLM_PROVIDER=openai|moonshot|ark 切换（三者均为 OpenAI 兼容接口）；
-若对应 Key 缺失但设置了 OPENROUTER_API_KEY，则自动改走 OpenRouter 兜底。
+若对应 Key 缺失但设置了 OPENAI_API_KEY，则自动改走 OpenRouter 兜底。
 """
 
 import json
@@ -32,11 +32,11 @@ from tool_manager import ToolLibrary, normalize_schema
 # --------------------------------------------------------------------------- #
 _PROVIDERS = {
     "openai": ("OPENAI_API_KEY", None, "gpt-5.6-luna"),
-    "moonshot": ("MOONSHOT_API_KEY", "https://api.moonshot.cn/v1", "kimi-k3"),
-    "ark": ("ARK_API_KEY", "https://ark.cn-beijing.volces.com/api/v3", "doubao-seed-1-6-250615"),
+    "moonshot": ("OPENAI_API_KEY", "https://api.openai.com/v1", "kimi-k3"),
+    "ark": ("OPENAI_API_KEY", "https://api.openai.com/v1", "doubao-seed-1-6-250615"),
 }
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 def _to_openrouter_model(model: str) -> str:
@@ -57,14 +57,14 @@ def build_client():
     key_env, base_url, default_model = _PROVIDERS.get(provider, _PROVIDERS["openai"])
     model = os.environ.get("LLM_MODEL", default_model)
     api_key = os.environ.get(key_env)
-    # 统一兜底：provider 自己的 Key 缺失，但有 OPENROUTER_API_KEY 时改走 OpenRouter
-    if not api_key and os.environ.get("OPENROUTER_API_KEY"):
-        client = OpenAI(api_key=os.environ["OPENROUTER_API_KEY"], base_url=OPENROUTER_BASE_URL)
+    # 统一兜底：provider 自己的 Key 缺失，但有 OPENAI_API_KEY 时改走 OpenRouter
+    if not api_key and os.environ.get("OPENAI_API_KEY"):
+        client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=OPENAI_BASE_URL)
         return client, _to_openrouter_model(model)
     if not api_key:
         raise RuntimeError(
             f"missing {key_env} in environment (provider={provider})；"
-            f"也未设置 OPENROUTER_API_KEY（OpenRouter 可作为统一兜底）。"
+            f"也未设置 OPENAI_API_KEY（OpenRouter 可作为统一兜底）。"
         )
     client = OpenAI(api_key=api_key, base_url=base_url) if base_url else OpenAI(api_key=api_key)
     return client, model

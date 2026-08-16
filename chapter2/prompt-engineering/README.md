@@ -1,6 +1,6 @@
 # Prompt Engineering Ablation (τ-bench) / 提示工程消融实验
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-4 ★★: Ablation study in prompt engineering**.  
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-4 ★★: Ablation study in prompt engineering**.
 > 配套《深入理解 AI Agent》第 2 章 **实验 2-4 ★★：提示工程的消融实验**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
@@ -17,9 +17,9 @@ Extends the [τ-bench](https://arxiv.org/abs/2406.12045) framework with three ab
 
 #### 1. Tone style
 
-- **default** — professional baseline  
-- **trump** — exaggerated, repetitive, confident phrasing  
-- **casual** — emoji/slang, informal  
+- **default** — professional baseline
+- **trump** — exaggerated, repetitive, confident phrasing
+- **casual** — emoji/slang, informal
 
 **Rationale:** Tone affects professionalism and task quality. Over-casual or exaggerated tone can reduce trust, increase misunderstanding, and hurt execution accuracy.
 
@@ -27,17 +27,17 @@ Extends the [τ-bench](https://arxiv.org/abs/2406.12045) framework with three ab
 
 Uses a pre-generated chaotic `wiki.md`:
 
-- Strip section headings/structure  
-- Prefix each rule with operation context (e.g. “When booking flights”)  
-- Fully shuffle into a flat list  
-- Break logical relationships between rules  
+- Strip section headings/structure
+- Prefix each rule with operation context (e.g. “When booking flights”)
+- Fully shuffle into a flat list
+- Break logical relationships between rules
 
 **Rationale:** Well-organized instructions are like a training manual. Extreme randomization destroys hierarchy, blurs rule boundaries, and raises misuse/omission risk.
 
 #### 3. Tool description removal
 
-- Empty tool and parameter descriptions  
-- Tests the value of explicit documentation  
+- Empty tool and parameter descriptions
+- Tests the value of explicit documentation
 
 **Rationale:** Clear tool docs are the “how to use the tools” handbook. Without them the Agent misuses tools more often and completion rates drop.
 
@@ -59,7 +59,7 @@ source .venv/bin/activate
 cd chapter2/prompt-engineering
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 (Older docs may mention `projects/week2/prompt-engineering`; use this repo path.)
@@ -73,8 +73,8 @@ All entry scripts have Chinese `--help`: `python run_ablation.py --help`, `pytho
 `--all` runs baseline + each single-axis ablation + all combined in one process, prints a success-rate table, and writes summary stats to `--output`. The frozen canonical protocol uses official Moonshot Kimi K3 for both the action model and user simulator, six arms, and the same ten τ-bench airline tasks in every arm:
 
 ```bash
-export OPENAI_API_KEY="$MOONSHOT_API_KEY"
-export OPENAI_API_BASE="https://api.moonshot.cn/v1"
+export OPENAI_API_KEY="$OPENAI_API_KEY"
+export OPENAI_API_BASE="https://api.openai.com/v1"
 python run_ablation.py \
   --all --model kimi-k3 --user-model kimi-k3 \
   --model-provider openai --user-model-provider openai --temperature 1 \
@@ -188,7 +188,7 @@ python run_ablation.py \
 
 Two equivalent ways to run the full suite:
 
-1. **Python one-shot (recommended):** `python run_ablation.py --env airline --end-index 10 --all`  
+1. **Python one-shot (recommended):** `python run_ablation.py --env airline --end-index 10 --all`
 2. **Bash orchestration:** `run_full_ablation.sh` calls `run_ablation.py` then `analyze_results.py`:
 
 ```bash
@@ -211,19 +211,19 @@ python analyze_results.py --results-dir results_ablation --output summary.json
 
 ### Expected ranking
 
-1. **Baseline** — best  
-2. **Tone variants** — usually little success-rate impact  
-3. **Wiki randomization** — hurts instruction following  
-4. **No tool descriptions** — many bad tool args / wrong ops  
-5. **Combined** — worst  
+1. **Baseline** — best
+2. **Tone variants** — usually little success-rate impact
+3. **Wiki randomization** — hurts instruction following
+4. **No tool descriptions** — many bad tool args / wrong ops
+5. **Combined** — worst
 
 ### Key insights
 
 Treat the Agent as a smart new employee:
 
-1. **Clear instructions matter** — structure, task description, tool how-to  
-2. **Context organization matters** — logical order, group related rules, explicit priority  
-3. **Tool docs are required** — purpose, parameters, examples  
+1. **Clear instructions matter** — structure, task description, tool how-to
+2. **Context organization matters** — logical order, group related rules, explicit priority
+3. **Tool docs are required** — purpose, parameters, examples
 
 ### Parameters
 
@@ -244,9 +244,9 @@ Treat the Agent as a smart new employee:
 
 ### Troubleshooting
 
-1. **ImportError** — correct cwd + install deps  
-2. **API errors** — keys and quota  
-3. **Memory** — lower `--max-concurrency`  
+1. **ImportError** — correct cwd + install deps
+2. **API errors** — keys and quota
+3. **Memory** — lower `--max-concurrency`
 
 Debug:
 
@@ -288,9 +288,9 @@ User strategies include `llm`, `react`, `verify`, `reflection`. See original τ-
 
 #### 1. 语气风格
 
-- **default**：标准专业语气（基线）  
-- **trump**：夸张、重复强调、自信表述  
-- **casual**：表情符号、俚语、轻松口吻  
+- **default**：标准专业语气（基线）
+- **trump**：夸张、重复强调、自信表述
+- **casual**：表情符号、俚语、轻松口吻
 
 **原理：** 语气影响专业性与任务质量；过于随意或夸张可能降低信任、增加误解、损害执行准确度。
 
@@ -298,17 +298,17 @@ User strategies include `llm`, `react`, `verify`, `reflection`. See original τ-
 
 使用预生成的极度混乱版 wiki：
 
-- 移除章节标题与结构  
-- 每条规则加操作上下文前缀（如 “When booking flights”）  
-- 打乱成平面列表  
-- 破坏规则间逻辑关系  
+- 移除章节标题与结构
+- 每条规则加操作上下文前缀（如 “When booking flights”）
+- 打乱成平面列表
+- 破坏规则间逻辑关系
 
 **原理：** 组织良好的指令像培训手册；极度随机化破坏层级、混淆规则边界、抬高误用与遗漏风险。
 
 #### 3. 工具描述移除
 
-- 工具与参数描述置空  
-- 检验「写清楚怎么用」的重要性  
+- 工具与参数描述置空
+- 检验「写清楚怎么用」的重要性
 
 **原理：** 清晰工具说明像操作手册；去掉后误用上升、完成率下降。
 
@@ -330,7 +330,7 @@ source .venv/bin/activate
 cd chapter2/prompt-engineering
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 （旧文档可能写 `projects/week2/prompt-engineering`；请使用本仓库路径。）
@@ -350,8 +350,8 @@ python run_ablation.py \
     --end-index 10 \
     --all
 # 默认 OpenAI 直连（provider=openai），需 OPENAI_API_KEY。
-# 走 OpenRouter：模型写成带斜杠 id（如 openai/gpt-5），需 OPENROUTER_API_KEY。
-# 通用回退：裸 id（如 gpt-4o-mini）且未设 OPENAI_API_KEY、已设 OPENROUTER_API_KEY 时，
+# 走 OpenRouter：模型写成带斜杠 id（如 openai/gpt-5），需 OPENAI_API_KEY。
+# 通用回退：裸 id（如 gpt-4o-mini）且未设 OPENAI_API_KEY、已设 OPENAI_API_KEY 时，
 #           自动前缀为 openai/gpt-4o-mini 并切到 openrouter。
 ```
 
@@ -434,7 +434,7 @@ python run_ablation.py \
 
 完整套消融有两种等价方式：
 
-1. **Python 一键（推荐）：** `python run_ablation.py --env airline --end-index 10 --all`  
+1. **Python 一键（推荐）：** `python run_ablation.py --env airline --end-index 10 --all`
 2. **Bash 编排：** `run_full_ablation.sh` 逐个调用 `run_ablation.py` 再 `analyze_results.py`：
 
 ```bash
@@ -455,19 +455,19 @@ python analyze_results.py --results-dir results_ablation --output summary.json
 
 ### 预期排序
 
-1. **Baseline** — 最佳  
-2. **语气变化** — 通常对成功率影响不大  
-3. **Wiki 随机化** — 严重损害指令遵循  
-4. **无工具描述** — 大量参数错误 / 错误操作  
-5. **组合消融** — 最差  
+1. **Baseline** — 最佳
+2. **语气变化** — 通常对成功率影响不大
+3. **Wiki 随机化** — 严重损害指令遵循
+4. **无工具描述** — 大量参数错误 / 错误操作
+5. **组合消融** — 最差
 
 ### 关键洞察
 
 把 Agent 看成聪明的新员工：
 
-1. **清晰指令至关重要** — 结构化信息、任务描述、工具用法  
-2. **上下文组织影响理解** — 逻辑排序、相关规则归并、优先级明确  
-3. **工具文档不可或缺** — 用途、参数、示例  
+1. **清晰指令至关重要** — 结构化信息、任务描述、工具用法
+2. **上下文组织影响理解** — 逻辑排序、相关规则归并、优先级明确
+3. **工具文档不可或缺** — 用途、参数、示例
 
 ### 参数说明
 
@@ -488,9 +488,9 @@ python analyze_results.py --results-dir results_ablation --output summary.json
 
 ### 故障排除
 
-1. **ImportError**：确认目录与依赖  
-2. **API 错误**：密钥与配额  
-3. **内存**：降低 `--max-concurrency`  
+1. **ImportError**：确认目录与依赖
+2. **API 错误**：密钥与配额
+3. **内存**：降低 `--max-concurrency`
 
 ```bash
 export LITELLM_LOG=DEBUG
@@ -522,7 +522,7 @@ python run.py --agent-strategy tool-calling --env retail --model gpt-4o \
 
 ## Notes / 说明
 
-- Book experiment path is `run_ablation.py`; vanilla `run.py` is the upstream τ-bench entry.  
-- 书中实验主路径是 `run_ablation.py`；`run.py` 为上游 τ-bench 原版入口。  
-- Smoke tables in this README are not publishable success rates.  
+- Book experiment path is `run_ablation.py`; vanilla `run.py` is the upstream τ-bench entry.
+- 书中实验主路径是 `run_ablation.py`；`run.py` 为上游 τ-bench 原版入口。
+- Smoke tables in this README are not publishable success rates.
 - 文中冒烟表不可当作可发表的成功率数字。

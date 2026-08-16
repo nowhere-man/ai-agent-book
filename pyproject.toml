@@ -69,16 +69,8 @@ viz = [
     "tqdm>=4.66.1",
 ]
 
-# Document parsing and generation (PDF/Office).
-# PyPDF2 is kept alongside pypdf because several experiments still
-# `import PyPDF2` directly (chapter1/context/agent.py,
-# chapter2/local_llm_serving/tools.py, chapter4/perception-tools/...).
-# Migrating those imports to pypdf is tracked separately.
-docs = [
-    "pypdf>=4.0",
-    "PyPDF2>=3.0",
-    "pdfplumber>=0.10.3",
-    "reportlab>=4.0",
+# Office document processing used by the chapter experiments.
+office-processing = [
     "python-docx>=1.1",
     "python-pptx>=0.6.23",
     "openpyxl>=3.1",
@@ -297,43 +289,38 @@ dev = [
 ]
 
 # ---------------------------------------------------------------------------
-# Chapter aggregates -- what a reader installs to run one chapter.
+# Chapter aggregates -- optional compatibility entry points for readers who
+# only want one chapter. The repository-wide requirements.txt uses `all`.
 # ---------------------------------------------------------------------------
-ch1  = ["agentbook[viz,docs]"]
-ch2  = ["agentbook[viz,docs,web,serve,providers,tokens,torch]"]
-ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch,providers]"]
-ch4  = [
-    "agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis,integrations]",
-    "PyMuPDF>=1.24.0",
+ch1 = ["agentbook[viz,office-processing]"]
+ch2 = ["agentbook[viz,office-processing,web,serve,providers,tokens,torch]"]
+ch3 = ["agentbook[viz,office-processing,web,serve,rag,mem,analysis,torch,providers]"]
+ch4 = [
+    "agentbook[viz,office-processing,media,browser,serve,mcp,tokens,analysis,integrations]",
 ]
-ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis,solvers]", "PyMuPDF>=1.25.0"]
-ch6  = ["agentbook[viz,tokens,analysis,providers]", "fish-audio-sdk>=1.3.0,<2"]
+ch5 = [
+    "agentbook[viz,office-processing,media,web,serve,mcp,providers,analysis,solvers]",
+]
+ch6 = ["agentbook[viz,tokens,analysis,providers]", "fish-audio-sdk>=1.3.0,<2"]
 # `train` floors transformers at >=4.55 for MultilingualReasoning's
 # Mxfp4Config. chapter7/sesame pins transformers==4.52.3, which no single
-# aggregate can satisfy alongside it -- run that one experiment from its own
-# requirements.txt in a separate venv. Add the `unsloth` extra for the
-# Unsloth-accelerated experiments.
-ch7  = ["agentbook[train,audio,viz]"]
-# Ordinary Chapter 8 experiments are inference/RAG/browser/orchestration demos.
-# The prompt-distillation training project keeps its Linux/CUDA stack isolated in
-# its own requirements.txt because it also needs vLLM and tighter training-stack
-# compatibility than the shared chapter aggregate should impose.
-ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,orchestration]"]
-ch9  = [
+# aggregate can satisfy alongside it -- run that one experiment separately.
+ch7 = ["agentbook[train,audio,viz]"]
+ch8 = [
+    "agentbook[viz,office-processing,media,browser,serve,rag,mcp,providers,orchestration]",
+]
+ch9 = [
     "agentbook[serve]",
     "httpx>=0.27",
     "playwright>=1.40",
     "aiortc>=1.10",
-    # The historical 9-2 add-on transcribes the exact browser-microphone RTP capture.
-    # The 20231106 metadata installs Linux-only Triton unconditionally on
-    # macOS.  The maintained release has platform-correct dependencies.
     "openai-whisper>=20240930",
     "torch>=2.2",
 ]
-ch10 = ["agentbook[tokens,web]"]              # token counting and browser research
+ch10 = ["agentbook[tokens,web]"]
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
-all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
+all = ["agentbook[viz,office-processing,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
 
 [tool.uv]
 # These GPU stacks are deliberately separate execution environments (see the
@@ -352,6 +339,10 @@ environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
     "sys_platform == 'win32'",
 ]
+
+# Use the repository's browser-use copy with the reduced file-system feature set.
+[tool.uv.sources]
+browser-use = { path = "chapter8/browser-use-rpa/browser-use" }
 
 [project.urls]
 Homepage = "https://github.com/bojieli/ai-agent-book"

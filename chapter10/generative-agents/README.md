@@ -58,12 +58,12 @@ legacy `openai` 0.27 API:
 
 ```bash
 python3.11 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r ../../requirements.txt
 git clone https://github.com/joonspk-research/generative_agents.git /tmp/generative_agents
 git -C /tmp/generative_agents checkout --detach fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4
 ```
 
-Set `DASHSCOPE_API_KEY` in the environment. The default current models are
+Set `OPENAI_API_KEY` in the environment. The default current models are
 `qwen3.7-flash` and `text-embedding-v4` through DashScope's international
 OpenAI-compatible endpoint. `GA_OPENAI_API_BASE`, `GA_CHAT_MODEL`, and
 `GA_EMBEDDING_MODEL` are explicit overrides; changing them defines a different

@@ -25,7 +25,7 @@ from openai import OpenAI
 HERE = Path(__file__).resolve().parent
 DEFAULT_CASES = HERE / "cases.json"
 DEFAULT_OUTPUT = HERE / "results" / "policy_prefix_live.json"
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 
 @dataclass
@@ -37,11 +37,11 @@ class Usage:
 
 class APIClient:
     def __init__(self, model: str, timeout: float = 120.0):
-        key = os.environ.get("OPENROUTER_API_KEY")
+        key = os.environ.get("OPENAI_API_KEY")
         if not key:
-            raise RuntimeError("OPENROUTER_API_KEY is required for the live experiment")
+            raise RuntimeError("OPENAI_API_KEY is required for the live experiment")
         self.model = model
-        self.client = OpenAI(api_key=key, base_url=OPENROUTER_BASE_URL, timeout=timeout)
+        self.client = OpenAI(api_key=key, base_url=OPENAI_BASE_URL, timeout=timeout)
 
     def json_call(self, system: str, user: str) -> tuple[dict[str, Any], str, Usage]:
         last_error: Exception | None = None

@@ -85,8 +85,8 @@ class _FakeHTTPResp(io.BytesIO):
 
 
 def _stub_gemini(monkeypatch, payload: dict):
-    monkeypatch.setenv("GEMINI_API_KEY", "fake-key-for-test")
-    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-key-for-test")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
     monkeypatch.setattr(pipeline, "_resolve_gemini_model", lambda key: "gemini-fake")
     monkeypatch.setattr("urllib.request.urlopen",
@@ -132,8 +132,8 @@ def test_judge_gemini_audio_parses_valid_response(monkeypatch, tmp_path):
 
 def test_judge_gemini_audio_falls_back_to_openrouter(monkeypatch, tmp_path):
     """An unavailable direct key keeps both clips on a direct-audio fallback route."""
-    monkeypatch.setenv("GEMINI_API_KEY", "invalid-direct-key")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "fake-openrouter-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "invalid-direct-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-openrouter-key")
     monkeypatch.setattr(pipeline, "_resolve_gemini_model", lambda key: "gemini-fake")
 
     def _http_error(req, timeout=None):
@@ -160,8 +160,8 @@ def test_judge_gemini_audio_falls_back_to_openrouter(monkeypatch, tmp_path):
 
 
 def test_openrouter_failure_preserves_both_route_attempts(monkeypatch, tmp_path):
-    monkeypatch.setenv("GEMINI_API_KEY", "invalid-direct-key")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "invalid-openrouter-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "invalid-direct-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "invalid-openrouter-key")
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
     monkeypatch.setattr(pipeline, "_resolve_gemini_model", lambda key: "gemini-fake")
 
@@ -188,8 +188,8 @@ def test_openrouter_failure_preserves_both_route_attempts(monkeypatch, tmp_path)
 
 
 def test_openrouter_failure_falls_back_to_exact_mistral_two_audio_route(monkeypatch, tmp_path):
-    monkeypatch.setenv("GEMINI_API_KEY", "invalid-direct-key")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "invalid-openrouter-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "invalid-direct-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "invalid-openrouter-key")
     monkeypatch.setenv("MISTRAL_API_KEY", "fake-mistral-key")
     monkeypatch.setattr(pipeline, "_resolve_gemini_model", lambda key: "gemini-fake")
     monkeypatch.setattr(pipeline.time, "sleep", lambda seconds: None)

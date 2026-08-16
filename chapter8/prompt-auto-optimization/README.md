@@ -40,7 +40,7 @@ source .venv/bin/activate
 cd chapter8/prompt-auto-optimization
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 
 cp env.example .env
 export OPENAI_API_KEY=your_api_key_here

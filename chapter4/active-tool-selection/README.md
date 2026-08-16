@@ -1,6 +1,6 @@
 # Active Tool Selection / 主动工具选择
 
-> Educational implementation of active tool discovery for LLM agents (MCP-Zero style), with measurable comparison of `all-tools` / `retrieval` / `active` strategies.  
+> Educational implementation of active tool discovery for LLM agents (MCP-Zero style), with measurable comparison of `all-tools` / `retrieval` / `active` strategies.
 > 面向 LLM Agent 的主动工具发现教学实现（MCP-Zero 风格），可度量对比 `all-tools` / `retrieval` / `active` 三种策略。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -198,7 +198,7 @@ source .venv/bin/activate
 cd chapter4/active-tool-selection
 
 # Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. Configure API Key
@@ -209,16 +209,16 @@ cp env.example .env
 ```
 
 > **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is not set but
-> `OPENROUTER_API_KEY` is, `config.py` automatically routes through OpenRouter
-> (`base_url=https://openrouter.ai/api/v1`) and maps the model id to
+> `OPENAI_API_KEY` is, `config.py` automatically routes through OpenRouter
+> (`base_url=https://api.openai.com/v1`) and maps the model id to
 > `provider/model` form (`gpt-*` → `openai/…`, `claude-*` →
 > `anthropic/claude-opus-4.8`). Existing `OPENAI_BASE_URL`/`OPENAI_MODEL`
 
 > overrides are preserved.
 
 For direct Alibaba Cloud Model Studio / Bailian (Qwen), set
-`LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `DASHSCOPE_API_KEY`; the
-default model is `qwen3.7-plus`. Set `DASHSCOPE_BASE_URL` for international keys.
+`LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `OPENAI_API_KEY`; the
+default model is `qwen3.7-plus`. Set `OPENAI_BASE_URL` for international keys.
 
 #### 3. Run Quick Start
 
@@ -345,7 +345,7 @@ passive = PassiveToolAgent()
 passive_result = passive.execute_task(task)
 
 # Compare efficiency
-reduction = (1 - active_result['metrics']['tokens_used'] / 
+reduction = (1 - active_result['metrics']['tokens_used'] /
              passive_result['metrics']['tokens_used']) * 100
 print(f"Token reduction: {reduction:.1f}%")  # Typically 90-98%
 ```
@@ -543,7 +543,7 @@ OPENAI_API_KEY=your-openai-api-key
 uv sync --locked --python 3.12 --extra ch4
 
 # Single-project compatibility path:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### Low Similarity Scores
@@ -726,7 +726,7 @@ source .venv/bin/activate
 cd chapter4/active-tool-selection
 
 # 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 2. 配置 API Key
@@ -737,8 +737,8 @@ cp env.example .env
 ```
 
 > **OpenRouter 通用兜底**：若未设置 `OPENAI_API_KEY` 但设置了
-> `OPENROUTER_API_KEY`，`config.py` 会自动改走 OpenRouter
-> （`base_url=https://openrouter.ai/api/v1`），并把模型 id 映射为
+> `OPENAI_API_KEY`，`config.py` 会自动改走 OpenRouter
+> （`base_url=https://api.openai.com/v1`），并把模型 id 映射为
 > `provider/model` 形式（`gpt-*` → `openai/…`，`claude-*` →
 > `anthropic/claude-opus-4.8`）。已有 `OPENAI_BASE_URL`/`OPENAI_MODEL`
 > 覆盖会保留。
@@ -865,7 +865,7 @@ passive = PassiveToolAgent()
 passive_result = passive.execute_task(task)
 
 # Compare efficiency
-reduction = (1 - active_result['metrics']['tokens_used'] / 
+reduction = (1 - active_result['metrics']['tokens_used'] /
              passive_result['metrics']['tokens_used']) * 100
 print(f"Token reduction: {reduction:.1f}%")  # Typically 90-98%
 ```
@@ -1062,7 +1062,7 @@ OPENAI_API_KEY=your-openai-api-key
 uv sync --locked --python 3.12 --extra ch4
 
 # 单项目兼容路径：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 #### 相似度过低
@@ -1098,7 +1098,7 @@ MIT License - 详见 LICENSE 文件
 
 ## Notes / 说明
 
-- Related experiment: [active-tool-discovery](../active-tool-discovery/) (Experiment 4-7, embedding-based `discover_tools`).  
-- 相关实验：[active-tool-discovery](../active-tool-discovery/)（实验 4-7，基于嵌入的 `discover_tools`）。  
-- Offline path is fully deterministic without API keys.  
+- Related experiment: [active-tool-discovery](../active-tool-discovery/) (Experiment 4-7, embedding-based `discover_tools`).
+- 相关实验：[active-tool-discovery](../active-tool-discovery/)（实验 4-7，基于嵌入的 `discover_tools`）。
+- Offline path is fully deterministic without API keys.
 - 离线路径完全确定性，无需 API Key。

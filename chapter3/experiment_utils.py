@@ -77,11 +77,11 @@ def runtime_provenance() -> Dict[str, Any]:
         "credential_presence": {
             name: bool(os.getenv(name))
             for name in (
-                "ARK_API_KEY",
-                "MOONSHOT_API_KEY",
                 "OPENAI_API_KEY",
-                "GEMINI_API_KEY",
-                "SILICONFLOW_API_KEY",
+                "OPENAI_API_KEY",
+                "OPENAI_API_KEY",
+                "OPENAI_API_KEY",
+                "OPENAI_API_KEY",
             )
         },
     }

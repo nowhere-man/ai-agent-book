@@ -1,6 +1,6 @@
 # Collaboration Tools MCP Server / 协作工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-4 ★★**. MCP server: browser automation, sub-agents, HITL, multi-channel notifications, timers.  
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-4 ★★**. MCP server: browser automation, sub-agents, HITL, multi-channel notifications, timers.
 > 配套《深入理解 AI Agent》第 4 章 **实验 4-4 ★★**。协作 MCP 服务器：浏览器、子 Agent、HITL、多渠道通知、定时器。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
@@ -72,7 +72,7 @@ source .venv/bin/activate
 cd chapter4/collaboration-tools
 
 # Exact legacy parity path, including direct Playwright/pydantic-settings/scheduler pins:
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 2. Copy the example environment file and configure it:
@@ -128,14 +128,14 @@ HITL_TIMEOUT_SECONDS=3600
 OPENAI_API_KEY=your-openai-api-key
 # Or use Alibaba Cloud Model Studio / Bailian (Qwen):
 # COLLAB_PROVIDER=dashscope  # qwen and bailian are aliases
-# DASHSCOPE_API_KEY=your-dashscope-api-key
+# OPENAI_API_KEY=your-dashscope-api-key
 OPENAI_MODEL=gpt-5.6-luna
 ```
 
 > **Universal OpenRouter fallback**: all LLM entry points (`spawn_subagent`,
 > intelligence tools, browser-use) resolve credentials via `src/llm_fallback.py`.
-> When `OPENAI_API_KEY` is absent but `OPENROUTER_API_KEY` is set, they route
-> through OpenRouter (`base_url=https://openrouter.ai/api/v1`, model id mapped to
+> When `OPENAI_API_KEY` is absent but `OPENAI_API_KEY` is set, they route
+> through OpenRouter (`base_url=https://api.openai.com/v1`, model id mapped to
 > `provider/model` form, e.g. `gpt-5.6-luna` → `openai/gpt-5.6-luna`). With neither
 > key set, sub-agents run in deterministic offline mode (no fabricated output).
 
@@ -462,7 +462,7 @@ source .venv/bin/activate
 cd chapter4/collaboration-tools
 
 # 精确复现旧版单项目环境，含直接 Playwright/pydantic-settings/scheduler 约束：
-# python -m pip install -r requirements.txt
+# python -m pip install -r ../../requirements.txt
 ```
 
 2. 复制环境模板并配置：
@@ -521,8 +521,8 @@ OPENAI_MODEL=gpt-5.6-luna
 
 > **OpenRouter 通用兜底**：所有 LLM 入口（`spawn_subagent`、
 > intelligence 工具、browser-use）经 `src/llm_fallback.py` 解析凭据。
-> 未设置 `OPENAI_API_KEY` 但设置了 `OPENROUTER_API_KEY` 时，走
-> OpenRouter（`base_url=https://openrouter.ai/api/v1`，模型 id 映射为
+> 未设置 `OPENAI_API_KEY` 但设置了 `OPENAI_API_KEY` 时，走
+> OpenRouter（`base_url=https://api.openai.com/v1`，模型 id 映射为
 > `provider/model`，如 `gpt-5.6-luna` → `openai/gpt-5.6-luna`）。两者皆无时，
 > 子 Agent 以确定性离线模式运行（不编造输出）。
 
@@ -765,7 +765,7 @@ MIT License
 
 ## Notes / 说明
 
-- HITL + notify paths in `python main.py demo` run offline without API keys.  
-- `python main.py demo` 中 HITL 与通知路径可离线、无需 API Key。  
-- Browser AI tasks and `llm_generated` sub-agent strategy need an LLM key.  
+- HITL + notify paths in `python main.py demo` run offline without API keys.
+- `python main.py demo` 中 HITL 与通知路径可离线、无需 API Key。
+- Browser AI tasks and `llm_generated` sub-agent strategy need an LLM key.
 - 浏览器 AI 任务与 `llm_generated` 子 Agent 策略需要 LLM Key。
